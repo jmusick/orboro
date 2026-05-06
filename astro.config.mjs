@@ -6,8 +6,12 @@ import cloudflare from '@astrojs/cloudflare';
 export default defineConfig({
 	output: 'server',
 	adapter: cloudflare({
+		imageService: 'passthrough',
 		platformProxy: {
 			enabled: true,
 		},
 	}),
+	experimental: {
+		session: false,
+	},
 });
