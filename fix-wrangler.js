@@ -1,38 +1,26 @@
-import fs from 'fs';
-import path from 'path';
+import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 
-const wranglerPath = path.join(process.cwd(), 'dist', 'server', 'wrangler.json');
+const deployConfigPath = resolve('.wrangler/deploy/config.json');
 
-if (fs.existsSync(wranglerPath)) {
-  const config = JSON.parse(fs.readFileSync(wranglerPath, 'utf-8'));
-  
-  // Remove problematic fields for Pages
-  delete config.triggers;
-  delete config.assets;
-  delete config.main;
-  delete config.rules;
-  delete config.no_bundle;
-  
-  // Remove Pages-incompatible fields
-  delete config.definedEnvironments;
-  delete config.ai_search_namespaces;
-  delete config.ai_search;
-  delete config.secrets_store_secrets;
-  delete config.unsafe_hello_world;
-  delete config.worker_loaders;
-  delete config.ratelimits;
-  delete config.vpc_services;
-  delete config.vpc_networks;
-  delete config.python_modules;
-  
-  // Clean up dev field
-  if (config.dev) {
-    delete config.dev.enable_containers;
-    delete config.dev.generate_types;
-  }
-  
-  fs.writeFileSync(wranglerPath, JSON.stringify(config, null, 2));
-  console.log('✓ Fixed wrangler.json for Pages compatibility');
-} else {
-  console.log('wrangler.json not found, skipping fix');
+const workerEntryDir = resolve('dist/_worker.js');
+const workerIndexPath = resolve(workerEntryDir, 'index.js');
+
+if (existsSync(deployConfigPath)) {
+  rmSync(deployConfigPath, { force: true });
 }
+
+const generatedWorkerConfigPath = resolve(workerEntryDir, 'wrangler.json');
+if (existsSync(generatedWorkerConfigPath)) {
+  rmSync(generatedWorkerConfigPath, { force: true });
+}
+
+mkdirSync(workerEntryDir, { recursive: true });
+
+const indexContent = `\
+import astroHandler from './entry.mjs';
+export default astroHandler;
+`;
+writeFileSync(workerIndexPath, indexContent, 'utf8');
+console.log('✓ Patched wrangler config for Pages');
+
