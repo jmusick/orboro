@@ -1,17 +1,21 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import { sessionDrivers } from 'astro/config';
 import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
 	output: 'server',
+	build: {
+		client: './',
+		server: './_worker.js',
+	},
 	session: {
-		// Prevent the Cloudflare adapter from auto-adding a SESSION KV binding.
-		// This app uses custom JWT auth and does not use Astro sessions.
-		driver: 'memory',
+		// This app uses custom JWT auth, use lruCache to prevent auto KV binding
+		driver: sessionDrivers.lruCache(),
 	},
 	adapter: cloudflare({
-		imageService: 'passthrough',
+		imageService: 'compile',
 		platformProxy: {
 			enabled: true,
 		},
