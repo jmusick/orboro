@@ -1,6 +1,6 @@
 name = "orboro-net"
 compatibility_date = "2026-04-05"
-pages_build_output_dir = "dist"
+pages_build_output_dir = "dist/server"
 
 [[d1_databases]]
 binding = "DB"

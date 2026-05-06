@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const wranglerPath = path.join(process.cwd(), 'dist', '_worker.js', 'wrangler.json');
+const wranglerPath = path.join(process.cwd(), 'dist', 'server', 'wrangler.json');
 
 if (fs.existsSync(wranglerPath)) {
   const config = JSON.parse(fs.readFileSync(wranglerPath, 'utf-8'));
