@@ -1,5 +1,4 @@
 import { defineMiddleware } from "astro:middleware";
-import { env as workerEnv } from "cloudflare:workers";
 import { getSessionAndUserByToken } from "./lib/auth";
 
 const SESSION_COOKIE = "orboro_session";
@@ -9,7 +8,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.session = null;
 
   const token = context.cookies.get(SESSION_COOKIE)?.value;
-  if (token && ((workerEnv as unknown) as { DB?: unknown }).DB) {
+  if (token && context.locals.runtime?.env?.DB) {
     try {
       const { session, user } = await getSessionAndUserByToken(context.locals, token);
       context.locals.session = session;
