@@ -1,6 +1,6 @@
 import { ensureDB } from "./db";
 
-const PASSWORD_ITERATIONS = 120_000;
+const PASSWORD_ITERATIONS = 100_000;
 const SESSION_DURATION_MS = 1000 * 60 * 60 * 24 * 14;
 
 function toBase64(bytes: Uint8Array): string {
