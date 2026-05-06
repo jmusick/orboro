@@ -9,6 +9,9 @@ if (fs.existsSync(wranglerPath)) {
   // Remove problematic fields for Pages
   delete config.triggers;
   delete config.assets;
+  delete config.main;
+  delete config.rules;
+  delete config.no_bundle;
   
   // Remove Pages-incompatible fields
   delete config.definedEnvironments;
