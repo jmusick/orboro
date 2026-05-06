@@ -1,0 +1,28 @@
+---
+import { marked } from "marked";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getPublishedBySlugAndType } from "../../lib/content";
+import DefaultPostTemplate from "../../components/templates/post/DefaultPostTemplate.astro";
+import FeaturePostTemplate from "../../components/templates/post/FeaturePostTemplate.astro";
+
+const { slug } = Astro.params;
+if (!slug) {
+  return Astro.redirect("/blog");
+}
+
+const post = await getPublishedBySlugAndType(Astro.locals, slug, "post");
+if (!post) {
+  return Astro.redirect("/blog");
+}
+
+const html = (await marked.parse(post.markdown)) as string;
+const templateComponentByKey = {
+  "post-default": DefaultPostTemplate,
+  "post-feature": FeaturePostTemplate,
+};
+const Template = templateComponentByKey[post.templateKey as keyof typeof templateComponentByKey] ?? DefaultPostTemplate;
+---
+
+<BaseLayout title={`${post.title} | Orboro.net`} description={post.excerpt ?? ""}>
+  <Template title={post.title} excerpt={post.excerpt} html={html} />
+</BaseLayout>

@@ -1,0 +1,28 @@
+---
+import { marked } from "marked";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getPublishedBySlugAndType } from "../../lib/content";
+import DefaultPageTemplate from "../../components/templates/page/DefaultPageTemplate.astro";
+import LandingPageTemplate from "../../components/templates/page/LandingPageTemplate.astro";
+
+const { slug } = Astro.params;
+if (!slug) {
+  return Astro.redirect("/");
+}
+
+const page = await getPublishedBySlugAndType(Astro.locals, slug, "page");
+if (!page) {
+  return Astro.redirect("/");
+}
+
+const html = String(await marked.parse(page.markdown));
+const templateComponentByKey = {
+  "page-default": DefaultPageTemplate,
+  "page-landing": LandingPageTemplate,
+};
+const Template = templateComponentByKey[page.templateKey as keyof typeof templateComponentByKey] ?? DefaultPageTemplate;
+---
+
+<BaseLayout title={`${page.title} | Orboro.net`} description={page.excerpt ?? ""}>
+  <Template title={page.title} excerpt={page.excerpt} html={html} />
+</BaseLayout>

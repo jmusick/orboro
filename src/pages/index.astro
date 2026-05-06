@@ -1,17 +1,128 @@
 ---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Button from "../components/Button.astro";
+import Card from "../components/Card.astro";
 
+const profiles = [
+	{
+		platform: "Steam",
+		handle: "XingYuen",
+		detail: "Public profile",
+		icon: "steam",
+		url: "https://steamcommunity.com/id/XingYuen/",
+		buttonLabel: "Open Steam Profile",
+	},
+	{
+		platform: "Battle.net",
+		handle: "Xing#1673",
+		detail: "BattleTag",
+		icon: "battlenet",
+	},
+	{
+		platform: "Discord",
+		handle: "xing_yuen",
+		detail: "Discord username",
+		icon: "discord",
+	},
+	{
+		platform: "Reddit",
+		handle: "u/XingYuen",
+		detail: "Public profile",
+		icon: "reddit",
+		url: "https://www.reddit.com/user/XingYuen/",
+		buttonLabel: "Open Reddit Profile",
+	},
+	{
+		platform: "YouTube",
+		handle: "@Vesius",
+		detail: "YouTube channel",
+		icon: "youtube",
+		url: "https://www.youtube.com/@Vesius",
+		buttonLabel: "Open YouTube Channel",
+	},
+	{
+		platform: "Twitch",
+		handle: "xingyuen",
+		detail: "Live streams",
+		icon: "twitch",
+		url: "https://www.twitch.tv/xingyuen",
+		buttonLabel: "Open Twitch Channel",
+	},
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+
+<BaseLayout title="Xing Yuen | Gamer Profiles" description="Central profile listing for Xing's gamer identity across platforms.">
+	<section class="profiles-section">
+		<div class="profiles-grid">
+			{profiles.map((profile) => (
+				<Card icon={profile.icon} iconFilled={true} title={profile.platform}>
+					<p class="profile-handle">{profile.handle}</p>
+					<p class="profile-detail">{profile.detail}</p>
+					{profile.url ? (
+						<Button href={profile.url} variant="tertiary" icon="chevron-right" iconPosition="right" target="_blank" rel="noopener noreferrer">
+							{profile.buttonLabel}
+						</Button>
+					) : (
+						<p class="profile-note">Use this handle to add me in-app.</p>
+					)}
+				</Card>
+			))}
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.hero {
+		display: none;
+	}
+
+	.subtitle {
+		font-size: 1.1rem;
+		color: var(--muted);
+		margin: 0 0 2rem;
+		line-height: 1.6;
+		max-width: 600px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.profiles-section {
+		margin-top: 0;
+	}
+
+	.profiles-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1.5rem;
+	}
+
+	.profile-handle {
+		font-family: "JetBrains Mono", Consolas, monospace;
+		font-size: 1.05rem;
+		font-weight: 600;
+		margin-bottom: 0.5rem;
+	}
+
+	.profile-detail {
+		color: var(--muted);
+		margin-bottom: 1rem;
+	}
+
+	.profile-note {
+		color: var(--muted);
+		font-size: 0.95rem;
+	}
+
+	@media (max-width: 768px) {
+		.profiles-grid {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.profiles-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

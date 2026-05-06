@@ -1,0 +1,64 @@
+---
+interface Props {
+  variant?: 'default' | 'success' | 'warning' | 'danger' | 'info';
+  size?: 'sm' | 'md';
+  icon?: string;
+  class?: string;
+}
+
+import Icon from './Icon.astro';
+
+const { 
+  variant = 'default', 
+  size = 'md',
+  icon,
+  class: className = '',
+} = Astro.props;
+
+const variantColors = {
+  default: { bg: 'rgb(0 229 255 / 15%)', border: 'rgb(0 229 255 / 50%)', text: 'var(--accent)' },
+  success: { bg: 'rgb(168 255 96 / 15%)', border: 'rgb(168 255 96 / 50%)', text: 'var(--accent-3)' },
+  warning: { bg: 'rgb(255 193 7 / 15%)', border: 'rgb(255 193 7 / 50%)', text: '#ffc107' },
+  danger: { bg: 'rgb(255 61 77 / 15%)', border: 'rgb(255 61 77 / 50%)', text: '#ff3d4d' },
+  info: { bg: 'rgb(255 63 184 / 15%)', border: 'rgb(255 63 184 / 50%)', text: 'var(--accent-2)' },
+};
+
+const colors = variantColors[variant];
+const padding = size === 'sm' ? '0.3rem 0.7rem' : '0.4rem 0.9rem';
+const fontSize = size === 'sm' ? '0.8rem' : '0.9rem';
+---
+
+<span 
+  class={`pill pill--${variant} ${className}`}
+  style={{
+    background: colors.bg,
+    border: `1px solid ${colors.border}`,
+    color: colors.text,
+    padding,
+    fontSize,
+  }}
+>
+  {icon && (
+    <span class="pill__icon">
+      <Icon name={icon} size={size === 'sm' ? 14 : 16} />
+    </span>
+  )}
+  <slot />
+</span>
+
+<style>
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-radius: 999px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .pill__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>

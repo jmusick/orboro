@@ -1,0 +1,117 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Button from "../../components/Button.astro";
+import { getUserCount } from "../../lib/content";
+
+const userCount = await getUserCount(Astro.locals);
+if (userCount > 0) {
+  return Astro.redirect("/admin");
+}
+---
+
+<BaseLayout title="Initial Admin Setup | Orboro.net" description="Create first admin user">
+  <section class="setup-section">
+    <h1>Create Initial Admin</h1>
+    <p class="setup-subtitle">Set up your first admin account to manage the Orboro CMS.</p>
+
+    <form method="post" action="/api/setup/create-admin" class="setup-form">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input 
+          id="email" 
+          type="email" 
+          name="email" 
+          required 
+          autocomplete="email"
+          placeholder="admin@example.com"
+        />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          id="password" 
+          type="password" 
+          name="password" 
+          minlength="10" 
+          required
+          placeholder="At least 10 characters"
+        />
+        <small class="password-hint">Use a strong password with letters, numbers, and symbols</small>
+      </div>
+      <Button type="submit" variant="primary" icon="lock">
+        Create Admin Account
+      </Button>
+    </form>
+  </section>
+</BaseLayout>
+
+<style>
+  .setup-section {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .setup-subtitle {
+    color: var(--muted);
+    font-size: 1.05rem;
+    margin-bottom: 2rem;
+  }
+
+  .setup-form {
+    background: linear-gradient(160deg, rgb(12 19 36 / 50%) 0%, rgb(17 26 48 / 50%) 100%);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 2rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+
+  .form-group input {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+  }
+
+  .form-group input::placeholder {
+    color: var(--muted);
+  }
+
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0.8rem rgb(0 229 255 / 20%);
+  }
+
+  .password-hint {
+    font-size: 0.8rem;
+    color: var(--muted);
+    display: block;
+    margin-top: 0.25rem;
+  }
+
+  .setup-form :global(.btn) {
+    width: 100%;
+  }
+
+  @media (max-width: 768px) {
+    .setup-form {
+      padding: 1.5rem;
+    }
+  }
+</style>

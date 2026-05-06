@@ -1,0 +1,107 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import Card from "../../components/Card.astro";
+import Button from "../../components/Button.astro";
+import { getUserCount } from "../../lib/content";
+
+const userCount = await getUserCount(Astro.locals);
+const loggedIn = Boolean(Astro.locals.user);
+const setupNeeded = userCount === 0;
+const error = Astro.url.searchParams.get("error");
+---
+
+{setupNeeded ? (
+  <BaseLayout title="Create Admin | Orboro.net" description="Initial admin setup">
+    <section>
+      <h1>Initial Setup</h1>
+      <p>Create the first admin account for this Orboro instance.</p>
+      <Button href="/admin/setup" variant="primary">
+        Get Started
+      </Button>
+    </section>
+  </BaseLayout>
+) : loggedIn ? (
+  <AdminLayout title="Dashboard">
+    <section>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+        <h2 style="margin: 0;">Quick Actions</h2>
+        <Button href="/" variant="secondary" icon="home" iconPosition="left">View Site</Button>
+      </div>
+      <div class="cards-grid">
+        <Card icon="plus" title="Create Content" href="/admin/content/new">
+          <p>Create a new post, page, or any content type</p>
+        </Card>
+        <Card icon="file-text" title="Manage Content" href="/admin/content">
+          <p>Edit, update, and organize your content</p>
+        </Card>
+        <Card icon="image" title="Manage Media" href="/admin/media">
+          <p>Upload and organize media files</p>
+        </Card>
+      </div>
+    </section>
+  </AdminLayout>
+) : (
+  <BaseLayout title="Admin Login | Orboro.net" description="Sign in to Orboro CMS">
+    <section>
+      <h1>Admin Login</h1>
+      {error ? <p style="color: #ff3d4d;"><strong>Unable to sign in.</strong></p> : null}
+      <form method="post" action="/api/auth/login">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input id="email" type="email" name="email" required autocomplete="email" />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input id="password" type="password" name="password" required autocomplete="current-password" />
+        </div>
+        <Button type="submit" variant="primary">Sign In</Button>
+      </form>
+    </section>
+  </BaseLayout>
+)}
+
+<style>
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+
+  .form-group input {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+  }
+
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0.8rem rgb(0 229 255 / 20%);
+  }
+
+  @media (max-width: 768px) {
+    .cards-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

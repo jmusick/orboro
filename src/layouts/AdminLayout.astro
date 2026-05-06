@@ -1,0 +1,210 @@
+---
+import Icon from "../components/Icon.astro";
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+const { user } = Astro.locals;
+
+const currentPath = new URL(Astro.request.url).pathname;
+const dashActive = currentPath === '/admin';
+const contentActive = currentPath.startsWith('/admin/content');
+const mediaActive = currentPath.startsWith('/admin/media');
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Admin | {title}</title>
+    <style>
+      :root {
+        --bg: #05070f;
+        --surface: #0c1324;
+        --surface-2: #111a30;
+        --text: #e8f3ff;
+        --muted: #97a8c4;
+        --accent: #00e5ff;
+        --accent-2: #ff3fb8;
+        --accent-3: #a8ff60;
+        --line: #1f2b46;
+      }
+      *, *::before, *::after { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Space Grotesk", "Segoe UI", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at 15% 10%, rgb(0 229 255 / 14%) 0%, transparent 32%),
+          radial-gradient(circle at 85% 15%, rgb(255 63 184 / 12%) 0%, transparent 28%),
+          radial-gradient(circle at 50% 95%, rgb(168 255 96 / 10%) 0%, transparent 38%),
+          var(--bg);
+        background-repeat: no-repeat;
+        background-size: 140vw 140vh, 130vw 130vh, 150vw 150vh, auto;
+        background-attachment: fixed;
+        min-height: 100vh;
+      }
+      input, textarea, select, button { font: inherit; }
+      h1, h2, h3 { color: #f4f8ff; margin: 0 0 1rem; }
+      p { line-height: 1.6; margin: 0 0 1rem; }
+      a { color: var(--accent); }
+      .mono { font-family: "JetBrains Mono", Consolas, monospace; }
+      .admin-layout {
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        gap: 1.5rem;
+        min-height: 100vh;
+        padding: 1.5rem;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      .admin-sidebar {
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(160deg, rgb(12 19 36 / 70%) 0%, rgb(17 26 48 / 70%) 100%);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 1.5rem;
+        height: fit-content;
+        position: sticky;
+        top: 1.5rem;
+      }
+      .sidebar-header {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--line);
+      }
+      .sidebar-logo {
+        display: block;
+        text-decoration: none;
+        line-height: 0;
+      }
+      .sidebar-logo img {
+        width: 100%;
+        max-width: 160px;
+        height: auto;
+      }
+      .sidebar-user { display: flex; align-items: center; gap: 0.75rem; }
+      .user-avatar {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, rgb(0 229 255 / 25%) 0%, rgb(255 63 184 / 15%) 100%);
+        border: 1px solid rgb(0 229 255 / 30%);
+        border-radius: 50%;
+        color: var(--accent);
+      }
+      .user-info { flex: 1; min-width: 0; }
+      .user-name { font-size: 0.9rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .user-email { font-size: 0.75rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .sidebar-nav { display: flex; flex-direction: column; gap: 0.4rem; flex: 1; margin-bottom: 2rem; }
+      .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.7rem 1rem;
+        border-radius: 8px;
+        color: var(--muted);
+        text-decoration: none;
+        border: 1px solid transparent;
+        font-weight: 500;
+        transition: all 0.2s ease;
+      }
+      .nav-link:hover { color: var(--accent); border-color: var(--accent); background: rgb(0 229 255 / 5%); }
+      .nav-link.active {
+        color: var(--accent);
+        background: linear-gradient(90deg, rgb(0 229 255 / 15%) 0%, rgb(0 229 255 / 5%) 100%);
+        border-color: var(--accent);
+        box-shadow: 0 0 0.8rem rgb(0 229 255 / 15%);
+      }
+      .sidebar-footer { padding-top: 1rem; border-top: 1px solid var(--line); }
+      .logout-form { width: 100%; }
+      .logout-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+        padding: 0.7rem 1rem;
+        border: 1px solid rgb(255 61 77 / 30%);
+        border-radius: 8px;
+        background: transparent;
+        color: #ff3d4d;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 0.95rem;
+      }
+      .logout-btn:hover { background: rgb(255 61 77 / 10%); border-color: #ff3d4d; }
+      .admin-main { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
+      .main-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0;
+      }
+      .admin-main > section {
+        background: linear-gradient(160deg, rgb(12 19 36 / 60%) 0%, rgb(17 26 48 / 60%) 100%);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 1.5rem;
+      }
+      @media (max-width: 768px) {
+        .admin-layout { grid-template-columns: 1fr; padding: 1rem; gap: 1rem; }
+        .admin-sidebar { position: static; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <div class="sidebar-header">
+          <a href="/" class="sidebar-logo">
+            <img src="/logo.png" alt="Orboro" />
+          </a>
+          <div class="sidebar-user">
+            <div class="user-avatar"><Icon name="user" size={16} /></div>
+            <div class="user-info">
+              <div class="user-name">{user?.role ?? "admin"}</div>
+              <div class="user-email">{user?.email ?? "guest"}</div>
+            </div>
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          <a href="/admin" class={`nav-link${dashActive ? " active" : ""}`}>
+            <Icon name="home" size={20} /><span>Dashboard</span>
+          </a>
+          <a href="/admin/content" class={`nav-link${contentActive ? " active" : ""}`}>
+            <Icon name="file-text" size={20} /><span>Content</span>
+          </a>
+          <a href="/admin/media" class={`nav-link${mediaActive ? " active" : ""}`}>
+            <Icon name="image" size={20} /><span>Media</span>
+          </a>
+        </nav>
+        <div class="sidebar-footer">
+          <form action="/api/auth/logout" method="post" class="logout-form">
+            <button type="submit" class="logout-btn">
+              <Icon name="log-out" size={20} /><span>Log out</span>
+            </button>
+          </form>
+        </div>
+      </aside>
+      <div class="admin-main">
+        <div class="main-header"><h1>{title}</h1></div>
+        <slot />
+      </div>
+    </div>
+  </body>
+</html>

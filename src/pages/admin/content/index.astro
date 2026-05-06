@@ -1,0 +1,163 @@
+---
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import Button from "../../../components/Button.astro";
+import Pill from "../../../components/Pill.astro";
+import Icon from "../../../components/Icon.astro";
+import { ensureRole } from "../../../lib/http";
+import { listAdminContent } from "../../../lib/content";
+
+ensureRole(Astro, ["admin", "editor", "author"]);
+const content = await listAdminContent(Astro.locals);
+
+const getStatusVariant = (status: string) => {
+  if (status === "published") return "success";
+  if (status === "draft") return "warning";
+  return "default";
+};
+
+const getStatusIcon = (status: string) => {
+  if (status === "published") return "check";
+  if (status === "draft") return "alert-circle";
+  return "file-text";
+};
+---
+
+<AdminLayout title="Content">
+  <section class="content-header">
+    <Button href="/admin/content/new" variant="primary" icon="plus">
+      Create New Content
+    </Button>
+  </section>
+
+  {content.length === 0 ? (
+    <section class="empty-state">
+      <Icon name="file-text" size={48} />
+      <h3>No content yet</h3>
+      <p>Create your first post or page to get started</p>
+      <Button href="/admin/content/new" variant="primary">Create Content</Button>
+    </section>
+  ) : (
+    <section class="content-table-wrapper">
+      <table class="content-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Template</th>
+            <th>Status</th>
+            <th>Slug</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {content.map((item) => (
+            <tr>
+              <td class="cell-title">
+                <strong>{item.title}</strong>
+              </td>
+              <td>
+                <Pill variant="info" size="sm">{item.pageType}</Pill>
+              </td>
+              <td>
+                <code class="mono">{item.templateKey}</code>
+              </td>
+              <td>
+                <Pill variant={getStatusVariant(item.status)} size="sm" icon={getStatusIcon(item.status)}>
+                  {item.status}
+                </Pill>
+              </td>
+              <td>
+                <code class="mono">{item.slug}</code>
+              </td>
+              <td class="cell-actions">
+                <Button href={`/admin/content/${item.id}`} variant="secondary" size="sm" icon="edit">
+                  Edit
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  )}
+</AdminLayout>
+
+<style>
+  .content-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1.5rem;
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 3rem 1rem;
+    text-align: center;
+    color: var(--muted);
+  }
+
+  .empty-state h3 {
+    margin: 0;
+    color: var(--text);
+    font-size: 1.3rem;
+  }
+
+  .empty-state p {
+    margin: 0 0 1rem;
+  }
+
+  .empty-state svg {
+    opacity: 0.5;
+  }
+
+  .content-table-wrapper {
+    overflow-x: auto;
+  }
+
+  .content-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  .content-table th {
+    padding: 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    background: linear-gradient(90deg, rgb(0 229 255 / 5%) 0%, transparent 100%);
+  }
+
+  .content-table td {
+    padding: 1rem 0.75rem;
+    border-bottom: 1px solid var(--line);
+    color: var(--text);
+  }
+
+  .content-table tbody tr:hover {
+    background: linear-gradient(90deg, rgb(0 229 255 / 5%) 0%, transparent 100%);
+  }
+
+  .cell-title {
+    font-weight: 500;
+  }
+
+  .cell-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .mono {
+    font-family: "Courier New", monospace;
+    font-size: 0.85rem;
+    color: var(--muted);
+    background: rgb(0 0 0 / 20%);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+  }
+</style>

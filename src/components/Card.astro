@@ -1,0 +1,110 @@
+---
+interface Props {
+  icon?: string;
+  iconFilled?: boolean;
+  title?: string;
+  href?: string;
+  class?: string;
+}
+
+import Icon from './Icon.astro';
+
+const { icon, iconFilled = false, title, href, class: className = '' } = Astro.props;
+
+const Element = href ? 'a' : 'div';
+const elementProps = href ? { href } : {};
+---
+
+<Element 
+  class={`card ${className}`}
+  {...elementProps}
+>
+  {icon && (
+    <div class="card__bg-icon" aria-hidden="true">
+      <Icon name={icon} size={120} filled={iconFilled} />
+    </div>
+  )}
+  {icon && (
+    <div class="card__icon">
+      <Icon name={icon} size={32} filled={iconFilled} />
+    </div>
+  )}
+  {title && <h3 class="card__title">{title}</h3>}
+  <div class="card__content">
+    <slot />
+  </div>
+</Element>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: linear-gradient(160deg, rgb(12 19 36 / 60%) 0%, rgb(17 26 48 / 60%) 100%);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card__bg-icon {
+    position: absolute;
+    bottom: -16px;
+    right: -16px;
+    opacity: 0.06;
+    color: var(--text);
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  a.card:hover .card__bg-icon {
+    opacity: 0.1;
+  }
+
+  a.card {
+    cursor: pointer;
+  }
+
+  a.card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 1.2rem rgb(0 229 255 / 20%), 0 0.5rem 1.5rem rgb(0 229 255 / 10%);
+    transform: translateY(-2px);
+  }
+
+  .card__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, rgb(0 229 255 / 20%) 0%, rgb(255 63 184 / 10%) 100%);
+    border: 1px solid rgb(0 229 255 / 30%);
+    border-radius: 8px;
+    color: var(--accent);
+  }
+
+  .card__title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .card__content {
+    font-size: 0.95rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .card__content :global(p) {
+    margin: 0 0 0.5rem;
+  }
+
+  .card__content :global(p:last-child) {
+    margin-bottom: 0;
+  }
+</style>

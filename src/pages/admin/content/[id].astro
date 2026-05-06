@@ -1,0 +1,246 @@
+---
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import Button from "../../../components/Button.astro";
+import { getContentById } from "../../../lib/content";
+import { ensureRole } from "../../../lib/http";
+import { getTemplateOptionsByType } from "../../../lib/templates";
+
+ensureRole(Astro, ["admin", "editor", "author"]);
+
+const { id } = Astro.params;
+if (!id) {
+  return Astro.redirect("/admin/content");
+}
+
+const content = await getContentById(Astro.locals, id);
+if (!content) {
+  return Astro.redirect("/admin/content");
+}
+
+const templateOptionsByType = getTemplateOptionsByType();
+const allTemplateOptions = [...templateOptionsByType.post, ...templateOptionsByType.page];
+---
+
+<AdminLayout title={`Edit ${content.title}`}>
+  <section class="editor-section">
+    <form method="post" action="/api/content/save" id="content-form" class="content-editor">
+      <input type="hidden" name="id" value={content.id} />
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input id="title" type="text" name="title" value={content.title} required placeholder="Enter content title" />
+        </div>
+        <div class="form-group">
+          <label for="slug">Slug</label>
+          <input id="slug" type="text" name="slug" value={content.slug} required placeholder="my-post" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="pageType">Page Type</label>
+          <select id="pageType" name="pageType">
+            <option value="post" selected={content.pageType === "post"}>post (blog)</option>
+            <option value="page" selected={content.pageType === "page"}>page (generic)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="status">Status</label>
+          <select id="status" name="status">
+            <option value="draft" selected={content.status === "draft"}>draft</option>
+            <option value="published" selected={content.status === "published"}>published</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="templateKey">Template</label>
+          <select id="templateKey" name="templateKey">
+            {allTemplateOptions.map((option) => (
+              <option value={option.key} selected={content.templateKey === option.key}>{option.label}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group full">
+        <label for="excerpt">Excerpt</label>
+        <textarea id="excerpt" name="excerpt" rows="2" placeholder="Brief summary of the content">{content.excerpt ?? ""}</textarea>
+      </div>
+
+      <div class="form-group full">
+        <label for="templateDataJson">Template Data (JSON, optional)</label>
+        <textarea id="templateDataJson" name="templateDataJson" rows="3" placeholder='{"key": "value"}'>{content.templateDataJson ?? ""}</textarea>
+      </div>
+
+      <div class="form-group full">
+        <label for="markdown">Markdown Content</label>
+        <textarea id="markdown" name="markdown" rows="20" required placeholder="Write your content in Markdown...">{content.markdown}</textarea>
+      </div>
+
+      <div class="form-actions">
+        <div class="preview-toggle">
+          <Button type="button" id="preview-toggle" variant="secondary" icon="eye">
+            Show Preview
+          </Button>
+        </div>
+        <div class="submit-buttons">
+          <Button type="submit" variant="primary" icon="check">
+            Save Changes
+          </Button>
+        </div>
+      </div>
+
+      <div id="preview" class="preview-pane" style="display:none;"></div>
+    </form>
+
+    <section class="delete-section">
+      <h3>Danger Zone</h3>
+      <p>Delete this content item permanently. This action cannot be undone.</p>
+      <form method="post" action="/api/content/delete" class="delete-form" onsubmit="return confirm('Delete this content item? This cannot be undone.');">
+        <input type="hidden" name="id" value={content.id} />
+        <Button type="submit" variant="danger" icon="trash-2">
+          Delete Content
+        </Button>
+      </form>
+    </section>
+  </section>
+
+  <script type="module" src="/admin-editor.js"></script>
+
+  <style>
+    .editor-section {
+      margin-bottom: 2rem;
+    }
+
+    .content-editor {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      resize: vertical;
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: var(--muted);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0.8rem rgb(0 229 255 / 20%);
+    }
+
+    .form-group select {
+      cursor: pointer;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 0;
+      border-top: 1px solid var(--line);
+      flex-wrap: wrap;
+    }
+
+    .submit-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .preview-pane {
+      background: linear-gradient(160deg, rgb(12 19 36 / 60%) 0%, rgb(17 26 48 / 60%) 100%);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-top: 1rem;
+    }
+
+    .delete-section {
+      padding: 1.5rem;
+      border: 2px solid rgb(255 61 77 / 30%);
+      border-radius: 12px;
+      background: linear-gradient(160deg, rgb(255 61 77 / 5%) 0%, transparent 100%);
+      margin-top: 2rem;
+    }
+
+    .delete-section h3 {
+      margin: 0 0 0.5rem;
+      color: #ff3d4d;
+      font-size: 1.1rem;
+    }
+
+    .delete-section p {
+      margin: 0 0 1rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .delete-form {
+      display: inline-block;
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .preview-toggle,
+      .submit-buttons {
+        width: 100%;
+      }
+
+      .preview-toggle :global(.btn),
+      .submit-buttons :global(.btn) {
+        width: 100%;
+      }
+
+      .delete-form :global(.btn) {
+        width: 100%;
+      }
+    }
+  </style>
+</AdminLayout>

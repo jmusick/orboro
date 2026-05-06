@@ -1,0 +1,87 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const year = new Date().getFullYear();
+---
+
+<BaseLayout title="Privacy Policy | Orboro.net" description="Privacy policy for Orboro.net">
+  <section>
+    <h1>Privacy Policy</h1>
+    <p class="updated">Last updated: May 2026</p>
+
+    <h2>Overview</h2>
+    <p>
+      This site (Orboro.net) is a personal site operated by Xing Yuen. It does not sell, share,
+      or monetise any personal data. This policy explains what limited information is collected
+      and why.
+    </p>
+
+    <h2>Information Collected</h2>
+    <h3>Server logs</h3>
+    <p>
+      Like most web servers, this site may log standard request metadata — including IP address,
+      browser user-agent, referring URL, and the page requested. These logs are used solely for
+      diagnosing errors and understanding traffic patterns. They are not linked to any personal
+      identity and are retained for a short period before being discarded.
+    </p>
+
+    <h3>No cookies or tracking</h3>
+    <p>
+      This site does not use cookies, analytics scripts, advertising pixels, or any third-party
+      tracking technology. No data is sold or shared with advertisers.
+    </p>
+
+    <h3>Third-party links</h3>
+    <p>
+      This site contains links to external platforms (Steam, Reddit, Discord, Battle.net). Once
+      you leave this site, this privacy policy no longer applies. Please review the privacy
+      practices of those platforms directly.
+    </p>
+
+    <h2>Data Storage</h2>
+    <p>
+      The site is hosted on Cloudflare's infrastructure. Cloudflare's own
+      <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">
+        Privacy Policy
+      </a>
+      governs any data processed at the network layer.
+    </p>
+
+    <h2>Your Rights</h2>
+    <p>
+      As no personal data is collected beyond transient server logs, there is nothing to access,
+      correct, or delete. If you have a concern, you can reach out via the contact details on the
+      platform profiles listed on the homepage.
+    </p>
+
+    <h2>Changes to This Policy</h2>
+    <p>
+      This policy may be updated occasionally. The "last updated" date at the top of the page
+      will reflect any changes.
+    </p>
+
+    <hr />
+    <p>&copy; {year} Xing Yuen.</p>
+  </section>
+</BaseLayout>
+
+<style>
+  section {
+    max-width: 720px;
+  }
+
+  .updated {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-top: -0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  h2 {
+    margin-top: 2rem;
+  }
+
+  h3 {
+    margin-top: 1.25rem;
+  }
+</style>

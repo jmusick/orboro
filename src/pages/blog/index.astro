@@ -1,0 +1,96 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Card from "../../components/Card.astro";
+import Button from "../../components/Button.astro";
+import { getPublishedContentByType } from "../../lib/content";
+
+const posts = await getPublishedContentByType(Astro.locals, "post", 60);
+---
+
+<BaseLayout title="Blog | Orboro.net" description="Latest Orboro posts">
+  <section class="blog-header">
+    <div>
+      <h1>Blog</h1>
+      <p class="subtitle">Published posts from the Orboro CMS.</p>
+    </div>
+    <Button href="/admin/content/new" variant="primary" icon="plus">
+      Submit a Post
+    </Button>
+  </section>
+
+  <section class="blog-posts">
+    {posts.length === 0 ? (
+      <div class="empty-state">
+        <p>No posts published yet.</p>
+      </div>
+    ) : (
+      <div class="posts-grid">
+        {posts.map((post) => (
+          <Card href={`/blog/${post.slug}`} icon="file-text" title={post.title}>
+            {post.excerpt ? (
+              <p>{post.excerpt}</p>
+            ) : (
+              <p class="placeholder">Read this post</p>
+            )}
+          </Card>
+        ))}
+      </div>
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  .blog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .blog-header div {
+    flex: 1;
+  }
+
+  .blog-header h1 {
+    margin-top: 0;
+  }
+
+  .subtitle {
+    font-size: 1.1rem;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: var(--muted);
+  }
+
+  .placeholder {
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  @media (max-width: 768px) {
+    .blog-header {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .blog-header :global(a) {
+      width: 100%;
+    }
+
+    .posts-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
