@@ -1,11 +1,9 @@
 name = "orboro-net"
 compatibility_date = "2026-04-05"
-
-[assets]
-directory = "./dist"
+pages_build_output_dir = "./dist"
 
 [[d1_databases]]
 binding = "DB"
 database_name = "orboro-db"
-database_id = "REPLACE_WITH_REAL_DATABASE_ID"
+database_id = "7fe68e1c-ce42-40a6-ae78-3bb674d6ad0f"
 migrations_dir = "migrations"
