@@ -1,10 +1,11 @@
 ---
 const year = new Date().getFullYear();
+const version = "1.0.0";
 ---
 
 <footer class="site-footer">
   <div class="footer-inner">
-    <span class="copyright">&copy; {year} Orboro.net. All rights reserved.</span>
+    <span class="copyright">&copy; {year} Orboro.net. All rights reserved. <span class="version">v{version}</span></span>
     <nav class="footer-nav">
       <a href="/privacy-policy">Privacy Policy</a>
     </nav>
@@ -40,6 +41,12 @@ const year = new Date().getFullYear();
 
   .footer-nav a:hover {
     color: var(--accent);
+  }
+
+  .version {
+    opacity: 0.5;
+    font-size: 0.8em;
+    margin-left: 0.4em;
   }
 
   @media (max-width: 600px) {
