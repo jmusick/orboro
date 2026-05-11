@@ -62,7 +62,7 @@ const { title, description = "" } = Astro.props;
         justify-content: space-between;
         gap: 2rem;
         padding: 1.5rem 0;
-        margin-bottom: 1rem;
+        margin-bottom: 0.85rem;
       }
       .header-logo {
         display: block;
@@ -92,6 +92,20 @@ const { title, description = "" } = Astro.props;
         border-color: var(--accent);
         background: linear-gradient(90deg, rgb(0 229 255 / 10%) 0%, transparent 100%);
         box-shadow: 0 0 0.8rem rgb(0 229 255 / 20%);
+      }
+      .header-banner {
+        margin-bottom: 1.2rem;
+        border-radius: 16px;
+        overflow: hidden;
+        line-height: 0;
+      }
+      .header-banner img {
+        display: block;
+        width: 100%;
+        height: auto;
+        max-height: none;
+        object-fit: contain;
+        border-radius: inherit;
       }
       main {
         background: linear-gradient(160deg, rgb(12 19 36 / 94%) 0%, rgb(17 26 48 / 94%) 100%);
@@ -176,6 +190,12 @@ const { title, description = "" } = Astro.props;
           width: 100%;
           justify-content: flex-start;
         }
+        .header-banner {
+          margin-bottom: 1rem;
+        }
+        .header-banner img {
+          border-radius: inherit;
+        }
         h1 {
           font-size: 1.8rem;
         }
@@ -196,6 +216,9 @@ const { title, description = "" } = Astro.props;
           <a href="/admin">Admin</a>
         </nav>
       </header>
+      <div class="header-banner">
+        <img src="/header.png" alt="Orboro header artwork" />
+      </div>
       <main>
         <slot />
       </main>
