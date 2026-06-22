@@ -1,9 +1,8 @@
 ---
 import AdminLayout from "../../../layouts/AdminLayout.astro";
 import Button from "../../../components/Button.astro";
-import { getContentById } from "../../../lib/content";
+import { getContentById, listCategories, getContentCategoryIds } from "../../../lib/content";
 import { ensureRole } from "../../../lib/http";
-import { getTemplateOptionsByType } from "../../../lib/templates";
 
 ensureRole(Astro, ["admin", "editor", "author"]);
 
@@ -17,8 +16,8 @@ if (!content) {
   return Astro.redirect("/admin/content");
 }
 
-const templateOptionsByType = getTemplateOptionsByType();
-const allTemplateOptions = [...templateOptionsByType.post, ...templateOptionsByType.page];
+const categories = await listCategories(Astro.locals);
+const selectedCategoryIds = await getContentCategoryIds(Astro.locals, id);
 ---
 
 <AdminLayout title={`Edit ${content.title}`}>
@@ -41,62 +40,49 @@ const allTemplateOptions = [...templateOptionsByType.post, ...templateOptionsByT
         <div class="form-group">
           <label for="pageType">Page Type</label>
           <select id="pageType" name="pageType">
-            <option value="post" selected={content.pageType === "post"}>post (blog)</option>
-            <option value="page" selected={content.pageType === "page"}>page (generic)</option>
+            <option value="post" selected={content.pageType === "post"}>Post</option>
+            <option value="page" selected={content.pageType === "page"}>Page</option>
           </select>
         </div>
         <div class="form-group">
           <label for="status">Status</label>
           <select id="status" name="status">
-            <option value="draft" selected={content.status === "draft"}>draft</option>
-            <option value="published" selected={content.status === "published"}>published</option>
+            <option value="draft" selected={content.status === "draft"}>Draft</option>
+            <option value="published" selected={content.status === "published"}>Published</option>
           </select>
         </div>
-        <div class="form-group">
-          <label for="templateKey">Template</label>
-          <select id="templateKey" name="templateKey">
-            {allTemplateOptions.map((option) => (
-              <option value={option.key} selected={content.templateKey === option.key}>{option.label}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      <div class="form-group full">
-        <label for="excerpt">Excerpt</label>
-        <textarea id="excerpt" name="excerpt" rows="2" placeholder="Brief summary of the content">{content.excerpt ?? ""}</textarea>
-      </div>
-
-      <div class="form-group full">
-        <label for="templateDataJson">Template Data (JSON, optional)</label>
-        <textarea id="templateDataJson" name="templateDataJson" rows="3" placeholder='{"key": "value"}'>{content.templateDataJson ?? ""}</textarea>
       </div>
 
       <div class="form-group full">
         <label for="markdown">Markdown Content</label>
-        <textarea id="markdown" name="markdown" rows="20" required placeholder="Write your content in Markdown...">{content.markdown}</textarea>
+        <textarea id="markdown" name="markdown" rows="20" placeholder="Write your content in Markdown...">{content.markdown}</textarea>
       </div>
+
+      {categories.length > 0 && (
+        <div class="form-group full">
+          <label>Categories</label>
+          <div class="category-checkboxes">
+            {categories.map((cat) => (
+              <label class="category-label">
+                <input type="checkbox" name="categoryId" value={cat.id} checked={selectedCategoryIds.includes(cat.id)} />
+                <span>{cat.name}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div class="form-actions">
-        <div class="preview-toggle">
-          <Button type="button" id="preview-toggle" variant="secondary" icon="eye">
-            Show Preview
-          </Button>
-        </div>
-        <div class="submit-buttons">
-          <Button type="submit" variant="primary" icon="check">
-            Save Changes
-          </Button>
-        </div>
+        <Button type="submit" variant="primary" icon="check">
+          Save Changes
+        </Button>
       </div>
-
-      <div id="preview" class="preview-pane" style="display:none;"></div>
     </form>
 
     <section class="delete-section">
       <h3>Danger Zone</h3>
       <p>Delete this content item permanently. This action cannot be undone.</p>
-      <form method="post" action="/api/content/delete" class="delete-form" onsubmit="return confirm('Delete this content item? This cannot be undone.');">
+      <form method="post" action="/api/content/delete" class="delete-form">
         <input type="hidden" name="id" value={content.id} />
         <Button type="submit" variant="danger" icon="trash-2">
           Delete Content
@@ -105,7 +91,8 @@ const allTemplateOptions = [...templateOptionsByType.post, ...templateOptionsByT
     </section>
   </section>
 
-  <script type="module" src="/admin-editor.js"></script>
+  <script is:inline src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+  <script is:inline type="module" src="/admin-editor.js"></script>
 
   <style>
     .editor-section {
@@ -173,25 +160,22 @@ const allTemplateOptions = [...templateOptionsByType.post, ...templateOptionsByT
 
     .form-actions {
       display: flex;
-      gap: 1rem;
-      align-items: center;
-      justify-content: space-between;
+      justify-content: flex-end;
       padding: 1.5rem 0;
       border-top: 1px solid var(--line);
-      flex-wrap: wrap;
     }
 
-    .submit-buttons {
+    .category-checkboxes {
       display: flex;
-      gap: 0.5rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
     }
 
-    .preview-pane {
-      background: linear-gradient(160deg, rgb(12 19 36 / 60%) 0%, rgb(17 26 48 / 60%) 100%);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 2rem;
-      margin-top: 1rem;
+    .category-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
     }
 
     .delete-section {
@@ -219,28 +203,8 @@ const allTemplateOptions = [...templateOptionsByType.post, ...templateOptionsByT
     }
 
     @media (max-width: 768px) {
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-
-      .form-actions {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .preview-toggle,
-      .submit-buttons {
-        width: 100%;
-      }
-
-      .preview-toggle :global(.btn),
-      .submit-buttons :global(.btn) {
-        width: 100%;
-      }
-
-      .delete-form :global(.btn) {
-        width: 100%;
-      }
+      .form-row { grid-template-columns: 1fr; }
+      .delete-form :global(.btn) { width: 100%; }
     }
   </style>
 </AdminLayout>

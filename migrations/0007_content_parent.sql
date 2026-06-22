@@ -1,0 +1,1 @@
+ALTER TABLE content ADD COLUMN parent_id TEXT REFERENCES content(id) ON DELETE SET NULL;

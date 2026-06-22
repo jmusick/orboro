@@ -26,13 +26,7 @@ const posts = await getPublishedContentByType(Astro.locals, "post", 60);
     ) : (
       <div class="posts-grid">
         {posts.map((post) => (
-          <Card href={`/blog/${post.slug}`} icon="file-text" title={post.title}>
-            {post.excerpt ? (
-              <p>{post.excerpt}</p>
-            ) : (
-              <p class="placeholder">Read this post</p>
-            )}
-          </Card>
+          <Card href={`/blog/${post.slug}`} icon="file-text" title={post.title} />
         ))}
       </div>
     )}
@@ -72,11 +66,6 @@ const posts = await getPublishedContentByType(Astro.locals, "post", 60);
     text-align: center;
     padding: 2rem;
     color: var(--muted);
-  }
-
-  .placeholder {
-    color: var(--muted);
-    font-style: italic;
   }
 
   @media (max-width: 768px) {

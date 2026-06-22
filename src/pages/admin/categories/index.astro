@@ -1,0 +1,146 @@
+---
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import Button from "../../../components/Button.astro";
+import Pill from "../../../components/Pill.astro";
+import Icon from "../../../components/Icon.astro";
+import { ensureRole } from "../../../lib/http";
+import { listCategories } from "../../../lib/content";
+
+ensureRole(Astro, ["admin", "editor"]);
+const categories = await listCategories(Astro.locals);
+
+const url = new URL(Astro.request.url);
+const error = url.searchParams.get("error");
+---
+
+<AdminLayout title="Categories">
+  <section class="content-header">
+    {error === "invalid" && (
+      <div class="error-banner">Name and slug are required.</div>
+    )}
+    <Button href="/admin/categories/new" variant="primary" icon="plus">
+      New Category
+    </Button>
+  </section>
+
+  {categories.length === 0 ? (
+    <section class="empty-state">
+      <Icon name="tag" size={48} />
+      <h3>No categories yet</h3>
+      <p>Create your first category to organize content</p>
+      <Button href="/admin/categories/new" variant="primary">Create Category</Button>
+    </section>
+  ) : (
+    <section class="content-table-wrapper">
+      <table class="content-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Slug</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {categories.map((cat) => (
+            <tr>
+              <td class="cell-title">
+                <strong>{cat.name}</strong>
+              </td>
+              <td>
+                <Pill variant="info" size="sm">{cat.slug}</Pill>
+              </td>
+              <td class="cell-actions">
+                <Button href={`/admin/categories/${cat.id}`} variant="secondary" size="sm" icon="edit">
+                  Edit
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  )}
+</AdminLayout>
+
+<style>
+  .content-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .error-banner {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    background: rgb(255 61 77 / 15%);
+    border: 1px solid rgb(255 61 77 / 40%);
+    border-radius: 8px;
+    color: #ff3d4d;
+    font-size: 0.9rem;
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 3rem 1rem;
+    text-align: center;
+    color: var(--muted);
+  }
+
+  .empty-state h3 {
+    margin: 0;
+    color: var(--text);
+    font-size: 1.3rem;
+  }
+
+  .empty-state p {
+    margin: 0 0 1rem;
+  }
+
+  .empty-state svg {
+    opacity: 0.5;
+  }
+
+  .content-table-wrapper {
+    overflow-x: auto;
+  }
+
+  .content-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  .content-table th {
+    padding: 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--accent);
+    border-bottom: 2px solid var(--line);
+    background: linear-gradient(90deg, rgb(0 229 255 / 5%) 0%, transparent 100%);
+  }
+
+  .content-table td {
+    padding: 1rem 0.75rem;
+    border-bottom: 1px solid var(--line);
+    color: var(--text);
+  }
+
+  .content-table tbody tr:hover {
+    background: linear-gradient(90deg, rgb(0 229 255 / 5%) 0%, transparent 100%);
+  }
+
+  .cell-title {
+    font-weight: 500;
+  }
+
+  .cell-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+</style>

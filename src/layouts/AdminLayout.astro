@@ -12,6 +12,8 @@ const currentPath = new URL(Astro.request.url).pathname;
 const dashActive = currentPath === '/admin';
 const contentActive = currentPath.startsWith('/admin/content');
 const mediaActive = currentPath.startsWith('/admin/media');
+const categoriesActive = currentPath.startsWith('/admin/categories');
+const navActive = currentPath.startsWith('/admin/nav');
 ---
 
 <!doctype html>
@@ -21,6 +23,75 @@ const mediaActive = currentPath.startsWith('/admin/media');
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
     <title>Admin | {title}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css" />
+    <style>
+      /* ── EasyMDE chrome ── */
+      .editor-toolbar {
+        background: #111a30 !important;
+        border: 1px solid #1f2b46 !important;
+        border-radius: 8px 8px 0 0 !important;
+        opacity: 1 !important;
+      }
+      .editor-toolbar button {
+        color: #c8d8f0 !important;
+        border: 1px solid transparent !important;
+        border-radius: 6px !important;
+      }
+      .editor-toolbar button:hover, .editor-toolbar button.active {
+        background: rgb(0 229 255 / 10%) !important;
+        border-color: #00e5ff !important;
+        color: #00e5ff !important;
+      }
+      .editor-toolbar i.separator { border-right-color: #1f2b46 !important; }
+      .editor-preview, .editor-preview-side {
+        background: #111a30 !important;
+        color: #e8f3ff !important;
+        border-color: #1f2b46 !important;
+      }
+      .editor-statusbar { color: #97a8c4 !important; border-top-color: #1f2b46 !important; }
+
+      /* ── Custom dark CodeMirror theme (cm-s-orboro) + broad fallback ── */
+      .cm-s-orboro.CodeMirror,
+      .EasyMDEContainer .CodeMirror {
+        background: #0c1324 !important;
+        color: #e8f3ff !important;
+        border: 1px solid #1f2b46 !important;
+        border-top: 0 !important;
+        border-radius: 0 0 8px 8px !important;
+        font-family: "JetBrains Mono", Consolas, monospace;
+        font-size: 0.9rem;
+        line-height: 1.7;
+        height: auto;
+      }
+      .cm-s-orboro .CodeMirror-scroll,
+      .EasyMDEContainer .CodeMirror-scroll { min-height: 380px; background: #0c1324 !important; }
+      .cm-s-orboro .CodeMirror-lines,
+      .EasyMDEContainer .CodeMirror-lines { background: #0c1324 !important; }
+      .cm-s-orboro .CodeMirror-gutters,
+      .EasyMDEContainer .CodeMirror-gutters {
+        background: #0c1324 !important;
+        border-right: 1px solid #1f2b46 !important;
+        color: #4a5e80;
+      }
+      .cm-s-orboro .CodeMirror-cursor,
+      .EasyMDEContainer .CodeMirror-cursor { border-left: 2px solid #00e5ff !important; }
+      .cm-s-orboro .CodeMirror-selected,
+      .EasyMDEContainer .CodeMirror-selected { background: rgba(0,229,255,0.12) !important; }
+      .cm-s-orboro .cm-header,
+      .EasyMDEContainer .cm-header { color: #00e5ff !important; font-weight: 700; }
+      .cm-s-orboro .cm-strong,
+      .EasyMDEContainer .cm-strong { color: #e8f3ff !important; font-weight: 700; }
+      .cm-s-orboro .cm-em,
+      .EasyMDEContainer .cm-em { color: #ff3fb8 !important; font-style: italic; }
+      .cm-s-orboro .cm-strikethrough,
+      .EasyMDEContainer .cm-strikethrough { color: #97a8c4 !important; }
+      .cm-s-orboro .cm-link,
+      .EasyMDEContainer .cm-link { color: #00e5ff !important; }
+      .cm-s-orboro .cm-url,
+      .EasyMDEContainer .cm-url { color: #a8ff60 !important; }
+      .cm-s-orboro .cm-quote,
+      .EasyMDEContainer .cm-quote { color: #97a8c4 !important; font-style: italic; }
+    </style>
     <style>
       :root {
         --bg: #05070f;
@@ -59,8 +130,6 @@ const mediaActive = currentPath.startsWith('/admin/media');
         gap: 1.5rem;
         min-height: 100vh;
         padding: 1.5rem;
-        max-width: 1400px;
-        margin: 0 auto;
       }
       .admin-sidebar {
         display: flex;
@@ -191,6 +260,12 @@ const mediaActive = currentPath.startsWith('/admin/media');
           </a>
           <a href="/admin/media" class={`nav-link${mediaActive ? " active" : ""}`}>
             <Icon name="image" size={20} /><span>Media</span>
+          </a>
+          <a href="/admin/categories" class={`nav-link${categoriesActive ? " active" : ""}`}>
+            <Icon name="tag" size={20} /><span>Categories</span>
+          </a>
+          <a href="/admin/nav" class={`nav-link${navActive ? " active" : ""}`}>
+            <Icon name="menu" size={20} /><span>Navigation</span>
           </a>
         </nav>
         <div class="sidebar-footer">

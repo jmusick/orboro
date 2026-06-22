@@ -11,14 +11,14 @@ Astro + Cloudflare starter for a markdown-first CMS/blog with role-based auth an
 ## What This Scaffold Includes
 
 - Astro SSR configured for Cloudflare (`@astrojs/cloudflare`)
-- D1 schema + migration for users, sessions, content, and media metadata
+- D1 schema + migrations for users, sessions, content, media, categories, and nav items
 - Initial admin setup flow (`/admin/setup`)
 - Email/password auth with role-based permissions (`admin`, `editor`, `author`)
-- CMS content editor for markdown posts/pages
-- Per-content custom templates (template key + optional template JSON data)
-- Basic markdown preview in admin editor
-- Blog routes (`/blog`, `/blog/[slug]`)
+- CMS content editor for markdown posts/pages with live preview
+- Blog routes (`/blog`, `/blog/[slug]`, `/blog/category/[slug]`)
 - Generic page route (`/pages/[slug]`)
+- Category management with content tagging
+- Dynamic navigation builder with unlimited nesting
 - Basic media library records (URL + alt + caption)
 
 ## Quick Start
@@ -78,6 +78,14 @@ Migration files:
 
 - `migrations/0001_initial.sql`
 - `migrations/0002_content_templates.sql`
+- `migrations/0003_drop_excerpt_template_data.sql`
+- `migrations/0004_drop_template_key.sql`
+- `migrations/0005_categories_nav.sql`
+- `migrations/0006_nav_categories.sql`
+- `migrations/0007_content_parent.sql`
+- `migrations/0008_nav_parent_item.sql`
+- `migrations/0009_drop_content_parent_id.sql`
+- `migrations/0010_drop_nav_category_columns.sql`
 
 Tables:
 
@@ -85,14 +93,16 @@ Tables:
 - `sessions`
 - `content`
 - `media`
+- `categories`
+- `content_categories`
+- `nav_items`
 
 ## Notes
 
 - Content markdown is stored in D1 (`content.markdown`).
-- Template selection is stored in D1 (`content.template_key`) with optional JSON payload in `content.template_data_json`.
 - Media management currently stores metadata and source URLs.
 - To support uploads later, pair this with Cloudflare R2 and add upload endpoints.
-- To support additional content types later, add new values in `content.page_type` and build matching routes/templates.
+- To support additional content types later, add new values in `content.page_type` and build matching routes.
 
 ## Troubleshooting
 

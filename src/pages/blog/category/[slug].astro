@@ -1,0 +1,44 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Card from "../../../components/Card.astro";
+import { getCategoryBySlug, getPublishedContentByCategory } from "../../../lib/content";
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect("/blog");
+
+const category = await getCategoryBySlug(Astro.locals, slug);
+if (!category) return Astro.redirect("/blog");
+
+const posts = await getPublishedContentByCategory(Astro.locals, slug, "post");
+---
+
+<BaseLayout title={`${category.name} | Orboro.net`}>
+  <section>
+    <h1>{category.name}</h1>
+    {posts.length === 0 ? (
+      <p class="empty">No published posts in this category yet.</p>
+    ) : (
+      <div class="posts-grid">
+        {posts.map((post) => (
+          <Card href={`/blog/${post.slug}`} title={post.title} />
+        ))}
+      </div>
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  h1 { margin-bottom: 1.5rem; }
+
+  .empty { color: var(--muted); font-style: italic; }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .posts-grid { grid-template-columns: 1fr; }
+  }
+</style>

@@ -1,5 +1,7 @@
 ---
 import Footer from "../components/Footer.astro";
+import { listNavItems } from "../lib/content";
+import { ClientRouter } from "astro:transitions";
 
 interface Props {
   title: string;
@@ -7,6 +9,42 @@ interface Props {
 }
 
 const { title, description = "" } = Astro.props;
+const navItems = await listNavItems(Astro.locals);
+const pathname = new URL(Astro.request.url).pathname;
+
+// Build nav tree (unlimited depth)
+type NavNode = (typeof navItems)[0] & { children: NavNode[] };
+
+function buildNavTree(items: typeof navItems, parentId: string | null = null): NavNode[] {
+  return items
+    .filter(i => (i.parentItemId ?? null) === parentId)
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map(i => ({ ...i, children: buildNavTree(items, i.id) }));
+}
+
+function esc(s: string) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function renderDropdownItems(nodes: NavNode[]): string {
+  return nodes.map(node => {
+    const active = isActive(node.url) ? ' active' : '';
+    if (node.children.length > 0) {
+      return `<div class="nav-flyout-item">` +
+        `<a href="${esc(node.url)}" class="nav-dropdown-link${active}">${esc(node.label)} <span class="nav-flyout-arrow" aria-hidden="true">›</span></a>` +
+        `<div class="nav-flyout">${renderDropdownItems(node.children)}</div>` +
+        `</div>`;
+    }
+    return `<a href="${esc(node.url)}" class="nav-dropdown-link${active}">${esc(node.label)}</a>`;
+  }).join('');
+}
+
+const navTree = buildNavTree(navItems);
+
+function isActive(url: string): boolean {
+  if (url === "/") return pathname === "/";
+  return pathname === url || pathname.startsWith(url + "/");
+}
 ---
 
 <!doctype html>
@@ -19,7 +57,8 @@ const { title, description = "" } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
     <title>{title}</title>
-    <style>
+    <ClientRouter />
+    <style is:global>
       :root {
         --bg: #05070f;
         --surface: #0c1324;
@@ -61,8 +100,7 @@ const { title, description = "" } = Astro.props;
         align-items: center;
         justify-content: space-between;
         gap: 2rem;
-        padding: 1.5rem 0;
-        margin-bottom: 0.85rem;
+        padding: 1.5rem 0 1rem;
       }
       .header-logo {
         display: block;
@@ -76,22 +114,125 @@ const { title, description = "" } = Astro.props;
       }
       nav {
         display: flex;
-        gap: 0.5rem;
+        align-items: stretch;
+        gap: 0;
+        margin-bottom: 1rem;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 0.25rem;
         flex-wrap: wrap;
       }
       nav a {
-        border: 1px solid transparent;
-        border-radius: 8px;
-        padding: 0.5rem 1rem;
+        display: flex;
+        align-items: center;
+        border-radius: 7px;
+        padding: 0.55rem 1.35rem;
         text-decoration: none;
-        transition: all 0.2s ease;
+        transition: all 0.18s ease;
         font-weight: 500;
         font-size: 0.95rem;
+        color: var(--muted);
+        white-space: nowrap;
       }
       nav a:hover {
-        border-color: var(--accent);
-        background: linear-gradient(90deg, rgb(0 229 255 / 10%) 0%, transparent 100%);
-        box-shadow: 0 0 0.8rem rgb(0 229 255 / 20%);
+        color: var(--text);
+        background: rgb(255 255 255 / 5%);
+      }
+      nav a.active {
+        color: var(--accent);
+        background: rgb(0 229 255 / 10%);
+        box-shadow: inset 0 0 0 1px rgb(0 229 255 / 20%);
+      }
+      .nav-dropdown-wrapper {
+        position: relative;
+        display: flex;
+        align-items: stretch;
+      }
+      .nav-dropdown-wrapper > a::after {
+        content: "";
+        display: inline-block;
+        width: 0;
+        height: 0;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        border-top: 4px solid currentColor;
+        margin-left: 0.45rem;
+        opacity: 0.55;
+        vertical-align: middle;
+        transition: transform 0.18s ease, opacity 0.18s ease;
+      }
+      .nav-dropdown-wrapper:hover > a::after {
+        transform: rotate(180deg);
+        opacity: 1;
+      }
+      .nav-dropdown {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        flex-direction: column;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 0.25rem;
+        min-width: 180px;
+        z-index: 50;
+        box-shadow: 0 8px 24px rgb(0 0 0 / 45%);
+      }
+      .nav-dropdown-wrapper:hover .nav-dropdown {
+        display: flex;
+      }
+      .nav-dropdown a, .nav-dropdown-link {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        border-radius: 7px;
+        box-shadow: none;
+        display: block;
+        text-decoration: none;
+        color: var(--text);
+        white-space: nowrap;
+        transition: background 0.15s ease, color 0.15s ease;
+      }
+      .nav-dropdown a:hover, .nav-dropdown-link:hover {
+        background: rgb(0 229 255 / 10%);
+        color: var(--accent);
+      }
+      .nav-dropdown a.active, .nav-dropdown-link.active {
+        color: var(--accent);
+        background: rgb(0 229 255 / 10%);
+      }
+      .nav-flyout-item {
+        position: relative;
+      }
+      .nav-flyout-item > .nav-dropdown-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+      }
+      .nav-flyout-arrow {
+        font-style: normal;
+        opacity: 0.6;
+        font-size: 1rem;
+        line-height: 1;
+      }
+      .nav-flyout {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 100%;
+        flex-direction: column;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 0.25rem;
+        min-width: 180px;
+        z-index: 51;
+        box-shadow: 0 8px 24px rgb(0 0 0 / 45%);
+      }
+      .nav-flyout-item:hover > .nav-flyout {
+        display: flex;
       }
       .header-banner {
         margin-bottom: 1.2rem;
@@ -183,12 +324,11 @@ const { title, description = "" } = Astro.props;
         }
         header {
           flex-direction: column;
-          gap: 1rem;
           align-items: flex-start;
+          gap: 0.75rem;
         }
         nav {
           width: 100%;
-          justify-content: flex-start;
         }
         .header-banner {
           margin-bottom: 1rem;
@@ -203,6 +343,222 @@ const { title, description = "" } = Astro.props;
           font-size: 1.3rem;
         }
       }
+
+      /* ── Prose ────────────────────────────────── */
+      .prose { line-height: 1.7; }
+      .prose p { margin: 0 0 1rem; }
+
+      .prose h2 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--accent);
+        margin: 2.5rem 0 0.9rem;
+        padding-bottom: 0.4rem;
+        border-bottom: 1px solid var(--line);
+      }
+      .prose h3 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--text);
+        margin: 1.75rem 0 0.5rem;
+      }
+      .prose h4 {
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin: 1.25rem 0 0.4rem;
+      }
+
+      .prose table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 0.9rem;
+        margin: 1.25rem 0;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .prose thead {
+        background: linear-gradient(90deg, rgb(0 229 255 / 8%) 0%, transparent 100%);
+      }
+      .prose th {
+        padding: 0.7rem 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: var(--accent);
+        border-bottom: 2px solid var(--line);
+        white-space: nowrap;
+      }
+      .prose td {
+        padding: 0.6rem 1rem;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      .prose tr:last-child td { border-bottom: 0; }
+      .prose tbody tr:hover { background: rgb(0 229 255 / 4%); }
+
+      .prose blockquote {
+        margin: 1.25rem 0;
+        padding: 1rem 1.25rem;
+        border-left: 3px solid var(--accent);
+        background: rgb(0 229 255 / 6%);
+        border-radius: 0 8px 8px 0;
+      }
+      .prose blockquote p { margin: 0; line-height: 1.9; }
+
+      .prose ul, .prose ol { margin: 0 0 1rem 1.35rem; padding: 0; }
+      .prose li { margin-bottom: 0.35rem; }
+      .prose li::marker { color: var(--accent); }
+
+      .prose a { color: #00e5ff; text-decoration: none; }
+      .prose a:hover { text-decoration: underline; }
+
+      .prose strong { color: var(--text); font-weight: 600; }
+      .prose em { color: var(--muted); font-style: italic; }
+
+      .prose code {
+        background: #111a30;
+        border: 1px solid #1f2b46;
+        border-radius: 0.35rem;
+        padding: 0.1rem 0.4rem;
+        font-size: 0.875em;
+        font-family: "JetBrains Mono", Consolas, monospace;
+      }
+      .prose pre {
+        background: #0c1324;
+        border: 1px solid #1f2b46;
+        border-radius: 10px;
+        padding: 1.25rem 1.5rem;
+        overflow-x: auto;
+        margin: 1.25rem 0;
+        font-size: 0.875rem;
+        line-height: 1.65;
+        font-family: "JetBrains Mono", Consolas, monospace;
+      }
+      .prose pre code {
+        background: none;
+        border: none;
+        padding: 0;
+        border-radius: 0;
+        font-size: inherit;
+      }
+
+      .prose hr {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 2rem 0;
+      }
+
+      /* ── Overview cards ── */
+      .prose .overview-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+        gap: 0.75rem;
+        margin: 1.25rem 0;
+      }
+      .prose .overview-card {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+        padding: 0.85rem 1rem;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-top: 2px solid var(--accent);
+        border-radius: 10px;
+        transition: box-shadow 0.2s ease, border-color 0.2s ease;
+      }
+      .prose .overview-card:hover {
+        box-shadow: 0 0 1rem rgb(0 229 255 / 10%);
+        border-color: rgb(0 229 255 / 40%);
+        border-top-color: var(--accent);
+      }
+      .prose .overview-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .prose .overview-value {
+        font-size: 0.975rem;
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      .prose img {
+        max-width: 100%;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        margin: 1rem 0;
+        display: block;
+      }
+
+      /* ── Accordion (details/summary) ── */
+      .prose details {
+        border: 1px solid var(--line);
+        border-left: 3px solid var(--accent);
+        border-radius: 0 10px 10px 0;
+        margin: 0.75rem 0;
+        background: var(--surface);
+        overflow: hidden;
+        transition: box-shadow 0.2s ease;
+      }
+      .prose details[open] {
+        box-shadow: 0 0 1rem rgb(0 229 255 / 10%);
+      }
+      .prose summary {
+        cursor: pointer;
+        list-style: none;
+        padding: 1rem 1.25rem;
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        user-select: none;
+        transition: background 0.15s ease, color 0.15s ease;
+      }
+      .prose summary::-webkit-details-marker { display: none; }
+      .prose summary::before {
+        content: "›";
+        color: var(--accent);
+        font-size: 1.25rem;
+        line-height: 1;
+        flex-shrink: 0;
+        transition: transform 0.2s ease;
+        display: inline-block;
+      }
+      .prose details.is-open > summary::before { transform: rotate(90deg); }
+      .prose summary:hover { background: rgb(0 229 255 / 4%); color: var(--accent); }
+      .prose details > *:not(summary) {
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+      }
+      .prose details > *:not(summary):last-child { padding-bottom: 1.25rem; }
+
+      /* ── Atlas node grid ── */
+      .prose table[data-node-table] th {
+        text-align: center;
+        width: 80px;
+      }
+      .prose td[data-node="on"] {
+        text-align: center;
+        font-size: 1.15rem;
+        color: var(--accent);
+        background: linear-gradient(135deg, rgb(0 229 255 / 18%) 0%, rgb(0 229 255 / 8%) 100%);
+        box-shadow: inset 0 0 0 1px rgb(0 229 255 / 35%);
+        text-shadow: 0 0 8px rgb(0 229 255 / 70%);
+      }
+      .prose td[data-node="off"] {
+        text-align: center;
+        font-size: 1.1rem;
+        color: rgb(100 116 139 / 0.45);
+        background: rgb(0 0 0 / 25%);
+      }
     </style>
   </head>
   <body>
@@ -212,17 +568,97 @@ const { title, description = "" } = Astro.props;
           <img src="/logo.png" alt="Orboro.net" />
         </a>
         <nav>
-          <a href="/">Home</a>
-          <a href="/admin">Admin</a>
+          <a href="/" class={isActive("/") ? "active" : ""}>Home</a>
+          {navTree.map(node => {
+            if (node.children.length > 0) {
+              return (
+                <div class="nav-dropdown-wrapper">
+                  <a href={node.url} class={isActive(node.url) ? "active" : ""}>{node.label}</a>
+                  <div class="nav-dropdown" set:html={renderDropdownItems(node.children)} />
+                </div>
+              );
+            }
+            return <a href={node.url} class={isActive(node.url) ? "active" : ""}>{node.label}</a>;
+          })}
         </nav>
       </header>
-      <div class="header-banner">
-        <img src="/header.png" alt="Orboro header artwork" />
-      </div>
+      {pathname === "/" && (
+        <div class="header-banner">
+          <img src="/header.png" alt="Orboro header artwork" />
+        </div>
+      )}
       <main>
         <slot />
       </main>
       <Footer />
     </div>
+    <script is:inline>
+      function styleNodeTables() {
+        document.querySelectorAll('.prose table').forEach(function(table) {
+          var isNodeTable = false;
+          table.querySelectorAll('td').forEach(function(td) {
+            var text = td.textContent.trim();
+            if (text === '✓') { td.setAttribute('data-node', 'on'); isNodeTable = true; }
+            else if (text === '✗') { td.setAttribute('data-node', 'off'); isNodeTable = true; }
+          });
+          if (isNodeTable) table.setAttribute('data-node-table', '');
+        });
+      }
+
+      function initAccordions() {
+        document.querySelectorAll('.prose details').forEach(function(details) {
+          if (details.dataset.accordionInit) return;
+          details.dataset.accordionInit = '1';
+          var summary = details.querySelector('summary');
+          if (!summary) return;
+
+          var wrapper = document.createElement('div');
+          wrapper.className = 'details-body';
+          Array.from(details.children).forEach(function(child) {
+            if (child !== summary) wrapper.appendChild(child);
+          });
+          details.appendChild(wrapper);
+          wrapper.style.cssText = 'overflow:hidden;transition:max-height 0.22s ease,opacity 0.18s ease;';
+
+          if (details.open) {
+            wrapper.style.maxHeight = wrapper.scrollHeight + 'px';
+            wrapper.style.opacity = '1';
+            details.classList.add('is-open');
+          } else {
+            wrapper.style.maxHeight = '0';
+            wrapper.style.opacity = '0';
+          }
+
+          summary.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (!details.open) {
+              details.open = true;
+              details.classList.add('is-open');
+              wrapper.offsetHeight;
+              wrapper.style.maxHeight = wrapper.scrollHeight + 'px';
+              wrapper.style.opacity = '1';
+            } else {
+              details.classList.remove('is-open');
+              wrapper.style.maxHeight = '0';
+              wrapper.style.opacity = '0';
+              var done = false;
+              wrapper.addEventListener('transitionend', function handler(ev) {
+                if (done || ev.propertyName !== 'max-height') return;
+                done = true;
+                details.open = false;
+                wrapper.removeEventListener('transitionend', handler);
+              });
+            }
+          });
+        });
+      }
+
+      styleNodeTables();
+      initAccordions();
+      document.addEventListener('astro:page-load', function() {
+        styleNodeTables();
+        initAccordions();
+      });
+    </script>
   </body>
 </html>

@@ -1,0 +1,70 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCategoryBySlug, getPublishedContentByCategory } from "../../lib/content";
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect("/");
+
+const category = await getCategoryBySlug(Astro.locals, slug);
+if (!category) return Astro.redirect("/");
+
+const items = await getPublishedContentByCategory(Astro.locals, slug);
+
+function itemUrl(pageType: string, itemSlug: string) {
+  return pageType === "post" ? `/blog/${itemSlug}` : `/pages/${itemSlug}`;
+}
+---
+
+<BaseLayout title={`${category.name} | Orboro.net`}>
+  <section>
+    <h1>{category.name}</h1>
+    {items.length === 0 ? (
+      <p class="empty">No published content in this category yet.</p>
+    ) : (
+      <div class="items-list">
+        {items.map((item) => (
+          <a href={itemUrl(item.pageType, item.slug)} class="item-link">
+            <span class="item-title">{item.title}</span>
+          </a>
+        ))}
+      </div>
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  h1 { margin-bottom: 1.5rem; }
+
+  .empty { color: var(--muted); font-style: italic; }
+
+  .items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .item-link {
+    display: flex;
+    align-items: center;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    background: linear-gradient(90deg, rgb(0 229 255 / 5%) 0%, transparent 60%);
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.18s ease;
+  }
+
+  .item-link:hover {
+    border-color: var(--accent);
+    background: linear-gradient(90deg, rgb(0 229 255 / 10%) 0%, transparent 60%);
+    box-shadow: 0 0 0.8rem rgb(0 229 255 / 15%);
+    color: var(--accent);
+  }
+
+  .item-title {
+    font-weight: 600;
+    font-size: 1rem;
+  }
+</style>

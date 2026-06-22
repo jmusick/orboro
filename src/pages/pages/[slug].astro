@@ -2,27 +2,29 @@
 import { marked } from "marked";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getPublishedBySlugAndType } from "../../lib/content";
-import DefaultPageTemplate from "../../components/templates/page/DefaultPageTemplate.astro";
-import LandingPageTemplate from "../../components/templates/page/LandingPageTemplate.astro";
 
 const { slug } = Astro.params;
-if (!slug) {
-  return Astro.redirect("/");
-}
+if (!slug) return Astro.redirect("/");
 
 const page = await getPublishedBySlugAndType(Astro.locals, slug, "page");
-if (!page) {
-  return Astro.redirect("/");
-}
+if (!page) return Astro.redirect("/");
 
 const html = String(await marked.parse(page.markdown));
-const templateComponentByKey = {
-  "page-default": DefaultPageTemplate,
-  "page-landing": LandingPageTemplate,
-};
-const Template = templateComponentByKey[page.templateKey as keyof typeof templateComponentByKey] ?? DefaultPageTemplate;
+const updated = new Date(page.updatedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 ---
 
-<BaseLayout title={`${page.title} | Orboro.net`} description={page.excerpt ?? ""}>
-  <Template title={page.title} excerpt={page.excerpt} html={html} />
+<BaseLayout title={`${page.title} | Orboro.net`}>
+  <article class="page-content">
+    <h1>{page.title}</h1>
+    <p class="meta">Updated {updated}</p>
+    <div class="prose" set:html={html} />
+  </article>
 </BaseLayout>
+
+<style>
+  .meta {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin: -0.5rem 0 1.5rem;
+  }
+</style>

@@ -4,10 +4,11 @@ import Button from "../../../components/Button.astro";
 import Pill from "../../../components/Pill.astro";
 import Icon from "../../../components/Icon.astro";
 import { ensureRole } from "../../../lib/http";
-import { listAdminContent } from "../../../lib/content";
+import { listAdminContent, listContentCategoryNames } from "../../../lib/content";
 
 ensureRole(Astro, ["admin", "editor", "author"]);
 const content = await listAdminContent(Astro.locals);
+const categoryNames = await listContentCategoryNames(Astro.locals);
 
 const getStatusVariant = (status: string) => {
   if (status === "published") return "success";
@@ -37,49 +38,166 @@ const getStatusIcon = (status: string) => {
       <Button href="/admin/content/new" variant="primary">Create Content</Button>
     </section>
   ) : (
-    <section class="content-table-wrapper">
-      <table class="content-table">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Type</th>
-            <th>Template</th>
-            <th>Status</th>
-            <th>Slug</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {content.map((item) => (
+    <section class="content-table-section">
+      <div class="filter-bar">
+        <input
+          id="filter-search"
+          type="search"
+          class="filter-input"
+          placeholder="Search title or slug…"
+          autocomplete="off"
+        />
+        <select id="filter-type" class="filter-select">
+          <option value="">All types</option>
+          <option value="post">Post</option>
+          <option value="page">Page</option>
+        </select>
+        <select id="filter-status" class="filter-select">
+          <option value="">All statuses</option>
+          <option value="published">Published</option>
+          <option value="draft">Draft</option>
+        </select>
+        <span id="filter-count" class="filter-count"></span>
+      </div>
+
+      <div class="content-table-wrapper">
+        <table class="content-table" id="content-table">
+          <thead>
             <tr>
-              <td class="cell-title">
-                <strong>{item.title}</strong>
-              </td>
-              <td>
-                <Pill variant="info" size="sm">{item.pageType}</Pill>
-              </td>
-              <td>
-                <code class="mono">{item.templateKey}</code>
-              </td>
-              <td>
-                <Pill variant={getStatusVariant(item.status)} size="sm" icon={getStatusIcon(item.status)}>
-                  {item.status}
-                </Pill>
-              </td>
-              <td>
-                <code class="mono">{item.slug}</code>
-              </td>
-              <td class="cell-actions">
-                <Button href={`/admin/content/${item.id}`} variant="secondary" size="sm" icon="edit">
-                  Edit
-                </Button>
-              </td>
+              <th class="sortable" data-col="title">Title <span class="sort-icon"></span></th>
+              <th class="sortable" data-col="type">Type <span class="sort-icon"></span></th>
+              <th class="sortable" data-col="categories">Categories <span class="sort-icon"></span></th>
+              <th class="sortable" data-col="status">Status <span class="sort-icon"></span></th>
+              <th class="sortable" data-col="slug">Slug <span class="sort-icon"></span></th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody id="content-tbody">
+            {content.map((item) => {
+              const cats = categoryNames[item.id] ?? [];
+              return (
+                <tr
+                  data-title={item.title.toLowerCase()}
+                  data-type={item.pageType}
+                  data-status={item.status}
+                  data-slug={item.slug}
+                  data-categories={cats.map(c => c.toLowerCase()).join(",")}
+                >
+                  <td class="cell-title"><strong>{item.title}</strong></td>
+                  <td><Pill variant="info" size="sm">{item.pageType}</Pill></td>
+                  <td>
+                    <div class="cell-categories">
+                      {cats.length > 0
+                        ? cats.map((name) => <Pill variant="info" size="sm">{name}</Pill>)
+                        : <span class="cell-empty">—</span>
+                      }
+                    </div>
+                  </td>
+                  <td>
+                    <Pill variant={getStatusVariant(item.status)} size="sm" icon={getStatusIcon(item.status)}>
+                      {item.status}
+                    </Pill>
+                  </td>
+                  <td><code class="mono">{item.slug}</code></td>
+                  <td class="cell-actions">
+                    <Button href={`/admin/content/${item.id}`} variant="secondary" size="sm" icon="edit">
+                      Edit
+                    </Button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        <p id="no-results" class="no-results" style="display:none">No content matches your filters.</p>
+      </div>
     </section>
   )}
+
+  <script is:inline>
+    (function () {
+      var searchEl = document.getElementById('filter-search');
+      var typeEl = document.getElementById('filter-type');
+      var statusEl = document.getElementById('filter-status');
+      var countEl = document.getElementById('filter-count');
+      var tbody = document.getElementById('content-tbody');
+      var noResults = document.getElementById('no-results');
+      var headers = document.querySelectorAll('.content-table th.sortable');
+
+      if (!tbody) return;
+
+      var allRows = Array.from(tbody.querySelectorAll('tr'));
+      var sortCol = '';
+      var sortDir = 'asc';
+
+      function getVal(row, col) {
+        return (row.getAttribute('data-' + col) || '').toLowerCase();
+      }
+
+      function applyFilterSort() {
+        var search = (searchEl ? searchEl.value : '').toLowerCase().trim();
+        var typeVal = typeEl ? typeEl.value : '';
+        var statusVal = statusEl ? statusEl.value : '';
+
+        var visible = allRows.filter(function (row) {
+          if (search && !(getVal(row, 'title').includes(search) || getVal(row, 'slug').includes(search) || getVal(row, 'categories').includes(search))) return false;
+          if (typeVal && getVal(row, 'type') !== typeVal) return false;
+          if (statusVal && getVal(row, 'status') !== statusVal) return false;
+          return true;
+        });
+
+        if (sortCol) {
+          visible.sort(function (a, b) {
+            var av = getVal(a, sortCol);
+            var bv = getVal(b, sortCol);
+            return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+          });
+        }
+
+        allRows.forEach(function (r) { r.style.display = 'none'; });
+        visible.forEach(function (r) {
+          r.style.display = '';
+          tbody.appendChild(r);
+        });
+
+        if (countEl) {
+          countEl.textContent = visible.length === allRows.length
+            ? allRows.length + ' items'
+            : visible.length + ' of ' + allRows.length + ' items';
+        }
+        if (noResults) noResults.style.display = visible.length === 0 ? '' : 'none';
+      }
+
+      function updateSortIcons() {
+        headers.forEach(function (th) {
+          var icon = th.querySelector('.sort-icon');
+          if (!icon) return;
+          var col = th.getAttribute('data-col');
+          icon.textContent = col === sortCol ? (sortDir === 'asc' ? ' ↑' : ' ↓') : '';
+        });
+      }
+
+      headers.forEach(function (th) {
+        th.addEventListener('click', function () {
+          var col = this.getAttribute('data-col');
+          if (sortCol === col) {
+            sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+          } else {
+            sortCol = col;
+            sortDir = 'asc';
+          }
+          updateSortIcons();
+          applyFilterSort();
+        });
+      });
+
+      if (searchEl) searchEl.addEventListener('input', applyFilterSort);
+      if (typeEl) typeEl.addEventListener('change', applyFilterSort);
+      if (statusEl) statusEl.addEventListener('change', applyFilterSort);
+
+      applyFilterSort();
+    })();
+  </script>
 </AdminLayout>
 
 <style>
@@ -100,23 +218,48 @@ const getStatusIcon = (status: string) => {
     color: var(--muted);
   }
 
-  .empty-state h3 {
-    margin: 0;
+  .empty-state h3 { margin: 0; color: var(--text); font-size: 1.3rem; }
+  .empty-state p { margin: 0 0 1rem; }
+  .empty-state svg { opacity: 0.5; }
+
+  .filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
     color: var(--text);
-    font-size: 1.3rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
   }
+  .filter-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0.6rem rgb(0 229 255 / 18%); }
 
-  .empty-state p {
-    margin: 0 0 1rem;
+  .filter-select {
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
   }
+  .filter-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0.6rem rgb(0 229 255 / 18%); }
 
-  .empty-state svg {
-    opacity: 0.5;
-  }
+  .filter-count { font-size: 0.82rem; color: var(--muted); white-space: nowrap; margin-left: auto; }
 
-  .content-table-wrapper {
-    overflow-x: auto;
-  }
+  .content-table-wrapper { overflow-x: auto; }
 
   .content-table {
     width: 100%;
@@ -131,26 +274,39 @@ const getStatusIcon = (status: string) => {
     color: var(--accent);
     border-bottom: 2px solid var(--line);
     background: linear-gradient(90deg, rgb(0 229 255 / 5%) 0%, transparent 100%);
+    white-space: nowrap;
   }
+
+  .content-table th.sortable { cursor: pointer; user-select: none; }
+  .content-table th.sortable:hover {
+    color: var(--text);
+    background: linear-gradient(90deg, rgb(0 229 255 / 10%) 0%, transparent 100%);
+  }
+
+  .sort-icon { font-style: normal; color: var(--accent); font-size: 0.85rem; }
 
   .content-table td {
     padding: 1rem 0.75rem;
     border-bottom: 1px solid var(--line);
     color: var(--text);
+    vertical-align: middle;
   }
 
   .content-table tbody tr:hover {
     background: linear-gradient(90deg, rgb(0 229 255 / 5%) 0%, transparent 100%);
   }
 
-  .cell-title {
-    font-weight: 500;
+  .cell-title { font-weight: 500; }
+
+  .cell-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: center;
   }
 
-  .cell-actions {
-    display: flex;
-    justify-content: flex-end;
-  }
+  .cell-empty { color: var(--muted); }
+  .cell-actions { text-align: right; white-space: nowrap; }
 
   .mono {
     font-family: "Courier New", monospace;
@@ -159,5 +315,12 @@ const getStatusIcon = (status: string) => {
     background: rgb(0 0 0 / 20%);
     padding: 0.25rem 0.5rem;
     border-radius: 4px;
+  }
+
+  .no-results {
+    text-align: center;
+    color: var(--muted);
+    padding: 2rem 0;
+    font-size: 0.95rem;
   }
 </style>

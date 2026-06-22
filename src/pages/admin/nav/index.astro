@@ -1,0 +1,441 @@
+---
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import Button from "../../../components/Button.astro";
+import { ensureRole } from "../../../lib/http";
+import { listNavItems, listAdminContent } from "../../../lib/content";
+
+ensureRole(Astro, ["admin"]);
+
+const navItems = await listNavItems(Astro.locals);
+const allContent = await listAdminContent(Astro.locals);
+const publishedContent = allContent.filter((c) => c.status === "published");
+
+const url = new URL(Astro.request.url);
+const saved = url.searchParams.get("saved") === "1";
+const error = url.searchParams.get("error");
+
+const initNav = navItems
+  .map((item) => ({
+    clientId: item.id,
+    contentId: item.contentId ?? undefined,
+    label: item.label,
+    parentId: item.parentItemId ?? null,
+    sortOrder: item.sortOrder,
+  }));
+const initContent = publishedContent.map((c) => ({
+  id: c.id,
+  title: c.title,
+  slug: c.slug,
+  pageType: c.pageType,
+}));
+---
+
+<AdminLayout title="Navigation">
+  {saved && <div class="success-banner">Navigation saved successfully.</div>}
+  {error === "invalid" && <div class="error-banner">Invalid navigation data. Please try again.</div>}
+
+  <script is:inline type="application/json" id="nav-init" set:html={JSON.stringify({ nav: initNav, content: initContent })} />
+
+  <section class="nav-section">
+    <form id="nav-form" method="post" action="/api/nav/save">
+      <input type="hidden" name="navItems" id="nav-items-json" />
+
+      <div class="nav-panel">
+        <h2 class="panel-title">Current Navigation</h2>
+        <p class="panel-desc">Top-level items appear in the nav bar. Sub-items appear as a dropdown. Use ↑↓ to reorder within each level.</p>
+        <ul id="nav-list" class="nav-list"></ul>
+      </div>
+
+      <div class="nav-panel add-panel">
+        <h2 class="panel-title">Add Item</h2>
+        <div class="add-row">
+          <select id="content-select" class="field-select">
+            <option value="">— select page —</option>
+          </select>
+          <select id="parent-select" class="field-select">
+            <option value="">Top Level</option>
+          </select>
+          <button type="button" id="add-btn" class="btn-add">Add to Nav</button>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <Button type="submit" variant="primary" icon="check">Save Navigation</Button>
+      </div>
+    </form>
+  </section>
+
+  <script is:inline>
+    (function () {
+      var initEl = document.getElementById('nav-init');
+      if (!initEl) return;
+      var data = JSON.parse(initEl.textContent || '{}');
+      var navItems = (data.nav || []).slice();
+      var allContent = data.content || [];
+      var idCounter = Date.now();
+
+      function newId() { return 'c' + (++idCounter); }
+
+      navItems.forEach(function (item) {
+        if (!item.clientId) item.clientId = newId();
+      });
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      }
+
+      function getItemUrl(item) {
+        var c = allContent.find(function (c) { return c.id === item.contentId; });
+        if (!c) return '#';
+        return c.pageType === 'post' ? '/blog/' + c.slug : '/pages/' + c.slug;
+      }
+
+      function getItemBadge(item) {
+        var c = allContent.find(function (c) { return c.id === item.contentId; });
+        return c ? c.pageType : 'page';
+      }
+
+      function siblingsOf(parentId) {
+        var p = parentId || null;
+        return navItems.filter(function (i) { return (i.parentId || null) === p; });
+      }
+
+      // Is checkId equal to ancestorId or a descendant of it?
+      function isInSubtree(ancestorId, checkId) {
+        if (checkId === ancestorId) return true;
+        var item = navItems.find(function (i) { return i.clientId === checkId; });
+        if (!item || !item.parentId) return false;
+        return isInSubtree(ancestorId, item.parentId);
+      }
+
+      function moveSibling(clientId, dir) {
+        var item = navItems.find(function (i) { return i.clientId === clientId; });
+        if (!item) return;
+        var siblings = siblingsOf(item.parentId).sort(function (a, b) { return a.sortOrder - b.sortOrder; });
+        var idx = siblings.findIndex(function (i) { return i.clientId === clientId; });
+        var swapIdx = idx + dir;
+        if (swapIdx < 0 || swapIdx >= siblings.length) return;
+        var a = navItems.find(function (i) { return i.clientId === siblings[idx].clientId; });
+        var b = navItems.find(function (i) { return i.clientId === siblings[swapIdx].clientId; });
+        var tmp = a.sortOrder; a.sortOrder = b.sortOrder; b.sortOrder = tmp;
+        render();
+      }
+
+      function removeItem(clientId) {
+        var toRemove = {};
+        function collect(id) {
+          toRemove[id] = true;
+          navItems.filter(function (i) { return i.parentId === id; }).forEach(function (c) { collect(c.clientId); });
+        }
+        collect(clientId);
+        navItems = navItems.filter(function (i) { return !toRemove[i.clientId]; });
+        render();
+      }
+
+      function updateLabel(clientId, val) {
+        var item = navItems.find(function (i) { return i.clientId === clientId; });
+        if (item) item.label = val;
+      }
+
+      function changeParent(clientId, newParentId) {
+        var item = navItems.find(function (i) { return i.clientId === clientId; });
+        if (!item) return;
+        // Prevent cycles
+        if (newParentId && isInSubtree(clientId, newParentId)) return;
+        item.parentId = newParentId || null;
+        var siblings = siblingsOf(item.parentId).filter(function (i) { return i.clientId !== clientId; });
+        item.sortOrder = siblings.reduce(function (m, i) { return Math.max(m, i.sortOrder); }, -1) + 1;
+        render();
+      }
+
+      function buildParentOptions(excludeClientId, currentParentId) {
+        var opts = '<option value=""' + (!currentParentId ? ' selected' : '') + '>Top Level</option>';
+        function addLevel(parentId, depth) {
+          siblingsOf(parentId).sort(function (a, b) { return a.sortOrder - b.sortOrder; }).forEach(function (item) {
+            if (isInSubtree(excludeClientId, item.clientId)) return;
+            var prefix = depth > 0 ? Array(depth + 1).join('— ') : '';
+            opts += '<option value="' + escapeHtml(item.clientId) + '"' +
+              (currentParentId === item.clientId ? ' selected' : '') + '>' +
+              escapeHtml(prefix + (item.label || '(unlabelled)')) + '</option>';
+            addLevel(item.clientId, depth + 1);
+          });
+        }
+        addLevel(null, 0);
+        return opts;
+      }
+
+      function renderTree(parentId, depth) {
+        var items = siblingsOf(parentId).sort(function (a, b) { return a.sortOrder - b.sortOrder; });
+        var html = '';
+        items.forEach(function (item, idx) {
+          var url = getItemUrl(item);
+          var badge = getItemBadge(item);
+          var isChild = depth > 0;
+          html += '<li class="nav-item' + (isChild ? ' nav-item--child' : '') + '">';
+          for (var d = 0; d < depth; d++) html += '<div class="nav-child-indent"></div>';
+          html +=
+            '<div class="nav-item-controls">' +
+              '<button type="button" class="btn-updown" data-dir="-1" data-id="' + escapeHtml(item.clientId) + '"' + (idx === 0 ? ' disabled' : '') + '>&#8679;</button>' +
+              '<button type="button" class="btn-updown" data-dir="1" data-id="' + escapeHtml(item.clientId) + '"' + (idx === items.length - 1 ? ' disabled' : '') + '>&#8681;</button>' +
+            '</div>' +
+            '<div class="nav-item-body">' +
+              '<div class="nav-item-meta">' +
+                '<span class="nav-badge' + (isChild ? ' nav-badge--child' : '') + '">' + escapeHtml(badge) + '</span>' +
+                '<span class="nav-url">' + escapeHtml(url) + '</span>' +
+              '</div>' +
+              '<div class="nav-item-row">' +
+                '<input type="text" class="nav-label-input" data-id="' + escapeHtml(item.clientId) + '" value="' + escapeHtml(item.label) + '" placeholder="Label" />' +
+                '<select class="nav-parent-select" data-id="' + escapeHtml(item.clientId) + '">' + buildParentOptions(item.clientId, item.parentId) + '</select>' +
+                '<button type="button" class="btn-remove" data-id="' + escapeHtml(item.clientId) + '">Remove</button>' +
+              '</div>' +
+            '</div>' +
+          '</li>';
+          html += renderTree(item.clientId, depth + 1);
+        });
+        return html;
+      }
+
+      function render() {
+        var list = document.getElementById('nav-list');
+        if (!list) return;
+        if (navItems.length === 0) {
+          list.innerHTML = '<li class="nav-empty">No items yet. Add pages below.</li>';
+        } else {
+          list.innerHTML = renderTree(null, 0);
+          list.querySelectorAll('.btn-updown').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+              moveSibling(this.getAttribute('data-id'), parseInt(this.getAttribute('data-dir')));
+            });
+          });
+          list.querySelectorAll('.btn-remove').forEach(function (btn) {
+            btn.addEventListener('click', function () { removeItem(this.getAttribute('data-id')); });
+          });
+          list.querySelectorAll('.nav-label-input').forEach(function (input) {
+            input.addEventListener('input', function () { updateLabel(this.getAttribute('data-id'), this.value); });
+          });
+          list.querySelectorAll('.nav-parent-select').forEach(function (sel) {
+            sel.addEventListener('change', function () { changeParent(this.getAttribute('data-id'), this.value || null); });
+          });
+        }
+        syncAddDropdowns();
+      }
+
+      function syncParentSelect() {
+        var sel = document.getElementById('parent-select');
+        if (!sel) return;
+        var opts = '<option value="">Top Level</option>';
+        function addLevel(parentId, depth) {
+          siblingsOf(parentId).sort(function (a, b) { return a.sortOrder - b.sortOrder; }).forEach(function (item) {
+            var prefix = depth > 0 ? Array(depth + 1).join('— ') : '';
+            opts += '<option value="' + escapeHtml(item.clientId) + '">' + escapeHtml(prefix + (item.label || '(unlabelled)')) + '</option>';
+            addLevel(item.clientId, depth + 1);
+          });
+        }
+        addLevel(null, 0);
+        sel.innerHTML = opts;
+      }
+
+      function syncAddDropdowns() {
+        var contentSel = document.getElementById('content-select');
+        var addBtn = document.getElementById('add-btn');
+        var usedContentIds = navItems.map(function (n) { return n.contentId; });
+        var avail = allContent.filter(function (c) { return usedContentIds.indexOf(c.id) === -1; });
+        if (contentSel) {
+          contentSel.innerHTML = avail.length === 0
+            ? '<option value="">— all pages in nav —</option>'
+            : '<option value="">— select page —</option>' + avail.map(function (c) {
+                return '<option value="' + escapeHtml(c.id) + '">' + escapeHtml(c.title) + ' (' + escapeHtml(c.pageType) + ')</option>';
+              }).join('');
+          contentSel.disabled = avail.length === 0;
+        }
+        if (addBtn) addBtn.disabled = !contentSel || contentSel.disabled;
+        syncParentSelect();
+      }
+
+      document.getElementById('add-btn').addEventListener('click', function () {
+        var parentSel = document.getElementById('parent-select');
+        var parentId = parentSel ? parentSel.value || null : null;
+        var siblings = siblingsOf(parentId);
+        var maxOrder = siblings.reduce(function (m, i) { return Math.max(m, i.sortOrder); }, -1);
+        var sel = document.getElementById('content-select');
+        var id = sel ? sel.value : '';
+        if (!id) return;
+        var c = allContent.find(function (c) { return c.id === id; });
+        if (!c) return;
+        navItems.push({ clientId: newId(), contentId: id, label: c.title, parentId: parentId, sortOrder: maxOrder + 1 });
+        render();
+      });
+
+      document.getElementById('nav-form').addEventListener('submit', function () {
+        document.getElementById('nav-items-json').value = JSON.stringify(navItems);
+      });
+
+      render();
+    })();
+  </script>
+
+  <style is:global>
+    .nav-section { margin-bottom: 2rem; }
+
+    .nav-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+
+    .add-panel { margin-top: 0.5rem; }
+
+    .panel-title { font-size: 1.05rem; font-weight: 600; color: var(--accent); margin: 0; }
+    .panel-desc { font-size: 0.875rem; color: var(--muted); margin: 0; }
+
+    .nav-list { list-style: none; margin: 0; padding: 0; }
+
+    .nav-empty {
+      padding: 1.5rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.75rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-item:first-child { border-top: 1px solid var(--line); }
+
+    .nav-item--child {
+      background: rgb(0 229 255 / 3%);
+      border-left: 3px solid rgb(0 229 255 / 25%);
+    }
+
+    .nav-child-indent {
+      width: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .nav-item-controls { display: flex; flex-direction: column; gap: 0.25rem; flex-shrink: 0; }
+
+    .btn-updown {
+      display: flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px;
+      border: 1px solid var(--line); border-radius: 6px;
+      background: var(--surface); color: var(--text);
+      cursor: pointer; font-size: 1.1rem; line-height: 1; padding: 0;
+      transition: all 0.15s ease;
+    }
+    .btn-updown:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: rgb(0 229 255 / 8%); }
+    .btn-updown:disabled { opacity: 0.3; cursor: default; }
+
+    .nav-item-body { flex: 1; display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+
+    .nav-item-meta { display: flex; align-items: center; gap: 0.6rem; }
+
+    .nav-badge {
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.03em;
+      padding: 0.15rem 0.5rem; border-radius: 4px;
+      background: rgb(0 229 255 / 12%); color: var(--accent);
+      border: 1px solid rgb(0 229 255 / 25%); white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .nav-badge--child {
+      background: rgb(0 229 255 / 6%);
+      color: var(--muted);
+      border-color: rgb(0 229 255 / 15%);
+    }
+
+    .nav-url { font-size: 0.8rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .nav-item-row { display: flex; align-items: center; gap: 0.5rem; }
+
+    .nav-parent-select {
+      width: 160px;
+      height: 2.5rem;
+      padding: 0 0.7rem;
+      box-sizing: border-box;
+      border: 1px solid var(--line); border-radius: 8px;
+      background: var(--surface); color: var(--muted);
+      font-family: inherit; font-size: 0.82rem; cursor: pointer;
+      white-space: nowrap; flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+    .nav-parent-select:focus { outline: none; border-color: var(--accent); color: var(--text); box-shadow: 0 0 0.6rem rgb(0 229 255 / 18%); }
+
+    .nav-label-input {
+      flex: 1;
+      height: 2.5rem;
+      padding: 0 0.9rem;
+      border: 1px solid var(--line); border-radius: 8px;
+      background: var(--surface); color: var(--text);
+      font-family: inherit; font-size: 0.95rem;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+    }
+    .nav-label-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0.8rem rgb(0 229 255 / 20%); }
+
+    .btn-remove {
+      flex-shrink: 0; padding: 0.4rem 0.8rem;
+      border: 1px solid rgb(255 61 77 / 40%); border-radius: 8px;
+      background: transparent; color: #ff3d4d;
+      cursor: pointer; font-size: 0.875rem; font-family: inherit;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+    .btn-remove:hover { background: rgb(255 61 77 / 10%); border-color: #ff3d4d; }
+
+    .add-row { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+
+    .field-select {
+      flex: 1; min-width: 160px;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--line); border-radius: 8px;
+      background: var(--surface); color: var(--text);
+      font-family: inherit; font-size: 0.95rem; cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .field-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0.8rem rgb(0 229 255 / 20%); }
+    .field-select:disabled { opacity: 0.5; cursor: default; }
+
+    .btn-add {
+      padding: 0.75rem 1.2rem; white-space: nowrap;
+      border: 1px solid var(--accent); border-radius: 8px;
+      background: rgb(0 229 255 / 10%); color: var(--accent);
+      font-family: inherit; font-size: 0.95rem; font-weight: 500;
+      cursor: pointer; transition: all 0.2s ease;
+    }
+    .btn-add:hover:not(:disabled) { background: rgb(0 229 255 / 20%); box-shadow: 0 0 0.8rem rgb(0 229 255 / 25%); }
+    .btn-add:disabled { opacity: 0.4; cursor: default; }
+
+    .form-actions {
+      display: flex; justify-content: flex-end;
+      padding: 1.5rem 0; border-top: 1px solid var(--line); margin-top: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .add-row { flex-direction: column; align-items: stretch; }
+      .field-select { width: 100%; }
+    }
+  </style>
+</AdminLayout>
+
+<style>
+  .success-banner {
+    padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1.5rem;
+    background: rgb(168 255 96 / 15%); border: 1px solid rgb(168 255 96 / 40%);
+    color: var(--accent-3); font-size: 0.9rem;
+  }
+  .error-banner {
+    padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1.5rem;
+    background: rgb(255 61 77 / 15%); border: 1px solid rgb(255 61 77 / 40%);
+    color: #ff3d4d; font-size: 0.9rem;
+  }
+</style>
+</content>
+</invoke>
