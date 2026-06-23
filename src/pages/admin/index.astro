@@ -45,7 +45,11 @@ const error = Astro.url.searchParams.get("error");
   <BaseLayout title="Admin Login | Orboro.net" description="Sign in to Orboro CMS">
     <section>
       <h1>Admin Login</h1>
-      {error ? <p style="color: #ff3d4d;"><strong>Unable to sign in.</strong></p> : null}
+      {error === "captcha"
+        ? <p style="color: #ff3d4d;"><strong>Captcha verification failed. Please try again.</strong></p>
+        : error
+        ? <p style="color: #ff3d4d;"><strong>Unable to sign in.</strong></p>
+        : null}
       <form method="post" action="/api/auth/login">
         <div class="form-group">
           <label for="email">Email</label>
@@ -55,9 +59,11 @@ const error = Astro.url.searchParams.get("error");
           <label for="password">Password</label>
           <input id="password" type="password" name="password" required autocomplete="current-password" />
         </div>
+        <div class="h-captcha" data-sitekey="063e31aa-ed14-481a-a844-cb5e5c74ab9a" style="margin-bottom: 1.5rem;"></div>
         <Button type="submit" variant="primary">Sign In</Button>
       </form>
     </section>
+    <script src="https://js.hcaptcha.com/1/api.js" async defer is:inline></script>
   </BaseLayout>
 )}
 

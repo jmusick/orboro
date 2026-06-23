@@ -1,15 +1,36 @@
 import type { APIRoute } from "astro";
+import { env as workerEnv } from "cloudflare:workers";
 import { createSession, verifyPassword } from "../../../lib/auth";
 import { ensureDB } from "../../../lib/db";
 import { SESSION_COOKIE } from "../../../middleware";
+
+async function verifyCaptcha(token: string): Promise<boolean> {
+  const secret = ((workerEnv as unknown) as { HCAPTCHA_SECRET?: string }).HCAPTCHA_SECRET;
+  if (!secret) return true; // skip verification in local dev (secret not configured)
+  if (!token) return false;
+  const body = new URLSearchParams({ secret, response: token });
+  const res = await fetch("https://api.hcaptcha.com/siteverify", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: body.toString(),
+  });
+  const data = await res.json() as { success: boolean };
+  return data.success === true;
+}
 
 export const POST: APIRoute = async ({ request, locals, cookies, url, redirect }) => {
   const form = await request.formData();
   const email = String(form.get("email") ?? "").trim().toLowerCase();
   const password = String(form.get("password") ?? "");
+  const captchaToken = String(form.get("h-captcha-response") ?? "");
 
   if (!email || !password) {
     return redirect("/admin?error=invalid");
+  }
+
+  const captchaOk = await verifyCaptcha(captchaToken);
+  if (!captchaOk) {
+    return redirect("/admin?error=captcha");
   }
 
   const db = ensureDB(locals);

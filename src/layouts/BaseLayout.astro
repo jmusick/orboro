@@ -1,5 +1,6 @@
 ---
 import Footer from "../components/Footer.astro";
+import Icon from "../components/Icon.astro";
 import { listNavItems } from "../lib/content";
 import { ClientRouter } from "astro:transitions";
 
@@ -44,6 +45,12 @@ const navTree = buildNavTree(navItems);
 function isActive(url: string): boolean {
   if (url === "/") return pathname === "/";
   return pathname === url || pathname.startsWith(url + "/");
+}
+
+function nodeIcon(node: NavNode): string {
+  if (node.url.includes("about")) return "user";
+  if (node.children.length > 0) return "compass";
+  return "file-text";
 }
 ---
 
@@ -126,6 +133,7 @@ function isActive(url: string): boolean {
       nav a {
         display: flex;
         align-items: center;
+        gap: 0.4rem;
         border-radius: 7px;
         padding: 0.55rem 1.35rem;
         text-decoration: none;
@@ -568,17 +576,17 @@ function isActive(url: string): boolean {
           <img src="/logo.png" alt="Orboro.net" />
         </a>
         <nav>
-          <a href="/" class={isActive("/") ? "active" : ""}>Home</a>
+          <a href="/" class={isActive("/") ? "active" : ""}><Icon name="home" size={15} />Home</a>
           {navTree.map(node => {
             if (node.children.length > 0) {
               return (
                 <div class="nav-dropdown-wrapper">
-                  <a href={node.url} class={isActive(node.url) ? "active" : ""}>{node.label}</a>
+                  <a href={node.url} class={isActive(node.url) ? "active" : ""}><Icon name={nodeIcon(node)} size={15} />{node.label}</a>
                   <div class="nav-dropdown" set:html={renderDropdownItems(node.children)} />
                 </div>
               );
             }
-            return <a href={node.url} class={isActive(node.url) ? "active" : ""}>{node.label}</a>;
+            return <a href={node.url} class={isActive(node.url) ? "active" : ""}><Icon name={nodeIcon(node)} size={15} />{node.label}</a>;
           })}
         </nav>
       </header>
