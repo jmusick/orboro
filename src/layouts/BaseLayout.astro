@@ -220,16 +220,19 @@ function nodeIcon(node: NavNode): string {
         gap: 0.5rem;
       }
       .nav-flyout-arrow {
+        display: inline-block;
         font-style: normal;
         opacity: 0.6;
         font-size: 1rem;
         line-height: 1;
+        transform: rotate(180deg);
       }
       .nav-flyout {
         display: none;
         position: absolute;
         top: 0;
-        left: 100%;
+        left: auto;
+        right: 100%;
         flex-direction: column;
         background: var(--surface);
         border: 1px solid var(--line);
