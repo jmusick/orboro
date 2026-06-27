@@ -12,7 +12,7 @@ if (!category) return Astro.redirect("/blog");
 const posts = await getPublishedContentByCategory(Astro.locals, slug, "post");
 ---
 
-<BaseLayout title={`${category.name} | Orboro.net`}>
+<BaseLayout title={`${category.name} | Orboro.net`} description={`Browse posts in the ${category.name} category on Orboro.net.`}>
   <section>
     <h1>{category.name}</h1>
     {posts.length === 0 ? (

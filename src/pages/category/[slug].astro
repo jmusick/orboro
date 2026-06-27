@@ -15,7 +15,7 @@ function itemUrl(pageType: string, itemSlug: string) {
 }
 ---
 
-<BaseLayout title={`${category.name} | Orboro.net`}>
+<BaseLayout title={`${category.name} | Orboro.net`} description={`Browse ${category.name} content on Orboro.net.`}>
   <section>
     <h1>{category.name}</h1>
     {items.length === 0 ? (
