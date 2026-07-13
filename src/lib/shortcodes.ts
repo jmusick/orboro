@@ -1,7 +1,9 @@
 import { generateExpeditionRumourSheet } from "./expedition-rumours";
+import { generateAtlasFarmingStrategies } from "./atlas-farming-strategies";
 
 const SHORTCODES: Record<string, () => string> = {
   rumour_cheat_sheet: generateExpeditionRumourSheet,
+  atlas_farming_strategies: generateAtlasFarmingStrategies,
 };
 
 // Replaces {{token}} shortcodes in rendered HTML.
