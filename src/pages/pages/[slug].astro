@@ -10,7 +10,7 @@ if (!slug) return Astro.redirect("/");
 const page = await getPublishedBySlugAndType(Astro.locals, slug, "page");
 if (!page) return Astro.redirect("/");
 
-const html = processShortcodes(String(await marked.parse(page.markdown)));
+const html = await processShortcodes(String(await marked.parse(page.markdown)));
 const updated = new Date(page.updatedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
 function descriptionFromMarkdown(md: string, maxLen = 155): string {

@@ -110,6 +110,11 @@ export function generateExpeditionRumourSheet(): string {
 
   const js = `
 (function(){
+  function init(){
+  var root=document.getElementById('ers-root');
+  if(!root||root.dataset.ersInit)return;
+  root.dataset.ersInit='1';
+
   var sel=new Set();
   var verdict=document.getElementById('ers-verdict');
   var iconEl=document.getElementById('ers-icon');
@@ -187,6 +192,13 @@ export function generateExpeditionRumourSheet(): string {
   }
 
   update();
+  }
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',init);
+  } else {
+    init();
+  }
+  document.addEventListener('astro:page-load',init);
 })();
   `.trim();
 

@@ -1,13 +1,13 @@
 {
   "name": "orboro",
   "type": "module",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "engines": {
     "node": ">=22.12.0"
   },
   "scripts": {
-    "dev": "wrangler dev --ip 127.0.0.1 --port 8787",
-    "dev:astro": "astro dev",
+    "dev": "npm run build && wrangler pages dev dist --ip 127.0.0.1 --port 8787",
+    "dev:astro": "astro dev --host 127.0.0.1",
     "build": "astro build && node fix-wrangler.js",
     "preview": "astro preview",
     "astro": "astro",

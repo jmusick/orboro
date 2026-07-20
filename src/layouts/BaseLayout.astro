@@ -380,12 +380,14 @@ function nodeIcon(node: NavNode): string {
         margin: 2.5rem 0 0.9rem;
         padding-bottom: 0.4rem;
         border-bottom: 1px solid var(--line);
+        clear: both;
       }
       .prose h3 {
         font-size: 1.05rem;
         font-weight: 700;
         color: var(--text);
         margin: 1.75rem 0 0.5rem;
+        clear: both;
       }
       .prose h4 {
         font-size: 0.78rem;
@@ -519,6 +521,36 @@ function nodeIcon(node: NavNode): string {
         border: 1px solid var(--line);
         margin: 1rem 0;
         display: block;
+      }
+
+      .prose img.float-left,
+      .prose img.float-right {
+        max-width: min(420px, 50%);
+        margin-top: 0.25rem;
+        margin-bottom: 1rem;
+      }
+      .prose img.float-left {
+        float: left;
+        margin-right: 1.5rem;
+      }
+      .prose img.float-right {
+        float: right;
+        margin-left: 1.5rem;
+      }
+      @media (max-width: 560px) {
+        .prose img.float-left,
+        .prose img.float-right {
+          float: none;
+          max-width: 100%;
+          margin-left: 0;
+          margin-right: 0;
+        }
+      }
+
+      .prose::after {
+        content: "";
+        display: table;
+        clear: both;
       }
 
       /* ── Accordion (details/summary) ── */

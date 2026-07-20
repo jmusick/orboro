@@ -49,7 +49,7 @@ npm run d1:migrate:local
 npm run dev:astro
 ```
 
-or run through Wrangler/Cloudflare runtime:
+or build and run through the full Cloudflare runtime (Wrangler Pages, D1 bindings, Cache API — closer to production, but won't hot-reload; re-run after each change):
 
 ```bash
 npm run dev
@@ -59,8 +59,8 @@ npm run dev
 
 ## Scripts
 
-- `npm run dev` - Run via `wrangler dev`
-- `npm run dev:astro` - Run Astro dev server directly
+- `npm run dev` - Build, then serve via `wrangler pages dev` (full Cloudflare runtime: D1 bindings, Cache API, secrets)
+- `npm run dev:astro` - Run Astro dev server directly (fast, hot-reloading, but doesn't fully mirror the Cloudflare runtime)
 - `npm run build` - Production build
 - `npm run preview` - Preview build
 - `npm run astro` - Astro CLI passthrough
@@ -107,5 +107,10 @@ Tables:
 ## Troubleshooting
 
 - If content/admin changes are not showing up in local dev, make sure your local D1 DB has migrations applied: `npm run d1:migrate:local`.
-- `npm run dev` (Wrangler) uses your configured Cloudflare bindings and local D1 simulation, while `npm run dev:astro` runs Astro directly and may not mirror Cloudflare runtime behavior exactly.
+- `npm run dev` uses your configured Cloudflare bindings and local D1 simulation, while `npm run dev:astro` runs Astro directly and may not mirror Cloudflare runtime behavior exactly (e.g. `caches.default`, secrets from `.dev.vars`).
 - Apply production/staging schema updates with `npm run d1:migrate:remote` before testing against remote data.
+- Content edited locally (via the admin UI or `wrangler d1 execute DB --local`) only exists in local D1 — it does not appear on the live site until reproduced against remote D1.
+
+## More
+
+For architecture notes, coding conventions, and known gotchas (the shortcode system, Astro View Transitions, D1 local-vs-remote pitfalls, etc.), see [AGENTS.md](AGENTS.md).
