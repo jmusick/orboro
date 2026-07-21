@@ -36,6 +36,7 @@ function renderDropdownItems(nodes: NavNode[]): string {
     if (node.children.length > 0) {
       return `<div class="nav-flyout-item">` +
         `<a href="${esc(node.url)}" class="nav-dropdown-link${active}">${esc(node.label)} <span class="nav-flyout-arrow" aria-hidden="true">›</span></a>` +
+        `<button type="button" class="nav-caret" aria-label="Toggle ${esc(node.label)} submenu" aria-expanded="false"></button>` +
         `<div class="nav-flyout">${renderDropdownItems(node.children)}</div>` +
         `</div>`;
     }
@@ -151,7 +152,38 @@ function nodeIcon(node: NavNode): string {
         width: 240px;
         height: auto;
       }
-      nav {
+      .nav-toggle {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 4px;
+        width: 42px;
+        height: 38px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+      .nav-toggle-bar {
+        display: block;
+        width: 20px;
+        height: 2px;
+        background: var(--text);
+        border-radius: 1px;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+      }
+      .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(1) {
+        transform: translateY(6px) rotate(45deg);
+      }
+      .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(2) {
+        opacity: 0;
+      }
+      .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(3) {
+        transform: translateY(-6px) rotate(-45deg);
+      }
+      #site-nav {
         display: flex;
         align-items: stretch;
         gap: 0;
@@ -162,7 +194,7 @@ function nodeIcon(node: NavNode): string {
         padding: 0.25rem;
         flex-wrap: wrap;
       }
-      nav a {
+      #site-nav a {
         display: flex;
         align-items: center;
         gap: 0.4rem;
@@ -175,11 +207,11 @@ function nodeIcon(node: NavNode): string {
         color: var(--muted);
         white-space: nowrap;
       }
-      nav a:hover {
+      #site-nav a:hover {
         color: var(--text);
         background: rgb(255 255 255 / 5%);
       }
-      nav a.active {
+      #site-nav a.active {
         color: var(--accent);
         background: rgb(0 229 255 / 10%);
         box-shadow: inset 0 0 0 1px rgb(0 229 255 / 20%);
@@ -202,10 +234,6 @@ function nodeIcon(node: NavNode): string {
         vertical-align: middle;
         transition: transform 0.18s ease, opacity 0.18s ease;
       }
-      .nav-dropdown-wrapper:hover > a::after {
-        transform: rotate(180deg);
-        opacity: 1;
-      }
       .nav-dropdown {
         display: none;
         position: absolute;
@@ -220,7 +248,72 @@ function nodeIcon(node: NavNode): string {
         z-index: 50;
         box-shadow: 0 8px 24px rgb(0 0 0 / 45%);
       }
-      .nav-dropdown-wrapper:hover .nav-dropdown {
+      .nav-caret {
+        display: none;
+        background: rgb(255 255 255 / 5%);
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        color: var(--accent);
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        min-width: 2.4rem;
+        padding: 0.4rem 0.6rem;
+        flex-shrink: 0;
+        transition: background 0.15s ease, border-color 0.15s ease;
+      }
+      .nav-caret:active {
+        background: rgb(0 229 255 / 12%);
+      }
+      .nav-caret[aria-expanded="true"] {
+        background: rgb(0 229 255 / 10%);
+        border-color: rgb(0 229 255 / 35%);
+      }
+      .nav-caret::after {
+        content: "";
+        display: inline-block;
+        width: 0;
+        height: 0;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 6px solid currentColor;
+        transition: transform 0.18s ease;
+      }
+      .nav-caret[aria-expanded="true"]::after {
+        transform: rotate(180deg);
+      }
+      /* Hover-driven dropdowns only make sense on mouse-driven devices;
+         touch/mobile relies on .nav-caret + JS accordion toggling instead. */
+      @media (hover: hover) {
+        .nav-dropdown-wrapper:hover > a::after {
+          transform: rotate(180deg);
+          opacity: 1;
+        }
+        .nav-dropdown-wrapper:hover .nav-dropdown {
+          display: flex;
+        }
+        .nav-flyout-item:hover > .nav-flyout {
+          display: flex;
+        }
+      }
+      /* Any device whose primary input can't hover (phones, tablets,
+         touchscreens) needs the tap-driven .nav-caret regardless of
+         viewport width — a tablet-width touch device gets neither the
+         hover dropdown above nor the narrow-viewport hamburger nav below. */
+      @media (hover: none), (pointer: coarse) {
+        .nav-caret {
+          display: flex;
+          margin-left: 0.25rem;
+        }
+        .nav-dropdown-wrapper > a::after {
+          content: none;
+        }
+        .nav-flyout-arrow {
+          display: none;
+        }
+      }
+      .nav-dropdown-wrapper.open > .nav-dropdown,
+      .nav-flyout-item.open > .nav-flyout {
         display: flex;
       }
       .nav-dropdown a, .nav-dropdown-link {
@@ -273,9 +366,6 @@ function nodeIcon(node: NavNode): string {
         min-width: 180px;
         z-index: 51;
         box-shadow: 0 8px 24px rgb(0 0 0 / 45%);
-      }
-      .nav-flyout-item:hover > .nav-flyout {
-        display: flex;
       }
       .header-banner {
         margin-bottom: 1.2rem;
@@ -366,12 +456,52 @@ function nodeIcon(node: NavNode): string {
           padding: 1.5rem;
         }
         header {
-          flex-direction: column;
-          align-items: flex-start;
+          flex-wrap: wrap;
+          justify-content: space-between;
           gap: 0.75rem;
         }
-        nav {
+        .nav-toggle {
+          display: flex;
+        }
+        #site-nav {
+          display: none;
           width: 100%;
+          flex-direction: column;
+          align-items: stretch;
+        }
+        #site-nav.nav-open {
+          display: flex;
+        }
+        #site-nav a {
+          width: 100%;
+          white-space: normal;
+        }
+        .nav-dropdown-wrapper,
+        .nav-flyout-item {
+          display: flex;
+          align-items: stretch;
+          flex-wrap: wrap;
+        }
+        #site-nav .nav-dropdown-wrapper > a,
+        #site-nav .nav-flyout-item > a {
+          width: auto;
+          flex: 1 1 auto;
+        }
+        .nav-caret {
+          width: auto;
+          align-self: center;
+          margin: 0.3rem 0.3rem 0.3rem 0;
+        }
+        .nav-dropdown,
+        .nav-flyout {
+          position: static;
+          display: none;
+          flex-basis: 100%;
+          width: 100%;
+          box-shadow: none;
+          background: transparent;
+          border: none;
+          padding-left: 0.75rem;
         }
         .header-banner {
           margin-bottom: 1rem;
@@ -642,13 +772,24 @@ function nodeIcon(node: NavNode): string {
         <a href="/" class="header-logo">
           <img src="/logo.png" alt="Orboro.net" />
         </a>
-        <nav>
+        <button
+          type="button"
+          class="nav-toggle"
+          id="nav-toggle"
+          aria-label="Toggle navigation menu"
+          aria-expanded="false"
+          aria-controls="site-nav"
+        >
+          <span class="nav-toggle-bar" /><span class="nav-toggle-bar" /><span class="nav-toggle-bar" />
+        </button>
+        <nav id="site-nav">
           <a href="/" class={isActive("/") ? "active" : ""}><Icon name="home" size={15} />Home</a>
           {navTree.map(node => {
             if (node.children.length > 0) {
               return (
                 <div class="nav-dropdown-wrapper">
                   <a href={node.url} class={isActive(node.url) ? "active" : ""}><Icon name={nodeIcon(node)} size={15} />{node.label}</a>
+                  <button type="button" class="nav-caret" aria-label={`Toggle ${node.label} submenu`} aria-expanded="false" />
                   <div class="nav-dropdown" set:html={renderDropdownItems(node.children)} />
                 </div>
               );
@@ -728,11 +869,51 @@ function nodeIcon(node: NavNode): string {
         });
       }
 
+      function initMobileNav() {
+        var toggle = document.getElementById('nav-toggle');
+        var nav = document.getElementById('site-nav');
+        if (toggle && nav && !toggle.dataset.navInit) {
+          toggle.dataset.navInit = '1';
+          toggle.addEventListener('click', function() {
+            var isOpen = nav.classList.toggle('nav-open');
+            toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+          });
+        }
+        document.querySelectorAll('.nav-caret').forEach(function(btn) {
+          if (btn.dataset.navInit) return;
+          btn.dataset.navInit = '1';
+          btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var parent = btn.closest('.nav-dropdown-wrapper, .nav-flyout-item');
+            if (!parent) return;
+            var isOpen = parent.classList.toggle('open');
+            btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+          });
+        });
+      }
+
+      function closeMobileNav() {
+        var toggle = document.getElementById('nav-toggle');
+        var nav = document.getElementById('site-nav');
+        if (nav) nav.classList.remove('nav-open');
+        if (toggle) toggle.setAttribute('aria-expanded', 'false');
+        document.querySelectorAll('.nav-dropdown-wrapper.open, .nav-flyout-item.open').forEach(function(el) {
+          el.classList.remove('open');
+        });
+        document.querySelectorAll('.nav-caret[aria-expanded="true"]').forEach(function(btn) {
+          btn.setAttribute('aria-expanded', 'false');
+        });
+      }
+
       styleNodeTables();
       initAccordions();
+      initMobileNav();
       document.addEventListener('astro:page-load', function() {
         styleNodeTables();
         initAccordions();
+        closeMobileNav();
+        initMobileNav();
       });
     </script>
   </body>
