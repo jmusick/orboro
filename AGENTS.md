@@ -36,6 +36,8 @@ Page/post markdown can embed rich, self-contained widgets via `{{token}}` or `{{
 
 Skipping this means the widget silently does nothing for any visitor who navigated in via the nav bar instead of a fresh page load — easy to miss when testing by typing the URL directly.
 
+**Same gotcha applies to Google Analytics:** the gtag.js snippet in `BaseLayout.astro`'s `<head>` is identical on every page, so Astro's head-diffing persists it across View Transitions rather than re-running it — meaning `gtag('config', ...)`'s automatic page-view fires exactly once per browser session, not on every in-site navigation. The site sets `send_page_view: false` and instead sends `gtag('event', 'page_view', ...)` manually on `astro:page-load` (which fires on the initial load and every subsequent client-side navigation), so don't "simplify" that back to the stock snippet or analytics will undercount navigation. Both `<script>` tags there also need `is:inline` — without it, Astro tries to process/type-check the inline script as a module and fails on the untyped `dataLayer`/`gtag` globals.
+
 ## Content model
 
 - `content` table holds both pages and posts, distinguished by `page_type` (`"page"` renders at `/pages/[slug]`, `"post"` at `/blog/[slug]`). Markdown lives in `content.markdown`; shortcodes (see above) get expanded at render time, not stored expanded.
@@ -77,6 +79,7 @@ This confirms the HTML/CSS/JS came out as expected (and that shortcodes didn't l
 - Prefer `127.0.0.1` over `localhost` — some integrations (OAuth redirect URIs, etc.) require an exact literal match, and `localhost` vs `127.0.0.1` are different origins to a browser even though they resolve to the same place. `dev:astro` runs `astro dev --host 127.0.0.1`, and `.vscode/launch.json` points at `http://127.0.0.1:4321`.
 - `npm run dev:astro` (Astro dev server, fast, hot-reloading) vs `npm run dev` (builds, then `wrangler pages dev dist` — full Cloudflare runtime: D1 bindings, secrets, Cache API, but no hot reload, re-run after each change). Use the latter when testing anything that touches D1, `caches.default`, or `cloudflare:workers` env/secrets, since `astro dev` may not mirror that runtime exactly. (`npm run dev` used to shell out to plain `wrangler dev`, which fails on a Pages project — if you see that error from an old muscle-memory command, this is why.)
 - Secrets for local dev go in `.dev.vars` (gitignored, never commit). Production secrets: `wrangler pages secret put <NAME>`.
+- `/admin` login is gated by hCaptcha (`src/pages/api/auth/login.ts`), verified server-side against `HCAPTCHA_SECRET`. **Gotcha:** if that secret isn't set, verification is skipped entirely (fails open) rather than rejecting the login — this is deliberate so local dev doesn't require an hCaptcha account, but it means captcha protection is silently absent unless the secret is actually configured in that environment. The site key itself isn't a secret; it's hardcoded in `src/pages/admin/index.astro`.
 - No headless browser tooling is set up in this repo (Playwright was deliberately removed — see git history). There's no automated way to screenshot or click-test the app in this environment; visual changes need a human to check in an actual browser.
 
 ## External API calls from shortcodes/pages

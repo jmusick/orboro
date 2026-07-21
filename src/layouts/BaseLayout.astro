@@ -61,6 +61,24 @@ function nodeIcon(node: NavNode): string {
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BLR72SL0L6"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      // send_page_view: false — View Transitions means this script only runs once
+      // per session, so we fire page_view manually on astro:page-load instead
+      // (fires on the initial load and every client-side navigation).
+      gtag("config", "G-BLR72SL0L6", { send_page_view: false });
+      document.addEventListener("astro:page-load", () => {
+        gtag("event", "page_view", {
+          page_location: location.href,
+          page_path: location.pathname,
+          page_title: document.title,
+        });
+      });
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width" />

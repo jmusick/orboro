@@ -13,13 +13,16 @@ Astro + Cloudflare starter for a markdown-first CMS/blog with role-based auth an
 - Astro SSR configured for Cloudflare (`@astrojs/cloudflare`)
 - D1 schema + migrations for users, sessions, content, media, categories, and nav items
 - Initial admin setup flow (`/admin/setup`)
-- Email/password auth with role-based permissions (`admin`, `editor`, `author`)
+- Email/password auth with role-based permissions (`admin`, `editor`, `author`), protected by hCaptcha on login
 - CMS content editor for markdown posts/pages with live preview
+- Shortcode system for rich, self-contained widgets embedded in markdown (e.g. an external bookmarks list, featured-links cards) — see `src/lib/shortcodes.ts` and [AGENTS.md](AGENTS.md)
 - Blog routes (`/blog`, `/blog/[slug]`, `/blog/category/[slug]`)
-- Generic page route (`/pages/[slug]`)
-- Category management with content tagging
+- Generic page route (`/pages/[slug]`), plus a static `/privacy-policy` page
+- Category management with content tagging (`/category/[slug]`)
 - Dynamic navigation builder with unlimited nesting
 - Basic media library records (URL + alt + caption)
+- `sitemap.xml`, `robots.txt`, and SEO meta tags generated from published D1 content
+- Google Analytics (gtag.js), wired into `BaseLayout.astro` with page views tracked manually per Astro View Transitions navigation (see [AGENTS.md](AGENTS.md))
 
 ## Quick Start
 
@@ -97,12 +100,18 @@ Tables:
 - `content_categories`
 - `nav_items`
 
+## Secrets
+
+- `HCAPTCHA_SECRET` — hCaptcha server-side verification secret for `/admin` login. If unset (e.g. local dev), captcha verification is skipped rather than failing closed. Production: `wrangler pages secret put HCAPTCHA_SECRET`. Local dev: add to `.dev.vars`.
+- The hCaptcha site key is not a secret and is hardcoded client-side in `src/pages/admin/index.astro`.
+
 ## Notes
 
 - Content markdown is stored in D1 (`content.markdown`).
 - Media management currently stores metadata and source URLs.
 - To support uploads later, pair this with Cloudflare R2 and add upload endpoints.
 - To support additional content types later, add new values in `content.page_type` and build matching routes.
+- `/privacy-policy` (`src/pages/privacy-policy.astro`) describes what tracking is active. Update it whenever you add, remove, or change a tracking/analytics script.
 
 ## Troubleshooting
 

@@ -2,7 +2,6 @@ import { generateExpeditionRumourSheet } from "./expedition-rumours";
 import { generateAtlasFarmingStrategies } from "./atlas-farming-strategies";
 import { generateBookmarksList } from "./bookmarks";
 import { generatePoe2Featured, generatePoe2Intro } from "./poe2-featured";
-import { generatePneumarisLinks } from "./pneumaris-featured";
 
 type ShortcodeFn = (attrs: Record<string, string>) => string | Promise<string>;
 
@@ -12,7 +11,6 @@ const SHORTCODES: Record<string, ShortcodeFn> = {
   bookmarks: generateBookmarksList,
   poe2_featured: generatePoe2Featured,
   poe2_intro: generatePoe2Intro,
-  pneumaris_links: generatePneumarisLinks,
 };
 
 // Matches {{token}} or {{token attr="value" ...}}. marked wraps a standalone

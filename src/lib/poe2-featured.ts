@@ -66,23 +66,31 @@ export function generatePoe2Featured(): string {
   return `<div id="pf-root"><style>${css}</style><p class="pf-label">On This Site</p><div class="pf-grid">${itemsHtml}</div></div>`;
 }
 
-const INTRO_TEXT =
+const INTRO_PARAGRAPHS = [
   "Path of Exile 2 is Grinding Gear Games' free-to-play action RPG, the sequel to the original " +
-  "Path of Exile — deep skill and passive systems, brutal combat, and an evolving endgame built " +
-  "around the Atlas.";
+    "Path of Exile — deep skill and passive systems, brutal combat, and an evolving endgame built " +
+    "around the Atlas.",
+  "The content here isn't a full guide to the game. It's a small collection of tools, utilities, " +
+    "and reference material I put together for myself while playing — farming strategies, cheat " +
+    "sheets, and useful links — that I figured might be handy for other exiles too.",
+];
 
 export function generatePoe2Intro(): string {
   const css = `
 #pi-root{font-family:inherit;margin:0;}
 #pi-root *{box-sizing:border-box;}
 
-.pi-row{display:flex;gap:1.5rem;align-items:flex-start;margin:1rem 0;}
+.pi-row{display:flex;gap:1.5rem;align-items:center;margin:1rem 0;}
 @media (max-width:700px){.pi-row{flex-direction:column;align-items:stretch;}}
 
 .pi-text{flex:1;margin:0;line-height:1.7;color:var(--text,#e8f3ff);}
+.pi-text p{margin:0 0 1rem;}
+.pi-text p:last-child{margin-bottom:0;}
 
-.pi-link{flex:0 0 400px;display:flex;align-items:center;gap:.9rem;padding:.9rem 1.1rem;border:1px solid var(--line,#1f2b46);border-left:3px solid var(--accent-2,#ff3fb8);border-radius:8px;background:linear-gradient(90deg,rgb(255 63 184 / 6%) 0%,transparent 60%);text-decoration:none;color:var(--text,#e8f3ff);transition:all .18s ease;}
-@media (max-width:700px){.pi-link{flex-basis:auto;}}
+.pi-links{flex:0 0 400px;display:flex;flex-direction:column;gap:.75rem;}
+@media (max-width:700px){.pi-links{flex-basis:auto;}}
+
+.pi-link{display:flex;align-items:center;gap:.9rem;padding:.9rem 1.1rem;border:1px solid var(--line,#1f2b46);border-left:3px solid var(--accent-2,#ff3fb8);border-radius:8px;background:linear-gradient(90deg,rgb(255 63 184 / 6%) 0%,transparent 60%);text-decoration:none;color:var(--text,#e8f3ff);transition:all .18s ease;}
 .pi-link:hover{border-color:var(--accent-2,#ff3fb8);background:linear-gradient(90deg,rgb(255 63 184 / 10%) 0%,transparent 60%);box-shadow:0 0 .8rem rgb(255 63 184 / 15%);}
 
 .pi-icon{color:var(--accent-2,#ff3fb8);flex:none;}
@@ -94,13 +102,21 @@ export function generatePoe2Intro(): string {
   return (
     `<div id="pi-root"><style>${css}</style>` +
     `<div class="pi-row">` +
-    `<p class="pi-text">${esc(INTRO_TEXT)}</p>` +
+    `<div class="pi-text">${INTRO_PARAGRAPHS.map((p) => `<p>${esc(p)}</p>`).join("")}</div>` +
+    `<div class="pi-links">` +
     `<a class="pi-link" href="https://pathofexile2.com" target="_blank" rel="noopener noreferrer">` +
     `<svg class="pi-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">` +
     `<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>` +
     `</svg>` +
     `<span class="pi-title">Visit the Official Path of Exile 2 Site ↗</span>` +
     `</a>` +
+    `<a class="pi-link" href="https://poe.ninja/poe2/profile/XingYuen-3765" target="_blank" rel="noopener noreferrer">` +
+    `<svg class="pi-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">` +
+    `<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>` +
+    `</svg>` +
+    `<span class="pi-title">View My Characters on poe.ninja ↗</span>` +
+    `</a>` +
+    `</div>` +
     `</div>` +
     `</div>`
   );
