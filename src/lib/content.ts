@@ -67,6 +67,20 @@ export async function getPublishedContentByType(
   return (result.results ?? []).map(mapContentRow);
 }
 
+export function excerptFromMarkdown(markdown: string, maxLen = 155): string {
+  const plain = markdown
+    .replace(/```[\s\S]*?```/g, "")
+    .replace(/#{1,6}\s+[^\n]*/g, "")
+    .replace(/!\[.*?\]\(.*?\)/g, "")
+    .replace(/\[(.+?)\]\(.*?\)/g, "$1")
+    .replace(/[*_`~]+/g, "")
+    .replace(/^\s*[-*+>|]\s*/gm, "")
+    .replace(/\n+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  return plain.length > maxLen ? plain.slice(0, maxLen).trimEnd() + "…" : plain;
+}
+
 export async function getPublishedBySlugAndType(
   locals: App.Locals,
   slug: string,

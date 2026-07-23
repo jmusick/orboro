@@ -5,19 +5,21 @@ interface Props {
   title?: string;
   href?: string;
   class?: string;
+  [key: string]: any;
 }
 
 import Icon from './Icon.astro';
 
-const { icon, iconFilled = false, title, href, class: className = '' } = Astro.props;
+const { icon, iconFilled = false, title, href, class: className = '', ...rest } = Astro.props;
 
 const Element = href ? 'a' : 'div';
 const elementProps = href ? { href } : {};
 ---
 
-<Element 
+<Element
   class={`card ${className}`}
   {...elementProps}
+  {...rest}
 >
   {icon && (
     <div class="card__bg-icon" aria-hidden="true">

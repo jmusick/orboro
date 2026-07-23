@@ -784,6 +784,7 @@ function nodeIcon(node: NavNode): string {
         </button>
         <nav id="site-nav">
           <a href="/" class={isActive("/") ? "active" : ""}><Icon name="home" size={15} />Home</a>
+          <a href="/blog" class={isActive("/blog") ? "active" : ""}><Icon name="file-text" size={15} />Blog</a>
           {navTree.map(node => {
             if (node.children.length > 0) {
               return (

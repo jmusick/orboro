@@ -1,49 +1,139 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Card from "../../components/Card.astro";
-import Button from "../../components/Button.astro";
-import { getPublishedContentByType } from "../../lib/content";
+import { getPublishedContentByType, listContentCategoryNames, excerptFromMarkdown } from "../../lib/content";
 
-const posts = await getPublishedContentByType(Astro.locals, "post", 60);
+const posts = await getPublishedContentByType(Astro.locals, "post", 500);
+const categoryNames = await listContentCategoryNames(Astro.locals);
+
+const postCards = posts.map((post) => {
+  const date = post.publishedAt ?? post.createdAt;
+  const categories = categoryNames[post.id] ?? [];
+  const excerpt = excerptFromMarkdown(post.markdown, 140);
+  const dateLabel = new Date(date).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  const search = [post.title, excerpt, ...categories].join(" ").toLowerCase();
+  return { ...post, date, categories, excerpt, dateLabel, search };
+});
 ---
 
 <BaseLayout title="Blog | Orboro.net" description="Latest Orboro posts">
   <section class="blog-header">
-    <div>
-      <h1>Blog</h1>
-      <p class="subtitle">Published posts from the Orboro CMS.</p>
-    </div>
-    <Button href="/admin/content/new" variant="primary" icon="plus">
-      Submit a Post
-    </Button>
+    <h1>Blog</h1>
+    <p class="subtitle">Published posts from the Orboro CMS.</p>
   </section>
 
-  <section class="blog-posts">
-    {posts.length === 0 ? (
-      <div class="empty-state">
-        <p>No posts published yet.</p>
+  {postCards.length === 0 ? (
+    <div class="empty-state">
+      <p>No posts published yet.</p>
+    </div>
+  ) : (
+    <section id="blog-root">
+      <div class="blog-controls">
+        <input
+          id="blog-search"
+          class="blog-search"
+          type="search"
+          placeholder="Search posts…"
+          aria-label="Search posts"
+          autocomplete="off"
+        />
+        <div class="sort-wrap">
+          <label for="blog-sort">Sort</label>
+          <select id="blog-sort" class="blog-sort">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="title-asc">Title A–Z</option>
+            <option value="title-desc">Title Z–A</option>
+          </select>
+        </div>
+        <span id="blog-count" class="blog-count" aria-live="polite">{postCards.length} posts</span>
       </div>
-    ) : (
-      <div class="posts-grid">
-        {posts.map((post) => (
-          <Card href={`/blog/${post.slug}`} icon="file-text" title={post.title} />
+
+      <div id="blog-grid" class="posts-grid">
+        {postCards.map((post) => (
+          <Card
+            href={`/blog/${post.slug}`}
+            icon="file-text"
+            title={post.title}
+            class="post-card"
+            data-title={post.title.toLowerCase()}
+            data-date={post.date}
+            data-search={post.search}
+          >
+            <p class="post-card__meta">
+              {post.dateLabel}
+              {post.categories.length > 0 ? ` · ${post.categories.join(", ")}` : ""}
+            </p>
+            {post.excerpt && <p class="post-card__excerpt">{post.excerpt}</p>}
+          </Card>
         ))}
       </div>
-    )}
-  </section>
+
+      <p id="blog-empty" class="empty-state" hidden>No posts match your search.</p>
+    </section>
+  )}
 </BaseLayout>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var root = document.getElementById('blog-root');
+      if (!root || root.dataset.blogInit) return;
+      root.dataset.blogInit = '1';
+
+      var searchInput = document.getElementById('blog-search');
+      var sortSelect = document.getElementById('blog-sort');
+      var grid = document.getElementById('blog-grid');
+      var emptyState = document.getElementById('blog-empty');
+      var countEl = document.getElementById('blog-count');
+      if (!grid) return;
+
+      var cards = Array.prototype.slice.call(grid.querySelectorAll('.post-card'));
+
+      function apply() {
+        var query = ((searchInput && searchInput.value) || '').trim().toLowerCase();
+        var sort = sortSelect ? sortSelect.value : 'newest';
+
+        var filtered = cards.filter(function (card) {
+          if (!query) return true;
+          return (card.dataset.search || '').indexOf(query) !== -1;
+        });
+
+        filtered.sort(function (a, b) {
+          if (sort === 'oldest') return Number(a.dataset.date) - Number(b.dataset.date);
+          if (sort === 'title-asc') return a.dataset.title.localeCompare(b.dataset.title);
+          if (sort === 'title-desc') return b.dataset.title.localeCompare(a.dataset.title);
+          return Number(b.dataset.date) - Number(a.dataset.date);
+        });
+
+        cards.forEach(function (card) { card.hidden = true; });
+        filtered.forEach(function (card) {
+          card.hidden = false;
+          grid.appendChild(card);
+        });
+
+        if (countEl) countEl.textContent = filtered.length + (filtered.length === 1 ? ' post' : ' posts');
+        if (emptyState) emptyState.hidden = filtered.length !== 0;
+        grid.hidden = filtered.length === 0;
+      }
+
+      if (searchInput) searchInput.addEventListener('input', apply);
+      if (sortSelect) sortSelect.addEventListener('change', apply);
+      apply();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+    document.addEventListener('astro:page-load', init);
+  })();
+</script>
 
 <style>
   .blog-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 2rem;
     margin-bottom: 2rem;
-  }
-
-  .blog-header div {
-    flex: 1;
   }
 
   .blog-header h1 {
@@ -56,10 +146,80 @@ const posts = await getPublishedContentByType(Astro.locals, "post", 60);
     margin: 0;
   }
 
+  .blog-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+
+  .blog-search {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+  }
+
+  .blog-search:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0.6rem rgb(0 229 255 / 18%);
+  }
+
+  .sort-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  .blog-sort {
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .blog-sort:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0.6rem rgb(0 229 255 / 18%);
+  }
+
+  .blog-count {
+    font-size: 0.82rem;
+    color: var(--muted);
+    white-space: nowrap;
+    margin-left: auto;
+  }
+
   .posts-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 1.5rem;
+  }
+
+  .post-card__meta {
+    font-size: 0.82rem;
+    color: var(--accent);
+    margin: 0 0 0.5rem;
+  }
+
+  .post-card__excerpt {
+    margin: 0;
   }
 
   .empty-state {
@@ -69,13 +229,13 @@ const posts = await getPublishedContentByType(Astro.locals, "post", 60);
   }
 
   @media (max-width: 768px) {
-    .blog-header {
+    .blog-controls {
       flex-direction: column;
       align-items: stretch;
     }
 
-    .blog-header :global(a) {
-      width: 100%;
+    .blog-count {
+      margin-left: 0;
     }
 
     .posts-grid {

@@ -1,7 +1,7 @@
 ---
 import { marked } from "marked";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getPublishedBySlugAndType } from "../../lib/content";
+import { getPublishedBySlugAndType, excerptFromMarkdown } from "../../lib/content";
 
 const { slug } = Astro.params;
 if (!slug) {
@@ -17,21 +17,7 @@ const html = (await marked.parse(post.markdown)) as string;
 
 const updated = new Date(post.updatedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
-function descriptionFromMarkdown(md: string, maxLen = 155): string {
-  const plain = md
-    .replace(/```[\s\S]*?```/g, '')
-    .replace(/#{1,6}\s+[^\n]*/g, '')
-    .replace(/!\[.*?\]\(.*?\)/g, '')
-    .replace(/\[(.+?)\]\(.*?\)/g, '$1')
-    .replace(/[*_`~]+/g, '')
-    .replace(/^\s*[-*+>|]\s*/gm, '')
-    .replace(/\n+/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-  return plain.length > maxLen ? plain.slice(0, maxLen).trimEnd() + '…' : plain;
-}
-
-const description = descriptionFromMarkdown(post.markdown);
+const description = excerptFromMarkdown(post.markdown);
 ---
 
 <BaseLayout title={`${post.title} | Orboro.net`} description={description} ogType="article">
