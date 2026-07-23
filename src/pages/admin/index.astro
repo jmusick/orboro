@@ -24,10 +24,7 @@ const error = Astro.url.searchParams.get("error");
 ) : loggedIn ? (
   <AdminLayout title="Dashboard">
     <section>
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
-        <h2 style="margin: 0;">Quick Actions</h2>
-        <Button href="/" variant="secondary" icon="home" iconPosition="left">View Site</Button>
-      </div>
+      <h2 style="margin: 0 0 1.5rem;">Quick Actions</h2>
       <div class="cards-grid">
         <Card icon="plus" title="Create Content" href="/admin/content/new">
           <p>Create a new post, page, or any content type</p>

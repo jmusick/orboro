@@ -16,12 +16,12 @@ Astro + Cloudflare starter for a markdown-first CMS/blog with role-based auth an
 - Email/password auth with role-based permissions (`admin`, `editor`, `author`), protected by hCaptcha on login
 - CMS content editor for markdown posts/pages with live preview
 - Shortcode system for rich, self-contained widgets embedded in markdown (e.g. an external bookmarks list, featured-links cards) — see `src/lib/shortcodes.ts` and [AGENTS.md](AGENTS.md)
-- Blog routes (`/blog`, `/blog/[slug]`, `/blog/category/[slug]`)
+- Blog routes (`/blog`, `/blog/[slug]`, `/blog/category/[slug]`), plus a homepage feed of recent posts
 - Generic page route (`/pages/[slug]`), plus a static `/privacy-policy` page
 - Category management with content tagging (`/category/[slug]`)
 - Dynamic navigation builder with unlimited nesting
 - Basic media library records (URL + alt + caption)
-- `sitemap.xml`, `robots.txt`, and SEO meta tags generated from published D1 content
+- `sitemap.xml` (generated from published D1 content) and SEO meta tags; `robots.txt` is a static file in `public/`
 - Google Analytics (gtag.js), wired into `BaseLayout.astro` with page views tracked manually per Astro View Transitions navigation (see [AGENTS.md](AGENTS.md))
 
 ## Quick Start
