@@ -29,7 +29,7 @@ function esc(s: string): string {
 
 async function fetchBookmarks(tag: string): Promise<TagstashBookmark[]> {
   const url = `https://tagsta.sh/api/profiles/${encodeURIComponent(TAGSTASH_USER)}?tag=${encodeURIComponent(tag)}`;
-  const cache = caches.default;
+  const cache = (caches as CacheStorage & { readonly default: Cache }).default;
   const cacheKey = new Request(url);
 
   let res = await cache.match(cacheKey);

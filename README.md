@@ -64,6 +64,7 @@ npm run dev
 
 - `npm run dev` - Build, then serve via `wrangler pages dev` (full Cloudflare runtime: D1 bindings, Cache API, secrets)
 - `npm run dev:astro` - Run Astro dev server directly (fast, hot-reloading, but doesn't fully mirror the Cloudflare runtime)
+- `npm run check` - Type-check `.astro` and TypeScript files
 - `npm run build` - Production build
 - `npm run preview` - Preview build
 - `npm run astro` - Astro CLI passthrough

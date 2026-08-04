@@ -1,6 +1,6 @@
 import type { APIContext } from "astro";
 
-export function requireUser(context: APIContext | AstroGlobal): UserRecord {
+export function requireUser(context: APIContext): UserRecord {
   const user = context.locals.user;
   if (!user) {
     throw context.redirect("/admin");
@@ -13,7 +13,7 @@ export function hasRole(user: UserRecord, allowed: UserRole[]): boolean {
 }
 
 export function ensureRole(
-  context: APIContext | AstroGlobal,
+  context: APIContext,
   allowed: UserRole[]
 ): UserRecord {
   const user = requireUser(context);
