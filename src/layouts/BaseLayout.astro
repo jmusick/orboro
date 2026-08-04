@@ -35,7 +35,7 @@ function renderDropdownItems(nodes: NavNode[]): string {
     const active = isActive(node.url) ? ' active' : '';
     if (node.children.length > 0) {
       return `<div class="nav-flyout-item">` +
-        `<a href="${esc(node.url)}" class="nav-dropdown-link${active}">${esc(node.label)} <span class="nav-flyout-arrow" aria-hidden="true">›</span></a>` +
+        `<a href="${esc(node.url)}" class="nav-dropdown-link${active}">${esc(node.label)} <span class="nav-flyout-arrow" aria-hidden="true"></span></a>` +
         `<button type="button" class="nav-caret" aria-label="Toggle ${esc(node.label)} submenu" aria-expanded="false"></button>` +
         `<div class="nav-flyout">${renderDropdownItems(node.children)}</div>` +
         `</div>`;
@@ -295,6 +295,10 @@ function nodeIcon(node: NavNode): string {
         .nav-flyout-item:hover > .nav-flyout {
           display: flex;
         }
+        .nav-flyout-item:hover > .nav-dropdown-link .nav-flyout-arrow {
+          transform: rotate(180deg);
+          opacity: 1;
+        }
       }
       /* Any device whose primary input can't hover (phones, tablets,
          touchscreens) needs the tap-driven .nav-caret regardless of
@@ -346,11 +350,19 @@ function nodeIcon(node: NavNode): string {
       }
       .nav-flyout-arrow {
         display: inline-block;
-        font-style: normal;
-        opacity: 0.6;
-        font-size: 1rem;
-        line-height: 1;
+        width: 0;
+        height: 0;
+        border-top: 4px solid transparent;
+        border-bottom: 4px solid transparent;
+        border-left: 4px solid currentColor;
+        margin-left: 0.45rem;
+        opacity: 0.55;
+        transform: rotate(0deg);
+        transition: transform 0.18s ease, opacity 0.18s ease;
+      }
+      .nav-flyout-item.open > .nav-dropdown-link .nav-flyout-arrow {
         transform: rotate(180deg);
+        opacity: 1;
       }
       .nav-flyout {
         display: none;

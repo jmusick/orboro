@@ -102,3 +102,7 @@ if (!res) {
 ```
 
 Always fail gracefully (return a small `<p><em>…</em></p>` fallback, not a thrown error) — these run inline in page content, and a broken shortcode shouldn't 500 the whole page.
+
+**Gotcha — the Cache API cache survives a dev server restart:** Miniflare persists `caches.default` to disk at `.wrangler/state/v3/cache`, not just in memory. Restarting `npm run dev` / `npm run dev:astro` does **not** clear it, so a stale cached response (e.g. from `bookmarks.ts`) can keep serving after the upstream data changed. To force a fresh fetch locally: stop the dev server (it holds the cache's sqlite files open), delete `.wrangler/state/v3/cache/miniflare-CacheObject`, then restart. Waiting out the `Cache-Control: max-age` TTL also works without touching anything.
+
+`bookmarks.ts` also demonstrates a reusable pattern for turning a flat tag list into filterable UI categories: exclude tags via an explicit shortcode attribute (e.g. `exclude_categories="arpg,gaming"`) rather than trying to auto-detect which tags are "shared by everything" — that heuristic breaks the moment one item is missing a tag the rest share.
