@@ -41,7 +41,7 @@ Skipping this means the widget silently does nothing for any visitor who navigat
 ## Content model
 
 - `content` table holds both pages and posts, distinguished by `page_type` (`"page"` renders at `/pages/[slug]`, `"post"` at `/blog/[slug]`). Markdown lives in `content.markdown`; shortcodes (see above) get expanded at render time, not stored expanded.
-- `nav_items` drives the header nav. Each row has `content_id` (what it links to) and an optional `parent_item_id` (self-referencing FK) for one level of dropdown nesting — e.g. the "Path of Exile II" nav item is the parent of "Atlas Farming Strategies", "Expedition Rumours Cheat Sheet", and "Useful POE2 Links". A page doesn't need a `nav_items` row to be reachable at its slug; nav is purely presentational.
+- `nav_items` drives the header nav. Each row has `content_id` (what it links to) and an optional `parent_item_id` (self-referencing FK) for arbitrarily deep dropdown/flyout nesting — e.g. "Path of Exile II" is the parent of "Atlas Farming Strategies", "Expedition Rumours Cheat Sheet", and "Useful POE2 Links"; "Gaming" is in turn the parent of "Path of Exile II" and "Grim Dawn", and "Grim Dawn" is the parent of "Useful Grim Dawn Links" (three levels deep, rendered as nested `.nav-flyout` submenus). A page doesn't need a `nav_items` row to be reachable at its slug; nav is purely presentational.
 - `categories` / `content_categories` are a separate tagging system from nav nesting — used by `/category/[slug]`, not the same thing as the nav dropdown parent/child relationship above. Don't conflate the two when adding a new sub-page.
 
 ## Editing D1 content directly

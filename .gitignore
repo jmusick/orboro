@@ -30,3 +30,5 @@ Thumbs.db
 
 # IDE settings
 .idea/
+.claude/
+.vscode/settings.json

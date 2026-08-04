@@ -15,7 +15,7 @@ const error = Astro.url.searchParams.get("error");
   <BaseLayout title="Create Admin | Orboro.net" description="Initial admin setup">
     <section>
       <h1>Initial Setup</h1>
-      <p>Create the first admin account for this Orboro instance.</p>
+      <p>Create the first admin account for this Orboro.net instance.</p>
       <Button href="/admin/setup" variant="primary">
         Get Started
       </Button>
@@ -39,7 +39,7 @@ const error = Astro.url.searchParams.get("error");
     </section>
   </AdminLayout>
 ) : (
-  <BaseLayout title="Admin Login | Orboro.net" description="Sign in to Orboro CMS">
+  <BaseLayout title="Admin Login | Orboro.net" description="Sign in to Orboro.net CMS">
     <section>
       <h1>Admin Login</h1>
       {error === "captcha"

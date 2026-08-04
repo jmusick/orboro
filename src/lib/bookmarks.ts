@@ -149,7 +149,9 @@ export async function generateBookmarksList(attrs: Record<string, string>): Prom
 .bml-cat--active:hover{color:#04141a;}
 .bml-cat__count{font-size:.72rem;opacity:.75;}
 
-.bml-credit{display:flex;align-items:center;gap:.7rem;margin-bottom:.9rem;padding:.75rem 1rem;border:1px solid rgb(0 229 255 / 25%);border-radius:8px;background:linear-gradient(90deg,rgb(0 229 255 / 8%) 0%,transparent 70%);font-size:.85rem;color:var(--text,#e8f3ff);}
+#bml-root hr.bml-divider{border:none;border-top:1px solid var(--line,#1f2b46);margin:1.25rem 0;}
+
+#bml-root p.bml-credit{display:flex;align-items:center;gap:.7rem;margin:0;padding:.75rem 1rem;border:1px solid rgb(0 229 255 / 25%);border-radius:8px;background:linear-gradient(90deg,rgb(0 229 255 / 8%) 0%,transparent 70%);font-size:.85rem;color:var(--text,#e8f3ff);}
 .bml-credit-icon{flex:none;color:var(--accent,#00e5ff);}
 .bml-credit a{display:inline-flex;align-items:center;gap:.3rem;color:var(--accent,#00e5ff);text-decoration:none;font-weight:700;}
 .bml-credit a:hover{text-decoration:underline;}
@@ -196,5 +198,5 @@ export async function generateBookmarksList(attrs: Record<string, string>): Prom
 
   const script = js ? `<script>${js}<\/script>` : "";
 
-  return `<div id="bml-root"><style>${css}</style>${credit}${categoryChips}<div class="bml-list">${itemsHtml}</div>${script}</div>`;
+  return `<div id="bml-root"><style>${css}</style>${categoryChips}<div class="bml-list">${itemsHtml}</div><hr class="bml-divider" />${credit}${script}</div>`;
 }
