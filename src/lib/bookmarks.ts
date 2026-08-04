@@ -153,6 +153,7 @@ export async function generateBookmarksList(attrs: Record<string, string>): Prom
 
 #bml-root p.bml-credit{display:flex;align-items:center;gap:.7rem;margin:0;padding:.75rem 1rem;border:1px solid rgb(0 229 255 / 25%);border-radius:8px;background:linear-gradient(90deg,rgb(0 229 255 / 8%) 0%,transparent 70%);font-size:.85rem;color:var(--text,#e8f3ff);}
 .bml-credit-icon{flex:none;color:var(--accent,#00e5ff);}
+.bml-credit-text{flex:1 1 auto;min-width:0;}
 .bml-credit a{display:inline-flex;align-items:center;gap:.3rem;color:var(--accent,#00e5ff);text-decoration:none;font-weight:700;}
 .bml-credit a:hover{text-decoration:underline;}
 .bml-credit-favicon{width:16px;height:16px;border-radius:3px;}
@@ -161,10 +162,10 @@ export async function generateBookmarksList(attrs: Record<string, string>): Prom
   const credit =
     `<p class="bml-credit">` +
     `<svg class="bml-credit-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>` +
-    `This list is powered by ` +
+    `<span class="bml-credit-text">This list is powered by ` +
     `<a href="https://tagsta.sh/?utm_source=orboro.net&utm_medium=referral&utm_campaign=bookmarks_credit" target="_blank" rel="noopener noreferrer">` +
     `<img class="bml-credit-favicon" src="https://www.google.com/s2/favicons?sz=64&domain=tagsta.sh" alt="" loading="lazy" referrerpolicy="no-referrer" />Tagstash</a>` +
-    ` — organize and share your own bookmarks, try it out!` +
+    ` — organize and share your own bookmarks, try it out!</span>` +
     `</p>`;
 
   const js = categories.length > 0

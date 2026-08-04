@@ -49,6 +49,7 @@ const version = packageJson.version;
     gap: 0.35rem;
     color: var(--muted);
     text-decoration: none;
+    white-space: nowrap;
     transition: color 0.2s ease;
   }
 
@@ -73,6 +74,13 @@ const version = packageJson.version;
     .version,
     .footer-nav {
       justify-self: center;
+    }
+
+    .footer-nav {
+      flex-wrap: wrap;
+      justify-content: center;
+      row-gap: 0.5rem;
+      column-gap: 1rem;
     }
   }
 </style>

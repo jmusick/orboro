@@ -4,6 +4,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Button from "../components/Button.astro";
 import Icon from "../components/Icon.astro";
 import { getPublishedContentByType, excerptFromMarkdown } from "../lib/content";
+import { fetchRecentTracks, LASTFM_PROFILE_URL } from "../lib/lastfm";
 
 const rawPosts = await getPublishedContentByType(Astro.locals, "post", 8);
 const posts = await Promise.all(rawPosts.map(async (post) => {
@@ -18,6 +19,8 @@ const posts = await Promise.all(rawPosts.map(async (post) => {
 		dateLabel: new Date(date).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
 	};
 }));
+
+const recentTracks = await fetchRecentTracks(7);
 
 const profiles = [
 	{
@@ -65,7 +68,7 @@ const profiles = [
 
 
 <BaseLayout title="Orboro.net" description="Latest posts and gamer profiles from Orboro.net.">
-	<div class="home-layout">
+	<div class={`home-layout ${recentTracks.length === 0 ? "home-layout--no-lastfm" : ""}`}>
 		<section class="feed-section">
 			<div class="feed-header">
 				<h2>Latest Posts</h2>
@@ -89,6 +92,36 @@ const profiles = [
 				</div>
 			)}
 		</section>
+
+		{recentTracks.length > 0 && (
+			<aside class="lastfm-column">
+				<div class="lastfm-header">
+					<h2>Recently Playing</h2>
+					<a class="lastfm-header__link" href={LASTFM_PROFILE_URL} target="_blank" rel="noopener noreferrer">
+						<Icon name="lastfm" size={16} filled={true} />
+						View on Last.fm
+					</a>
+				</div>
+				<div class="lastfm-list">
+					{recentTracks.map((track) => (
+						<a class="lastfm-row" href={track.url} target="_blank" rel="noopener noreferrer">
+							{track.image ? (
+								<img class="lastfm-row__art" src={track.image} alt="" loading="lazy" referrerpolicy="no-referrer" />
+							) : (
+								<span class="lastfm-row__art lastfm-row__art--placeholder" aria-hidden="true">
+									<Icon name="music" size={16} />
+								</span>
+							)}
+							<span class="profile-row__text">
+								<strong>{track.name}</strong>
+								<span>{track.artist}</span>
+							</span>
+							{track.nowPlaying && <span class="lastfm-row__live">Live</span>}
+						</a>
+					))}
+				</div>
+			</aside>
+		)}
 
 		<aside class="profiles-column">
 			<h2>Find Me Elsewhere</h2>
@@ -141,12 +174,112 @@ const profiles = [
 	})();
 </script>
 
+<script is:inline>
+	(function () {
+		var POLL_MS = 60000;
+
+		function init() {
+			var root = document.querySelector('.lastfm-column');
+			if (!root || root.dataset.lastfmInit) return;
+			root.dataset.lastfmInit = '1';
+
+			var list = root.querySelector('.lastfm-list');
+			if (!list) return;
+
+			// Astro's scoped CSS relies on a per-build data-astro-cid-* attribute on
+			// every templated element; elements built here in JS need it too or the
+			// component's styles silently won't match them.
+			var cidAttrName = null;
+			for (var i = 0; i < root.attributes.length; i++) {
+				if (root.attributes[i].name.indexOf('data-astro-cid') === 0) {
+					cidAttrName = root.attributes[i].name;
+					break;
+				}
+			}
+			function tag(el) {
+				if (cidAttrName) el.setAttribute(cidAttrName, '');
+				return el;
+			}
+
+			function buildRow(track) {
+				var a = tag(document.createElement('a'));
+				a.className = 'lastfm-row';
+				a.href = track.url;
+				a.target = '_blank';
+				a.rel = 'noopener noreferrer';
+
+				var art;
+				if (track.image) {
+					art = tag(document.createElement('img'));
+					art.className = 'lastfm-row__art';
+					art.src = track.image;
+					art.alt = '';
+					art.loading = 'lazy';
+					art.referrerPolicy = 'no-referrer';
+				} else {
+					art = tag(document.createElement('span'));
+					art.className = 'lastfm-row__art lastfm-row__art--placeholder';
+					art.setAttribute('aria-hidden', 'true');
+					art.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
+				}
+				a.appendChild(art);
+
+				var textWrap = tag(document.createElement('span'));
+				textWrap.className = 'profile-row__text';
+				var strong = tag(document.createElement('strong'));
+				strong.textContent = track.name;
+				var artistSpan = tag(document.createElement('span'));
+				artistSpan.textContent = track.artist;
+				textWrap.appendChild(strong);
+				textWrap.appendChild(artistSpan);
+				a.appendChild(textWrap);
+
+				if (track.nowPlaying) {
+					var live = tag(document.createElement('span'));
+					live.className = 'lastfm-row__live';
+					live.textContent = 'Live';
+					a.appendChild(live);
+				}
+
+				return a;
+			}
+
+			function poll() {
+				fetch('/api/lastfm/recent-tracks')
+					.then(function (res) { return res.ok ? res.json() : []; })
+					.then(function (tracks) {
+						if (!Array.isArray(tracks) || tracks.length === 0) return;
+						var frag = document.createDocumentFragment();
+						tracks.forEach(function (t) { frag.appendChild(buildRow(t)); });
+						list.innerHTML = '';
+						list.appendChild(frag);
+					})
+					.catch(function () {});
+			}
+
+			var timer = setInterval(poll, POLL_MS);
+			document.addEventListener('astro:before-swap', function () { clearInterval(timer); }, { once: true });
+		}
+
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', init);
+		} else {
+			init();
+		}
+		document.addEventListener('astro:page-load', init);
+	})();
+</script>
+
 <style>
 	.home-layout {
 		display: grid;
-		grid-template-columns: 2fr 1fr;
+		grid-template-columns: 2fr 1fr 1fr;
 		gap: 2.5rem;
 		align-items: start;
+	}
+
+	.home-layout--no-lastfm {
+		grid-template-columns: 2fr 1fr;
 	}
 
 	.feed-header {
@@ -158,7 +291,8 @@ const profiles = [
 	}
 
 	.feed-header h2,
-	.profiles-column h2 {
+	.profiles-column h2,
+	.lastfm-column h2 {
 		margin: 0;
 		font-size: 1.3rem;
 	}
@@ -288,6 +422,94 @@ const profiles = [
 		font-size: 0.85rem;
 	}
 
+	.lastfm-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+		margin-bottom: 1.25rem;
+	}
+
+	.lastfm-header__link {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		color: var(--muted);
+		font-size: 0.82rem;
+		font-weight: 500;
+		text-decoration: none;
+		white-space: nowrap;
+		transition: color 0.2s ease;
+	}
+
+	.lastfm-header__link:hover {
+		color: var(--accent);
+	}
+
+	.lastfm-list {
+		display: flex;
+		flex-direction: column;
+		gap: 0.6rem;
+	}
+
+	.lastfm-row {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 0.6rem 0.75rem;
+		background: linear-gradient(160deg, rgb(12 19 36 / 60%) 0%, rgb(17 26 48 / 60%) 100%);
+		border: 1px solid var(--line);
+		border-radius: 10px;
+		color: inherit;
+		text-decoration: none;
+		transition: all 0.2s ease;
+	}
+
+	.lastfm-row:hover {
+		border-color: var(--accent);
+		box-shadow: 0 0 0.8rem rgb(0 229 255 / 15%);
+	}
+
+	.lastfm-row__art {
+		flex-shrink: 0;
+		width: 32px;
+		height: 32px;
+		border-radius: 6px;
+		object-fit: cover;
+	}
+
+	.lastfm-row__art--placeholder {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: var(--surface);
+		border: 1px solid var(--line);
+		color: var(--accent);
+	}
+
+	.lastfm-row__text {
+		font-size: 0.85rem;
+	}
+
+	.lastfm-row .profile-row__text strong {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.lastfm-row__live {
+		flex-shrink: 0;
+		margin-left: auto;
+		padding: 0.15rem 0.5rem;
+		border-radius: 999px;
+		background: rgb(0 229 255 / 12%);
+		color: var(--accent);
+		font-size: 0.7rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.03em;
+	}
+
 	.profile-row__text strong {
 		font-size: 0.9rem;
 		color: var(--text);
@@ -302,13 +524,19 @@ const profiles = [
 		white-space: nowrap;
 	}
 
-	@media (max-width: 900px) {
+	@media (max-width: 1150px) {
 		.home-layout {
-			grid-template-columns: 1fr;
+			grid-template-columns: 1fr 1fr;
 		}
 
-		.profiles-column {
-			order: -1;
+		.feed-section {
+			grid-column: 1 / -1;
+		}
+	}
+
+	@media (max-width: 700px) {
+		.home-layout {
+			grid-template-columns: 1fr;
 		}
 
 		.profiles-list {

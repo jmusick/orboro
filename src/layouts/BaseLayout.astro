@@ -302,22 +302,6 @@ function nodeIcon(node: NavNode): string {
           opacity: 1;
         }
       }
-      /* Any device whose primary input can't hover (phones, tablets,
-         touchscreens) needs the tap-driven .nav-caret regardless of
-         viewport width — a tablet-width touch device gets neither the
-         hover dropdown above nor the narrow-viewport hamburger nav below. */
-      @media (hover: none), (pointer: coarse) {
-        .nav-caret {
-          display: flex;
-          margin-left: 0.25rem;
-        }
-        .nav-dropdown-wrapper > a::after {
-          content: none;
-        }
-        .nav-flyout-arrow {
-          display: none;
-        }
-      }
       .nav-dropdown-wrapper.open > .nav-dropdown,
       .nav-flyout-item.open > .nav-flyout {
         display: flex;
@@ -380,6 +364,24 @@ function nodeIcon(node: NavNode): string {
         min-width: 180px;
         z-index: 51;
         box-shadow: 0 8px 24px rgb(0 0 0 / 45%);
+      }
+      /* Any device whose primary input can't hover (phones, tablets,
+         touchscreens) needs the tap-driven .nav-caret regardless of
+         viewport width — a tablet-width touch device gets neither the
+         hover dropdown above nor the narrow-viewport hamburger nav below.
+         This must come after the base .nav-caret/.nav-flyout-arrow rules
+         above so its overrides win the cascade regardless of source order. */
+      @media (hover: none), (pointer: coarse) {
+        .nav-caret {
+          display: flex;
+          margin-left: 0.25rem;
+        }
+        .nav-dropdown-wrapper > a::after {
+          content: none;
+        }
+        .nav-flyout-arrow {
+          display: none;
+        }
       }
       .header-banner {
         margin-bottom: 1.2rem;
@@ -465,7 +467,14 @@ function nodeIcon(node: NavNode): string {
         border-top: 1px solid var(--line);
         margin: 2rem 0;
       }
-      @media (max-width: 768px) {
+      /* Below 768px this is the only usable nav layout regardless of input
+         type. Between 768–1024px, touch/coarse-pointer devices (tablets)
+         also get it — the horizontal nav's tap-driven .nav-caret dropdowns
+         don't leave enough room at those widths and wrap into a messy
+         multi-row layout, so fall back to the stacked accordion nav. Wider
+         coarse-pointer devices (e.g. touchscreen desktops) still get the
+         horizontal nav with tap dropdowns. */
+      @media (max-width: 768px), ((pointer: coarse) and (max-width: 1024px)) {
         main {
           padding: 1.5rem;
         }
