@@ -11,7 +11,7 @@ Conventions and gotchas for anyone (human or agent) working on this codebase. Se
 
 ## The shortcode system
 
-Page/post markdown can embed rich, self-contained widgets via `{{token}}` or `{{token attr="value"}}` syntax, processed by `src/lib/shortcodes.ts` after `marked.parse()`. Each shortcode is a hardcoded, page-specific TS module in `src/lib/*.ts` (e.g. `atlas-farming-strategies.ts`, `bookmarks.ts`, `poe2-featured.ts`) that returns a self-contained HTML string with its own inline `<style>` (and `<script>` if interactive), registered in the `SHORTCODES` map in `shortcodes.ts`.
+Page/post markdown can embed rich, self-contained widgets via `{{token}}` or `{{token attr="value"}}` syntax, processed by `src/lib/shortcodes.ts` after `marked.parse()`. Each shortcode is a hardcoded, page-specific TS module in `src/lib/*.ts` (e.g. `atlas-farming-strategies.ts`, `bookmarks.ts`, `poe2-featured.ts`, `wow-featured.ts`) that returns a self-contained HTML string with its own inline `<style>` (and `<script>` if interactive), registered in the `SHORTCODES` map in `shortcodes.ts`.
 
 **Gotcha:** `marked` HTML-escapes quotes in paragraph text before shortcode processing runs, so `{{token attr="value"}}` becomes `{{token attr=&quot;value&quot;}}` in the parsed HTML. The attribute regex in `shortcodes.ts` decodes entities before parsing — don't "simplify" that away.
 
@@ -36,12 +36,24 @@ Page/post markdown can embed rich, self-contained widgets via `{{token}}` or `{{
 
 Skipping this means the widget silently does nothing for any visitor who navigated in via the nav bar instead of a fresh page load — easy to miss when testing by typing the URL directly.
 
+**Gotcha — `.prose` element selectors out-specify your shortcode's classes:** shortcode HTML is injected into `<div class="prose">`, and `BaseLayout.astro` styles bare elements there — `.prose img` (adds `margin: 1rem 0`, a border, and a border-radius), `.prose h2` (adds `margin: 2.5rem 0 0.9rem`, an accent color, and a `border-bottom`), `.prose ul` (adds a `1.35rem` left indent), plus `.prose p`, `.prose li`, and `.prose a`. Those selectors have specificity (0,1,1), so a bare `.my-image` rule at (0,1,0) **loses** and your reset is silently ignored. Scope anything that styles one of those elements with the widget's root id:
+
+```css
+/* loses to .prose img — margin/border still applied */
+.hl-img{margin:0;border:0;}
+
+/* wins */
+#hl-root img.hl-img{margin:0;border:0;border-radius:0;}
+```
+
+The symptom is misleading: unexplained gaps, stray borders, or indentation that looks like a flexbox/layout bug and sends you rewriting the layout instead of the specificity. `bookmarks.ts` (`#bml-root p.bml-credit`, `#bml-root hr.bml-divider`) and `wow-featured.ts` both use this pattern.
+
 **Same gotcha applies to Google Analytics:** the gtag.js snippet in `BaseLayout.astro`'s `<head>` is identical on every page, so Astro's head-diffing persists it across View Transitions rather than re-running it — meaning `gtag('config', ...)`'s automatic page-view fires exactly once per browser session, not on every in-site navigation. The site sets `send_page_view: false` and instead sends `gtag('event', 'page_view', ...)` manually on `astro:page-load` (which fires on the initial load and every subsequent client-side navigation), so don't "simplify" that back to the stock snippet or analytics will undercount navigation. Both `<script>` tags there also need `is:inline` — without it, Astro tries to process/type-check the inline script as a module and fails on the untyped `dataLayer`/`gtag` globals.
 
 ## Content model
 
 - `content` table holds both pages and posts, distinguished by `page_type` (`"page"` renders at `/pages/[slug]`, `"post"` at `/blog/[slug]`). Markdown lives in `content.markdown`; shortcodes (see above) get expanded at render time, not stored expanded.
-- `nav_items` drives the header nav. Each row has `content_id` (what it links to) and an optional `parent_item_id` (self-referencing FK) for arbitrarily deep dropdown/flyout nesting — e.g. "Path of Exile II" is the parent of "Atlas Farming Strategies", "Expedition Rumours Cheat Sheet", and "Useful POE2 Links"; "Gaming" is in turn the parent of "Path of Exile II" and "Grim Dawn", and "Grim Dawn" is the parent of "Useful Grim Dawn Links" (three levels deep, rendered as nested `.nav-flyout` submenus). A page doesn't need a `nav_items` row to be reachable at its slug; nav is purely presentational.
+- `nav_items` drives the header nav. Each row has `content_id` (what it links to) and an optional `parent_item_id` (self-referencing FK) for arbitrarily deep dropdown/flyout nesting — e.g. "Path of Exile II" is the parent of "Atlas Farming Strategies", "Expedition Rumours Cheat Sheet", and "Useful POE2 Links"; "Gaming" is in turn the parent of "Path of Exile II", "Grim Dawn", and "World of Warcraft", each of which parents its own "Useful … Links" page (three levels deep, rendered as nested `.nav-flyout` submenus). A page doesn't need a `nav_items` row to be reachable at its slug; nav is purely presentational.
 - `categories` / `content_categories` are a separate tagging system from nav nesting — used by `/category/[slug]`, not the same thing as the nav dropdown parent/child relationship above. Don't conflate the two when adding a new sub-page.
 
 ## Editing D1 content directly
@@ -84,7 +96,7 @@ This confirms the HTML/CSS/JS came out as expected (and that shortcodes didn't l
 
 ## External API calls from shortcodes/pages
 
-When a shortcode or page fetches an external API server-side (see `bookmarks.ts` for tagsta.sh, or the git history around the Spotify integration that was later removed), cache the response with the Cloudflare Workers Cache API:
+When a shortcode or page fetches an external API server-side (see `bookmarks.ts` for tagsta.sh, or `lastfm.ts` for the homepage recently-played widget), cache the response with the Cloudflare Workers Cache API:
 
 ```js
 const cache = (caches as CacheStorage & { readonly default: Cache }).default;

@@ -17,6 +17,7 @@ Astro + Cloudflare starter for a markdown-first CMS/blog with role-based auth an
 - CMS content editor for markdown posts/pages with live preview
 - Shortcode system for rich, self-contained widgets embedded in markdown (e.g. an external bookmarks list, featured-links cards) — see `src/lib/shortcodes.ts` and [AGENTS.md](AGENTS.md)
 - Blog routes (`/blog`, `/blog/[slug]`, `/blog/category/[slug]`), plus a homepage feed of recent posts
+- Homepage Last.fm widget showing now-playing / recently-played tracks, server-rendered and refreshed client-side via `/api/lastfm/recent-tracks`
 - Generic page route (`/pages/[slug]`), plus a static `/privacy-policy` page
 - Category management with content tagging (`/category/[slug]`)
 - Dynamic navigation builder with unlimited nesting
@@ -105,6 +106,7 @@ Tables:
 
 - `HCAPTCHA_SECRET` — hCaptcha server-side verification secret for `/admin` login. If unset (e.g. local dev), captcha verification is skipped rather than failing closed. Production: `wrangler pages secret put HCAPTCHA_SECRET`. Local dev: add to `.dev.vars`.
 - The hCaptcha site key is not a secret and is hardcoded client-side in `src/pages/admin/index.astro`.
+- `LASTFM_API_KEY` — Last.fm API key for the homepage recently-played widget (`src/lib/lastfm.ts`). If unset, the widget degrades to empty rather than erroring. Production: `wrangler pages secret put LASTFM_API_KEY`. Local dev: add to `.dev.vars`.
 
 ## Notes
 
