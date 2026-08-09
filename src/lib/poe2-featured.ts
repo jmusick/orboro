@@ -68,11 +68,11 @@ export function generatePoe2Featured(): string {
 
 const INTRO_PARAGRAPHS = [
   "Path of Exile 2 is Grinding Gear Games' free-to-play action RPG, the sequel to the original " +
-    "Path of Exile — deep skill and passive systems, brutal combat, and an evolving endgame built " +
+    "Path of Exile: deep skill and passive systems, brutal combat, and an evolving endgame built " +
     "around the Atlas.",
   "The content here isn't a full guide to the game. It's a small collection of tools, utilities, " +
-    "and reference material I put together for myself while playing — farming strategies, cheat " +
-    "sheets, and useful links — that I figured might be handy for other exiles too.",
+    "and reference material I put together for myself while playing (farming strategies, cheat " +
+    "sheets, and useful links) that I figured might be handy for other exiles too.",
 ];
 
 export function generatePoe2Intro(): string {

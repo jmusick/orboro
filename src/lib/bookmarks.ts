@@ -165,7 +165,7 @@ export async function generateBookmarksList(attrs: Record<string, string>): Prom
     `<span class="bml-credit-text">This list is powered by ` +
     `<a href="https://tagsta.sh/?utm_source=orboro.net&utm_medium=referral&utm_campaign=bookmarks_credit" target="_blank" rel="noopener noreferrer">` +
     `<img class="bml-credit-favicon" src="https://www.google.com/s2/favicons?sz=64&domain=tagsta.sh" alt="" loading="lazy" referrerpolicy="no-referrer" />Tagstash</a>` +
-    ` — organize and share your own bookmarks, try it out!</span>` +
+    `, organize and share your own bookmarks, try it out!</span>` +
     `</p>`;
 
   const js = categories.length > 0

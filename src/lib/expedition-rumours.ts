@@ -137,16 +137,16 @@ export function generateExpeditionRumourSheet(): string {
       var badMap=cards.find(function(c){return c.dataset.type==='Unique Map'&&c.dataset.id!=='fallen-skies';});
       if(boss){
         status='danger';icon='✗';main="Don't use Aldur's Saga";
-        sub='Boss encounter present ('+boss.dataset.name+') — Aldur\\'s may alter or remove the boss node';
+        sub='Boss encounter present ('+boss.dataset.name+'): Aldur\\'s may alter or remove the boss node';
       } else if(badMap){
         status='danger';icon='✗';main="Don't use Aldur's Saga";
-        sub='Unique Map present ('+badMap.dataset.name+') — Fallen Skies is the only safe Unique Map';
+        sub='Unique Map present ('+badMap.dataset.name+'): Fallen Skies is the only safe Unique Map';
       } else if(count<3){
         status='warn';icon='⚠';main="Don't use Aldur's Saga";
-        sub='Only '+count+' rumour'+(count===1?'':'s')+' selected — need at least 3 (less content otherwise)';
+        sub='Only '+count+' rumour'+(count===1?'':'s')+' selected: need at least 3 (less content otherwise)';
       } else {
         status='safe';icon='✓';main="Safe to use Aldur's Saga!";
-        sub=count+' rumour'+(count===1?'':'s')+' — no boss, no problematic unique map';
+        sub=count+' rumour'+(count===1?'':'s')+', no boss, no problematic unique map';
       }
     }
     verdict.className='ers-verdict ers-verdict--'+status;

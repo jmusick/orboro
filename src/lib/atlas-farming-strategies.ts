@@ -631,7 +631,7 @@ function renderAtlasTreeImage(s: Strategy): string {
 
 function renderStrategyBody(s: Strategy): string {
   if (s.tier === "F" && !s.notes && !s.waystone && !s.tablets && !s.steps) {
-    return `<div class="afs-empty">No detailed strategy guide has been published for this yet — check back later.</div>`;
+    return `<div class="afs-empty">No detailed strategy guide has been published for this yet. Check back later.</div>`;
   }
 
   const linkRow = renderLinkRow([s.video, s.guide, s.atlasTree]);
@@ -680,10 +680,10 @@ function renderAccordionItem(s: Strategy): string {
     `</span>` +
     (s.recommendedBy ? `<span class="afs-item__by" title="Atlas Master used for this strategy">${esc(s.recommendedBy)}</span>` : "") +
     (s.difficulty
-      ? `<span class="afs-item__mini" title="Difficulty: ${s.difficulty}/5 — how tricky the strategy is to execute"><span class="afs-item__mini-label">Diff</span>${starRating(s.difficulty, "★", "☆")}</span>`
+      ? `<span class="afs-item__mini" title="Difficulty: ${s.difficulty}/5, how tricky the strategy is to execute"><span class="afs-item__mini-label">Diff</span>${starRating(s.difficulty, "★", "☆")}</span>`
       : "") +
     (s.investment
-      ? `<span class="afs-item__mini afs-item__mini--investment" title="Investment: ${s.investment}/5 — how much currency it costs to run"><span class="afs-item__mini-label">Inv</span>${starRating(s.investment, "✦", "✧")}</span>`
+      ? `<span class="afs-item__mini afs-item__mini--investment" title="Investment: ${s.investment}/5, how much currency it costs to run"><span class="afs-item__mini-label">Inv</span>${starRating(s.investment, "✦", "✧")}</span>`
       : "") +
     (!hasContent ? `<span class="afs-item__soon">No guide yet</span>` : "") +
     `<span class="afs-item__chevron" aria-hidden="true">▾</span>` +
@@ -870,8 +870,8 @@ export function generateAtlasFarmingStrategies(): string {
     `<p>A tier list of the best currency farming strategies for Path of Exile 2's 0.5 update, ranked S to F. Click a strategy below to see its waystone setup, tablets, Atlas Tree, and notes.</p>` +
     `<div class="afs-tierlist">${tierRows}</div>` +
     `<div class="afs-legend">` +
-    `<span class="afs-legend__item"><span class="afs-legend__icon">★★★☆☆</span><span class="afs-legend__text"><strong>Difficulty</strong> — more stars = trickier to execute</span></span>` +
-    `<span class="afs-legend__item"><span class="afs-legend__icon">✦✦✦✧✧</span><span class="afs-legend__text"><strong>Investment</strong> — more diamonds = more currency to run</span></span>` +
+    `<span class="afs-legend__item"><span class="afs-legend__icon">★★★☆☆</span><span class="afs-legend__text"><strong>Difficulty</strong>: more stars = trickier to execute</span></span>` +
+    `<span class="afs-legend__item"><span class="afs-legend__icon">✦✦✦✧✧</span><span class="afs-legend__text"><strong>Investment</strong>: more diamonds = more currency to run</span></span>` +
     `</div>` +
     `<div class="afs-toolbar">` +
     `<button type="button" class="afs-toolbtn" id="afs-expand-all">Expand all</button>` +
@@ -880,7 +880,7 @@ export function generateAtlasFarmingStrategies(): string {
     `<div class="afs-list">${accordionItems}</div>` +
     `<script>${js}<\/script>` +
     `<div class="afs-meta">` +
-    `<span class="afs-credit">Tier list &amp; strategies by <a href="https://maxroll.gg/@bawloch" target="_blank" rel="noopener">BawLoch</a> — <a href="http://discord.gg/xq6FtCVRse" target="_blank" rel="noopener">Discord</a> · <a href="https://www.youtube.com/@BawLoch" target="_blank" rel="noopener">YouTube</a> · <a href="https://www.twitch.tv/bawlochs" target="_blank" rel="noopener">Twitch</a></span>` +
+    `<span class="afs-credit">Tier list &amp; strategies by <a href="https://maxroll.gg/@bawloch" target="_blank" rel="noopener">BawLoch</a> · <a href="http://discord.gg/xq6FtCVRse" target="_blank" rel="noopener">Discord</a> · <a href="https://www.youtube.com/@BawLoch" target="_blank" rel="noopener">YouTube</a> · <a href="https://www.twitch.tv/bawlochs" target="_blank" rel="noopener">Twitch</a></span>` +
     `</div>` +
     `</div>`
   );
