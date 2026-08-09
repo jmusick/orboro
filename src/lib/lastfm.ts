@@ -62,7 +62,19 @@ export async function fetchRecentTracks(limit = 5): Promise<LastfmTrack[]> {
     // Last.fm's "limit" excludes an in-progress now-playing track, so a request
     // for N can come back with N+1 entries while something's live. Slice back
     // down so callers always get a stable count to lay out against.
-    const tracks = (data.recenttracks?.track ?? []).slice(0, limit);
+    const rawTracks = data.recenttracks?.track ?? [];
+    // When a track is playing, Last.fm returns it as a dateless "now playing"
+    // entry, but once it's also been scrobbled the same track shows again as
+    // the first history entry — producing a visible duplicate. Drop that
+    // trailing repeat.
+    const nowPlaying = rawTracks[0]?.["@attr"]?.nowplaying === "true";
+    const isSameTrack = (a: LastfmApiTrack, b: LastfmApiTrack) =>
+      a.name === b.name && a.artist["#text"] === b.artist["#text"];
+    const deduped =
+      nowPlaying && rawTracks.length > 1 && isSameTrack(rawTracks[0], rawTracks[1])
+        ? [rawTracks[0], ...rawTracks.slice(2)]
+        : rawTracks;
+    const tracks = deduped.slice(0, limit);
     return tracks.map((t) => {
       const image =
         t.image?.find((i) => i.size === "large")?.["#text"] ||

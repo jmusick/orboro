@@ -27,7 +27,7 @@ const RESEARCHED_AT = "2026-08-06";
 const repoRoot = path.resolve(import.meta.dirname, "..");
 const researchRoot =
   process.env.ASSISTED_COMBAT_RESEARCH_ROOT
-  ?? "C:/Users/JD/.codex/visualizations/2026/08/06/019fd824-1d08-7433-a5a5-ebe2031538c8";
+  ?? "C:/Users/JD/Projects/orboro/games/world-of-warcraft/assisted-combat/source-snapshot/2026-08-06";
 const vaultRoot =
   process.env.ASSISTED_COMBAT_VAULT_ROOT
   ?? "C:/Users/JD/Vault/Research/Games/World of Warcraft/Assisted Combat";
