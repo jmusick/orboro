@@ -7,10 +7,10 @@ function esc(s: string): string {
 }
 
 const INTRO_PARAGRAPHS = [
-  "World of Warcraft is Blizzard Entertainment's long-running MMORPG — two decades of expansions " +
+  "World of Warcraft is Blizzard Entertainment's long-running MMORPG, two decades of expansions " +
     "built around questing, dungeons, raids, and a persistent world shared with millions of other players.",
-  "The content here isn't a full guide to the game. It's a small collection of useful links I've " +
-    "gathered while playing, plus a look at The Hidden Lodge, the raiding guild I run with.",
+  "The content here isn't a full guide to the game. It's a small collection of research and useful " +
+    "links I've gathered while playing, plus a look at The Hidden Lodge, the raiding guild I run with.",
 ];
 
 export function generateWowIntro(): string {
@@ -48,16 +48,73 @@ export function generateWowIntro(): string {
     `</svg>` +
     `<span class="wi-title">Visit the Official World of Warcraft Site ↗</span>` +
     `</a>` +
-    `<a class="wi-link" href="/pages/useful-wow-links">` +
+    `<a class="wi-link" href="https://worldofwarcraft.blizzard.com/en-us/news" target="_blank" rel="noopener noreferrer">` +
     `<svg class="wi-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">` +
-    `<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>` +
+    `<path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/>` +
     `</svg>` +
-    `<span class="wi-title">Useful WoW Links</span>` +
+    `<span class="wi-title">Official WoW News ↗</span>` +
     `</a>` +
     `</div>` +
     `</div>` +
     `</div>`
   );
+}
+
+interface FeaturedItem {
+  title: string;
+  description: string;
+  href: string;
+  iconSvg: string;
+}
+
+const FEATURED_ITEMS: FeaturedItem[] = [
+  {
+    title: "Assisted Combat Analysis",
+    description:
+      "Blizzard's built-in rotation priority list for every specialization, pulled straight from the game's data "
+      + "and compared against SimulationCraft and Icy Veins.",
+    href: "/pages/assisted-combat-analysis",
+    iconSvg: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+  },
+  {
+    title: "Useful WoW Links",
+    description: "A running list of bookmarked tools, trackers, and resources for World of Warcraft.",
+    href: "/pages/useful-wow-links",
+    iconSvg: '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>',
+  },
+];
+
+export function generateWowFeatured(): string {
+  const itemsHtml = FEATURED_ITEMS.map((item) => (
+    `<a class="wf-card" href="${esc(item.href)}">` +
+    `<svg class="wf-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${item.iconSvg}</svg>` +
+    `<span class="wf-title">${esc(item.title)}</span>` +
+    `<span class="wf-desc">${esc(item.description)}</span>` +
+    `</a>`
+  )).join("");
+
+  // Every rule is scoped by #wf-root: `.prose p` and `.prose a` in BaseLayout
+  // are (0,1,1) and would otherwise beat bare classes, overriding the label's
+  // margin and repainting the card text accent-blue with a hover underline.
+  const css = `
+#wf-root{font-family:inherit;margin:0;}
+#wf-root *{box-sizing:border-box;}
+
+#wf-root p.wf-label{margin:1.5rem 0 .6rem;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#97a8c4);}
+
+#wf-root .wf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin:0;}
+@media (max-width:640px){#wf-root .wf-grid{grid-template-columns:1fr;}}
+
+#wf-root a.wf-card{display:flex;flex-direction:column;gap:.6rem;min-width:0;padding:1.1rem;border:1px solid var(--line,#1f2b46);border-radius:12px;background:linear-gradient(160deg,rgb(12 19 36 / 60%) 0%,rgb(17 26 48 / 60%) 100%);color:var(--text,#e8f3ff);text-decoration:none;transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease;}
+#wf-root a.wf-card:hover{border-color:var(--accent-2,#ff3fb8);box-shadow:0 0 1rem rgb(255 63 184 / 15%);transform:translateY(-2px);text-decoration:none;}
+#wf-root a.wf-card:focus-visible{outline:2px solid var(--accent-2,#ff3fb8);outline-offset:2px;}
+
+#wf-root .wf-icon{color:var(--accent-2,#ff3fb8);flex:none;}
+#wf-root .wf-title{font-weight:600;font-size:1rem;}
+#wf-root .wf-desc{color:var(--muted,#97a8c4);font-size:.85rem;line-height:1.5;}
+`;
+
+  return `<div id="wf-root"><style>${css}</style><p class="wf-label">On This Site</p><div class="wf-grid">${itemsHtml}</div></div>`;
 }
 
 const HIDDEN_LODGE_FACTS: { label: string; value: string }[] = [
@@ -105,12 +162,12 @@ export function generateHiddenLodgeFeature(): string {
     `<div id="hl-root"><style>${css}</style>` +
     `<div class="hl-card">` +
     `<div class="hl-media">` +
-    `<img class="hl-img" src="/images/hidden-lodge-header.webp" alt="The Hidden Lodge — For Azeroth. For The Hidden Lodge." loading="lazy" />` +
+    `<img class="hl-img" src="/images/hidden-lodge-header.webp" alt="The Hidden Lodge banner: For Azeroth. For The Hidden Lodge." loading="lazy" />` +
     `</div>` +
     `<div class="hl-body">` +
     `<h2 class="hl-title">The Hidden Lodge</h2>` +
     `<p class="hl-tagline">For Azeroth. For The Hidden Lodge.</p>` +
-    `<p class="hl-desc">The Hidden Lodge is the raiding guild I run with — a semi-hardcore crew on Illidan (US) ` +
+    `<p class="hl-desc">The Hidden Lodge is the raiding guild I run with, a semi-hardcore crew on Illidan (US) ` +
     `focused on getting Ahead of the Curve each tier before pushing into Mythic progression. We take the game ` +
     `seriously without turning raid night into a second job: lock in during pulls, joke around the rest of the time.</p>` +
     `<ul class="hl-facts">${factsHtml}</ul>` +

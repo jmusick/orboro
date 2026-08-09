@@ -16,6 +16,13 @@ const updated = new Date(page.updatedAt).toLocaleDateString("en-US", { year: "nu
 function descriptionFromMarkdown(md: string, maxLen = 155): string {
   const plain = md
     .replace(/```[\s\S]*?```/g, '')
+    // Shortcode tokens are widget placeholders, not prose. Without this a
+    // shortcode-only page ends up with "{{atlasfarmingstrategies}}" as its
+    // meta description (the underscores get eaten by the emphasis strip).
+    .replace(/\{\{\w+[^}]*\}\}/g, '')
+    // Markdown may contain raw HTML (the About page opens with an <img>), and
+    // an unstripped tag ends up escaped into the meta description verbatim.
+    .replace(/<[^>]+>/g, ' ')
     .replace(/#{1,6}\s+[^\n]*/g, '')
     .replace(/!\[.*?\]\(.*?\)/g, '')
     .replace(/\[(.+?)\]\(.*?\)/g, '$1')
@@ -27,7 +34,7 @@ function descriptionFromMarkdown(md: string, maxLen = 155): string {
   return plain.length > maxLen ? plain.slice(0, maxLen).trimEnd() + '…' : plain;
 }
 
-const description = descriptionFromMarkdown(page.markdown);
+const description = descriptionFromMarkdown(page.markdown) || `${page.title} on Orboro.net.`;
 ---
 
 <BaseLayout title={`${page.title} | Orboro.net`} description={description} ogType="article">
