@@ -4,6 +4,7 @@ import { generateBookmarksList } from "./bookmarks";
 import { generatePoe2Featured, generatePoe2Intro } from "./poe2-featured";
 import { generateWowIntro, generateWowFeatured, generateHiddenLodgeFeature } from "./wow-featured";
 import { generateAssistedCombatAnalysis } from "./assisted-combat-analysis";
+import { generateMidnightSheetLink, generateMidnightTierList } from "./midnight-tier-list";
 
 type ShortcodeFn = (attrs: Record<string, string>) => string | Promise<string>;
 
@@ -17,6 +18,8 @@ const SHORTCODES: Record<string, ShortcodeFn> = {
   wow_featured: generateWowFeatured,
   hidden_lodge_feature: generateHiddenLodgeFeature,
   assisted_combat_analysis: generateAssistedCombatAnalysis,
+  midnight_tier_list: generateMidnightTierList,
+  midnight_sheet_link: generateMidnightSheetLink,
 };
 
 // Matches {{token}} or {{token attr="value" ...}}. marked wraps a standalone

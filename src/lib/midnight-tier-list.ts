@@ -1,0 +1,202 @@
+import specIcons from "./assisted-combat-spec-icons.json";
+
+type Tier = "S" | "A" | "B" | "C" | "D";
+
+interface SpecScore {
+  specId: number;
+  name: string;
+  score: number;
+}
+
+type TierBoard = Record<Tier, SpecScore[]>;
+
+const TIER_ORDER: Tier[] = ["S", "A", "B", "C", "D"];
+
+const RESEARCH_SHEET_URL =
+  "https://docs.google.com/spreadsheets/d/1_XGdJ0u2Kkfwl7mBGQd2teCUfgYSE_bTN3d9gQIDFyY/edit?usp=sharing";
+
+const BOARDS: Record<string, { label: string; tiers: TierBoard }> = {
+  tanks: {
+    label: "Tank",
+    tiers: {
+      S: [{ specId: 250, name: "Blood Death Knight", score: 86.0 }],
+      A: [{ specId: 66, name: "Protection Paladin", score: 65.9 }],
+      B: [
+        { specId: 104, name: "Guardian Druid", score: 45.2 },
+        { specId: 73, name: "Protection Warrior", score: 41.5 },
+        { specId: 581, name: "Vengeance Demon Hunter", score: 41.5 },
+      ],
+      C: [{ specId: 268, name: "Brewmaster Monk", score: 20.1 }],
+      D: [],
+    },
+  },
+  healers: {
+    label: "Healer",
+    tiers: {
+      S: [
+        { specId: 65, name: "Holy Paladin", score: 87.4 },
+        { specId: 264, name: "Restoration Shaman", score: 80.3 },
+      ],
+      A: [],
+      B: [{ specId: 270, name: "Mistweaver Monk", score: 55.7 }],
+      C: [
+        { specId: 256, name: "Discipline Priest", score: 38.7 },
+        { specId: 1468, name: "Preservation Evoker", score: 35.9 },
+        { specId: 105, name: "Restoration Druid", score: 28.4 },
+      ],
+      D: [{ specId: 257, name: "Holy Priest", score: 10.3 }],
+    },
+  },
+  dps: {
+    label: "DPS",
+    tiers: {
+      S: [
+        { specId: 71, name: "Arms Warrior", score: 95.6 },
+        { specId: 62, name: "Arcane Mage", score: 94.7 },
+        { specId: 262, name: "Elemental Shaman", score: 85.1 },
+        { specId: 251, name: "Frost Death Knight", score: 81.2 },
+      ],
+      A: [
+        { specId: 1480, name: "Devourer Demon Hunter", score: 78.8 },
+        { specId: 102, name: "Balance Druid", score: 71.9 },
+        { specId: 260, name: "Outlaw Rogue", score: 65.3 },
+      ],
+      B: [
+        { specId: 269, name: "Windwalker Monk", score: 57.2 },
+        { specId: 259, name: "Assassination Rogue", score: 54.6 },
+        { specId: 252, name: "Unholy Death Knight", score: 52.6 },
+        { specId: 577, name: "Havoc Demon Hunter", score: 50.0 },
+        { specId: 267, name: "Destruction Warlock", score: 47.6 },
+        { specId: 254, name: "Marksmanship Hunter", score: 47.5 },
+        { specId: 265, name: "Affliction Warlock", score: 43.1 },
+        { specId: 266, name: "Demonology Warlock", score: 43.1 },
+        { specId: 1473, name: "Augmentation Evoker", score: 42.5 },
+        { specId: 70, name: "Retribution Paladin", score: 41.6 },
+        { specId: 263, name: "Enhancement Shaman", score: 40.1 },
+      ],
+      C: [
+        { specId: 103, name: "Feral Druid", score: 36.3 },
+        { specId: 258, name: "Shadow Priest", score: 34.1 },
+        { specId: 63, name: "Fire Mage", score: 33.0 },
+        { specId: 64, name: "Frost Mage", score: 30.2 },
+        { specId: 253, name: "Beast Mastery Hunter", score: 30.2 },
+        { specId: 255, name: "Survival Hunter", score: 29.1 },
+        { specId: 261, name: "Subtlety Rogue", score: 24.4 },
+      ],
+      D: [
+        { specId: 1467, name: "Devastation Evoker", score: 15.0 },
+        { specId: 72, name: "Fury Warrior", score: 10.9 },
+      ],
+    },
+  },
+};
+
+function esc(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function renderSpec(spec: SpecScore): string {
+  const icon = (specIcons as Record<string, string>)[String(spec.specId)];
+  const iconMarkup = icon
+    ? `<img class="mtl-spec-icon" src="/images/wow-spec-icons/${esc(icon)}.jpg" alt="" width="34" height="34" loading="lazy" decoding="async">`
+    : "";
+
+  return (
+    `<span class="mtl-spec">` +
+    `<span class="mtl-spec-main">${iconMarkup}<span class="mtl-spec-name">${esc(spec.name)}</span></span>` +
+    `<span class="mtl-score" aria-label="Score ${spec.score.toFixed(1)}">${spec.score.toFixed(1)}</span>` +
+    `</span>`
+  );
+}
+
+export function generateMidnightSheetLink(): string {
+  const css = `
+#mts-root{margin:1.25rem 0 1.75rem;font-family:inherit;}
+#mts-root *{box-sizing:border-box;}
+#mts-root a.mts-link{display:flex;align-items:center;gap:1rem;width:100%;padding:1rem 1.1rem;border:1px solid rgb(0 229 255 / 35%);border-left:4px solid var(--accent,#00e5ff);border-radius:11px;background:linear-gradient(100deg,rgb(0 229 255 / 10%),rgb(17 26 48 / 72%) 62%);color:var(--text,#e8f3ff);text-decoration:none;box-shadow:0 4px 16px rgb(0 0 0 / 14%);transition:border-color .18s,box-shadow .18s,transform .18s;}
+#mts-root a.mts-link:hover{border-color:var(--accent,#00e5ff);box-shadow:0 5px 20px rgb(0 229 255 / 13%);transform:translateY(-1px);text-decoration:none;}
+#mts-root a.mts-link:focus-visible{outline:2px solid var(--accent,#00e5ff);outline-offset:3px;}
+#mts-root .mts-icon{display:grid;place-items:center;flex:0 0 auto;width:2.65rem;height:2.65rem;border:1px solid rgb(0 229 255 / 28%);border-radius:9px;background:rgb(0 229 255 / 8%);color:var(--accent,#00e5ff);}
+#mts-root .mts-copy{display:flex;flex:1;flex-direction:column;gap:.2rem;min-width:0;}
+#mts-root .mts-eyebrow{color:var(--accent,#00e5ff);font-size:.68rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;}
+#mts-root .mts-title{font-size:1rem;font-weight:800;line-height:1.25;color:var(--text,#e8f3ff);}
+#mts-root .mts-note{color:var(--muted,#97a8c4);font-size:.78rem;line-height:1.35;}
+#mts-root .mts-external{display:inline-flex;align-items:center;gap:.35rem;flex:0 0 auto;padding:.42rem .62rem;border:1px solid rgb(0 229 255 / 24%);border-radius:999px;background:rgb(0 229 255 / 6%);color:var(--accent,#00e5ff);font-size:.72rem;font-weight:750;white-space:nowrap;}
+@media (max-width:560px){
+  #mts-root a.mts-link{align-items:flex-start;gap:.75rem;padding:.9rem;}
+  #mts-root .mts-icon{width:2.35rem;height:2.35rem;}
+  #mts-root .mts-external{display:none;}
+}
+`;
+
+  return (
+    `<div id="mts-root"><style>${css}</style>` +
+    `<a class="mts-link" href="${RESEARCH_SHEET_URL}" target="_blank" rel="noopener noreferrer" aria-label="Open the complete tier-list research workbook in Google Sheets in a new tab">` +
+    `<span class="mts-icon" aria-hidden="true">` +
+    `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3h7v7"/><path d="M10 14 21 3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg>` +
+    `</span>` +
+    `<span class="mts-copy">` +
+    `<span class="mts-eyebrow">Full research data</span>` +
+    `<span class="mts-title">View the complete tier-list workbook in Google Sheets</span>` +
+    `<span class="mts-note">Raw placements, normalized scores, source dates, weights, and evidence links. Opens in a new tab.</span>` +
+    `</span>` +
+    `<span class="mts-external" aria-hidden="true">External link ↗</span>` +
+    `</a></div>`
+  );
+}
+
+export function generateMidnightTierList(attrs: Record<string, string>): string {
+  const roleKey = (attrs.role ?? "").trim().toLowerCase();
+  const board = BOARDS[roleKey];
+  if (!board) return `<p><em>Unknown tier-list role.</em></p>`;
+  const scopeId = esc(roleKey);
+
+  const rows = TIER_ORDER.map((tier) => {
+    const specs = board.tiers[tier];
+    const contents = specs.length
+      ? specs.map(renderSpec).join("")
+      : `<span class="mtl-empty">No specs</span>`;
+
+    return (
+      `<div class="mtl-row mtl-${tier.toLowerCase()}" role="row">` +
+      `<div class="mtl-tier" role="rowheader" aria-label="${tier} tier">${tier}</div>` +
+      `<div class="mtl-specs" role="cell">${contents}</div>` +
+      `</div>`
+    );
+  }).join("");
+
+  const css = `
+#mtl-${scopeId}{margin:1rem 0 2rem;font-family:inherit;}
+#mtl-${scopeId} *{box-sizing:border-box;}
+#mtl-${scopeId}.mtl-board{display:flex;flex-direction:column;gap:.45rem;}
+#mtl-${scopeId} .mtl-row{display:grid;grid-template-columns:4.25rem minmax(0,1fr);min-height:4.25rem;border:1px solid var(--line,#1f2b46);border-radius:10px;overflow:hidden;background:rgb(12 19 36 / 72%);}
+#mtl-${scopeId} .mtl-tier{display:flex;align-items:center;justify-content:center;font-size:1.65rem;font-weight:900;line-height:1;color:#101522;text-shadow:0 1px rgb(255 255 255 / 18%);}
+#mtl-${scopeId} .mtl-s .mtl-tier{background:#ff6b6b;}
+#mtl-${scopeId} .mtl-a .mtl-tier{background:#ffad66;}
+#mtl-${scopeId} .mtl-b .mtl-tier{background:#ffd966;}
+#mtl-${scopeId} .mtl-c .mtl-tier{background:#8bd17c;}
+#mtl-${scopeId} .mtl-d .mtl-tier{background:#72b7e8;}
+#mtl-${scopeId} .mtl-specs{display:flex;flex-wrap:wrap;align-items:center;gap:.55rem;padding:.65rem;min-width:0;}
+#mtl-${scopeId} .mtl-spec{display:inline-flex;align-items:center;gap:.6rem;min-height:2.9rem;padding:.35rem .5rem .35rem .4rem;border:1px solid var(--line,#1f2b46);border-radius:8px;background:var(--surface,#111a30);box-shadow:0 2px 7px rgb(0 0 0 / 18%);color:var(--text,#e8f3ff);}
+#mtl-${scopeId} .mtl-spec-main{display:inline-flex;align-items:center;gap:.55rem;min-width:0;}
+#mtl-${scopeId} img.mtl-spec-icon{display:block;flex:0 0 auto;width:2.125rem;height:2.125rem;margin:0;max-width:none;border:1px solid rgb(255 255 255 / 14%);border-radius:6px;object-fit:cover;box-shadow:0 1px 5px rgb(0 0 0 / 32%);}
+#mtl-${scopeId} .mtl-spec-name{font-size:.84rem;font-weight:650;line-height:1.2;}
+#mtl-${scopeId} .mtl-score{display:inline-flex;align-items:center;justify-content:center;min-width:2.7rem;padding:.2rem .38rem;border-radius:5px;background:rgb(255 255 255 / 7%);color:var(--muted,#97a8c4);font-size:.72rem;font-variant-numeric:tabular-nums;}
+#mtl-${scopeId} .mtl-empty{color:var(--muted,#97a8c4);font-size:.8rem;font-style:italic;}
+@media (max-width:560px){
+  #mtl-${scopeId} .mtl-row{grid-template-columns:3.25rem minmax(0,1fr);min-height:3.75rem;}
+  #mtl-${scopeId} .mtl-tier{font-size:1.35rem;}
+  #mtl-${scopeId} .mtl-specs{gap:.4rem;padding:.5rem;}
+  #mtl-${scopeId} .mtl-spec{width:100%;justify-content:space-between;}
+}
+`;
+
+  return (
+    `<div id="mtl-${scopeId}" class="mtl-board" role="table" aria-label="${esc(board.label)} weighted aggregate tier list">` +
+    `<style>${css}</style>${rows}</div>`
+  );
+}
