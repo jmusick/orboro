@@ -73,7 +73,7 @@ const structuredData = {
   dateModified: updatedIso,
   mainEntityOfPage: { "@type": "WebPage", "@id": canonicalUrl },
   ...(absoluteImageUrl ? { image: [absoluteImageUrl] } : {}),
-  author: { "@type": "Organization", name: "Orboro.net" },
+  author: { "@type": "Person", name: "JD" },
   publisher: {
     "@type": "Organization",
     name: "Orboro.net",
@@ -92,7 +92,7 @@ const structuredData = {
   <div class="post-layout">
     <article>
       <h1>{post.title}</h1>
-      <p class="meta">By Orboro.net · Updated {updated} · {readingMinutes} min read</p>
+      <p class="meta">By JD · Updated {updated} · {readingMinutes} min read</p>
       {post.featuredImageUrl && (
         <img class="hero" src={post.featuredImageUrl} alt="" />
       )}
