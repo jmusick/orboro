@@ -826,7 +826,6 @@ function nodeIcon(node: NavNode): string {
             }
             return <a href={node.url} class={isActive(node.url) ? "active" : ""}><Icon name={nodeIcon(node)} size={15} />{node.label}</a>;
           })}
-          <a href="https://www.patreon.com/cw/Orboro" target="_blank" rel="noopener noreferrer"><Icon name="patreon" size={15} filled />Support Me</a>
         </nav>
       </header>
       {pathname === "/" && (
