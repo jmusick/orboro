@@ -16,7 +16,7 @@ Astro + Cloudflare starter for a markdown-first CMS/blog with role-based auth an
 - Email/password auth with role-based permissions (`admin`, `editor`, `author`), protected by hCaptcha on login
 - CMS content editor for markdown posts/pages with live preview
 - Shortcode system for rich, self-contained widgets embedded in markdown (e.g. an external bookmarks list, featured-links cards) — see `src/lib/shortcodes.ts` and [AGENTS.md](AGENTS.md)
-- Blog routes (`/blog`, `/blog/[slug]`, `/blog/category/[slug]`), plus a homepage feed of recent posts
+- Blog routes (`/blog`, `/blog/[slug]`, `/blog/category/[slug]`), plus a homepage feed of recent posts — both the homepage feed and `/blog` cards show each post's featured image (`content.featured_image_url`) as a thumbnail, and posts are attributed to JD in the visible byline and JSON-LD author field
 - Homepage Last.fm widget showing now-playing / recently-played tracks, server-rendered and refreshed client-side via `/api/lastfm/recent-tracks`
 - Generic page route (`/pages/[slug]`), plus a static `/privacy-policy` page
 - Category management with content tagging (`/category/[slug]`)
@@ -91,6 +91,7 @@ Migration files:
 - `migrations/0008_nav_parent_item.sql`
 - `migrations/0009_drop_content_parent_id.sql`
 - `migrations/0010_drop_nav_category_columns.sql`
+- `migrations/0011_content_featured_image.sql`
 
 Tables:
 
