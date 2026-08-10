@@ -63,6 +63,7 @@ const postCards = posts.map((post) => {
             <Card
               href={`/blog/${post.slug}`}
               icon="file-text"
+              image={post.featuredImageUrl ?? undefined}
               title={post.title}
               class="post-card"
               data-title={post.title.toLowerCase()}
