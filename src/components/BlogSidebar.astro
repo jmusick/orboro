@@ -1,0 +1,132 @@
+---
+import Icon from "./Icon.astro";
+import type { CategoryWithCount } from "../lib/content";
+
+interface RecentPost {
+  slug: string;
+  title: string;
+  dateLabel: string;
+}
+
+interface Props {
+  categories: CategoryWithCount[];
+  recentPosts: RecentPost[];
+  activeCategorySlug?: string;
+}
+
+const { categories, recentPosts, activeCategorySlug } = Astro.props;
+---
+
+<aside class="blog-sidebar">
+  {categories.length > 0 && (
+    <section class="sidebar-block">
+      <h2>Categories</h2>
+      <div class="sidebar-list">
+        {categories.map((cat) => (
+          <a
+            class={`sidebar-row ${cat.slug === activeCategorySlug ? "sidebar-row--active" : ""}`}
+            href={`/blog/category/${cat.slug}`}
+          >
+            <Icon name="tag" size={14} />
+            <span class="sidebar-row__text">{cat.name}</span>
+            <span class="sidebar-row__count">{cat.postCount}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
+
+  {recentPosts.length > 0 && (
+    <section class="sidebar-block">
+      <h2>Recent Posts</h2>
+      <div class="sidebar-list">
+        {recentPosts.map((post) => (
+          <a class="sidebar-row sidebar-row--post" href={`/blog/${post.slug}`}>
+            <span class="sidebar-row__text">
+              <strong>{post.title}</strong>
+              <span class="sidebar-row__date">{post.dateLabel}</span>
+            </span>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
+</aside>
+
+<style>
+  .blog-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  .sidebar-block h2 {
+    margin: 0 0 1rem;
+    font-size: 1.1rem;
+  }
+
+  .sidebar-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .sidebar-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0.75rem;
+    background: linear-gradient(160deg, rgb(12 19 36 / 60%) 0%, rgb(17 26 48 / 60%) 100%);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+  }
+
+  .sidebar-row:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 0.8rem rgb(0 229 255 / 15%);
+  }
+
+  .sidebar-row--active {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .sidebar-row__text {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sidebar-row--post .sidebar-row__text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    white-space: normal;
+  }
+
+  .sidebar-row--post strong {
+    font-size: 0.88rem;
+    line-height: 1.35;
+  }
+
+  .sidebar-row__date {
+    color: var(--muted);
+    font-size: 0.78rem;
+  }
+
+  .sidebar-row__count {
+    flex-shrink: 0;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    background: rgb(0 229 255 / 10%);
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+</style>

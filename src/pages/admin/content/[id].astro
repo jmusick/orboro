@@ -54,6 +54,11 @@ const selectedCategoryIds = await getContentCategoryIds(Astro.locals, id);
       </div>
 
       <div class="form-group full">
+        <label for="featuredImageUrl">Featured Image URL</label>
+        <input id="featuredImageUrl" type="text" name="featuredImageUrl" value={content.featuredImageUrl ?? ""} placeholder="/images/example.jpg or https://example.com/image.jpg" />
+      </div>
+
+      <div class="form-group full">
         <label for="markdown">Markdown Content</label>
         <textarea id="markdown" name="markdown" rows="20" placeholder="Write your content in Markdown...">{content.markdown}</textarea>
       </div>

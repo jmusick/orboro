@@ -1,5 +1,4 @@
 ---
-import { marked } from "marked";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Button from "../components/Button.astro";
 import Icon from "../components/Icon.astro";
@@ -7,7 +6,7 @@ import { getPublishedContentByType, excerptFromMarkdown } from "../lib/content";
 import { fetchRecentTracks, LASTFM_PROFILE_URL } from "../lib/lastfm";
 
 const rawPosts = await getPublishedContentByType(Astro.locals, "post", 8);
-const posts = await Promise.all(rawPosts.map(async (post) => {
+const posts = rawPosts.map((post) => {
 	const date = post.publishedAt ?? post.createdAt;
 	const excerpt = excerptFromMarkdown(post.markdown, 600);
 	const truncated = excerpt.endsWith("…");
@@ -15,10 +14,9 @@ const posts = await Promise.all(rawPosts.map(async (post) => {
 		...post,
 		excerpt,
 		truncated,
-		fullHtml: truncated ? ((await marked.parse(post.markdown)) as string) : "",
 		dateLabel: new Date(date).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
 	};
-}));
+});
 
 const recentTracks = await fetchRecentTracks(7);
 
@@ -83,9 +81,8 @@ const profiles = [
 							<p class="feed-item__date">{post.dateLabel}</p>
 							<h3 class="feed-item__title"><a href={`/blog/${post.slug}`}>{post.title}</a></h3>
 							{post.excerpt && <p class="feed-item__excerpt">{post.excerpt}</p>}
-							{post.truncated && <div class="feed-item__full prose" hidden set:html={post.fullHtml} />}
 							{post.truncated && (
-								<button type="button" class="feed-item__toggle">Show full post</button>
+								<a class="feed-item__more" href={`/blog/${post.slug}`}>Read full post</a>
 							)}
 						</article>
 					))}
@@ -144,35 +141,6 @@ const profiles = [
 		</aside>
 	</div>
 </BaseLayout>
-
-<script is:inline>
-	(function () {
-		function init() {
-			var root = document.getElementById('home-feed');
-			if (!root || root.dataset.feedInit) return;
-			root.dataset.feedInit = '1';
-
-			root.querySelectorAll('.feed-item__toggle').forEach(function (btn) {
-				btn.addEventListener('click', function () {
-					var item = btn.closest('.feed-item');
-					if (!item) return;
-					var excerpt = item.querySelector('.feed-item__excerpt');
-					var full = item.querySelector('.feed-item__full');
-					var expanded = full ? full.hidden : false;
-					if (excerpt) excerpt.hidden = expanded;
-					if (full) full.hidden = !expanded;
-					btn.textContent = expanded ? 'Show less' : 'Show full post';
-				});
-			});
-		}
-		if (document.readyState === 'loading') {
-			document.addEventListener('DOMContentLoaded', init);
-		} else {
-			init();
-		}
-		document.addEventListener('astro:page-load', init);
-	})();
-</script>
 
 <script is:inline>
 	(function () {
@@ -352,11 +320,8 @@ const profiles = [
 		line-height: 1.5;
 	}
 
-	.feed-item__full {
-		margin-top: 0.75rem;
-	}
-
-	.feed-item__toggle {
+	.feed-item__more {
+		display: inline-block;
 		margin-top: 0.75rem;
 		padding: 0.4rem 0.9rem;
 		border: 1px solid var(--line);
@@ -366,11 +331,11 @@ const profiles = [
 		font-family: inherit;
 		font-size: 0.85rem;
 		font-weight: 500;
-		cursor: pointer;
+		text-decoration: none;
 		transition: all 0.2s ease;
 	}
 
-	.feed-item__toggle:hover {
+	.feed-item__more:hover {
 		border-color: var(--accent);
 		background: rgb(0 229 255 / 8%);
 	}

@@ -13,6 +13,7 @@ export interface ContentRecord {
   publishedAt: number | null;
   createdAt: number;
   updatedAt: number;
+  featuredImageUrl: string | null;
 }
 
 export interface MediaRecord {
@@ -36,6 +37,7 @@ function mapContentRow(row: any): ContentRecord {
     publishedAt: row.published_at,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    featuredImageUrl: row.featured_image_url,
   };
 }
 
@@ -121,20 +123,22 @@ export async function saveContent(
     pageType: string;
     status: ContentStatus;
     authorId: string;
+    featuredImageUrl?: string | null;
   }
 ): Promise<string> {
   const db = ensureDB(locals);
   const now = Date.now();
   const publishedAt = input.status === "published" ? now : null;
+  const featuredImageUrl = input.featuredImageUrl || null;
 
   if (input.id) {
     await db
       .prepare(
         `UPDATE content
-         SET slug = ?, title = ?, markdown = ?, page_type = ?, status = ?, published_at = ?, updated_at = ?
+         SET slug = ?, title = ?, markdown = ?, page_type = ?, status = ?, published_at = ?, updated_at = ?, featured_image_url = ?
          WHERE id = ?`
       )
-      .bind(input.slug, input.title, input.markdown, input.pageType, input.status, publishedAt, now, input.id)
+      .bind(input.slug, input.title, input.markdown, input.pageType, input.status, publishedAt, now, featuredImageUrl, input.id)
       .run();
     return input.id;
   }
@@ -143,10 +147,10 @@ export async function saveContent(
   await db
     .prepare(
       `INSERT INTO content
-      (id, slug, title, markdown, page_type, status, author_id, published_at, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      (id, slug, title, markdown, page_type, status, author_id, published_at, created_at, updated_at, featured_image_url)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
-    .bind(id, input.slug, input.title, input.markdown, input.pageType, input.status, input.authorId, publishedAt, now, now)
+    .bind(id, input.slug, input.title, input.markdown, input.pageType, input.status, input.authorId, publishedAt, now, now, featuredImageUrl)
     .run();
 
   return id;
@@ -212,6 +216,37 @@ export async function listCategories(locals: App.Locals): Promise<CategoryRecord
   }));
 }
 
+export interface CategoryWithCount extends CategoryRecord {
+  postCount: number;
+}
+
+export async function listCategoriesWithPostCounts(
+  locals: App.Locals,
+  pageType = "post"
+): Promise<CategoryWithCount[]> {
+  const db = getDB(locals);
+  if (!db) return [];
+  const result = await db
+    .prepare(
+      `SELECT cat.id, cat.name, cat.slug, cat.created_at, COUNT(c.id) AS post_count
+       FROM categories cat
+       INNER JOIN content_categories cc ON cc.category_id = cat.id
+       INNER JOIN content c ON c.id = cc.content_id
+       WHERE c.status = 'published' AND c.page_type = ?
+       GROUP BY cat.id
+       ORDER BY cat.name ASC`
+    )
+    .bind(pageType)
+    .all<{ id: string; name: string; slug: string; created_at: number; post_count: number }>();
+  return (result.results ?? []).map((row) => ({
+    id: row.id,
+    name: row.name,
+    slug: row.slug,
+    createdAt: row.created_at,
+    postCount: row.post_count,
+  }));
+}
+
 export async function getCategoryById(locals: App.Locals, id: string): Promise<CategoryRecord | null> {
   const db = ensureDB(locals);
   const row = await db.prepare("SELECT * FROM categories WHERE id = ? LIMIT 1").bind(id).first<any>();
@@ -251,6 +286,30 @@ export async function getContentCategoryIds(locals: App.Locals, contentId: strin
     .bind(contentId)
     .all<{ category_id: string }>();
   return (result.results ?? []).map((r) => r.category_id);
+}
+
+export async function getContentCategories(
+  locals: App.Locals,
+  contentId: string
+): Promise<CategoryRecord[]> {
+  const db = getDB(locals);
+  if (!db) return [];
+  const result = await db
+    .prepare(
+      `SELECT cat.id, cat.name, cat.slug, cat.created_at
+       FROM categories cat
+       INNER JOIN content_categories cc ON cc.category_id = cat.id
+       WHERE cc.content_id = ?
+       ORDER BY cat.name ASC`
+    )
+    .bind(contentId)
+    .all<{ id: string; name: string; slug: string; created_at: number }>();
+  return (result.results ?? []).map((row) => ({
+    id: row.id,
+    name: row.name,
+    slug: row.slug,
+    createdAt: row.created_at,
+  }));
 }
 
 export async function setContentCategories(

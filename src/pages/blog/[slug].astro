@@ -1,8 +1,24 @@
 ---
 import { marked } from "marked";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getPublishedBySlugAndType, excerptFromMarkdown } from "../../lib/content";
+import BlogSidebar from "../../components/BlogSidebar.astro";
+import {
+  getPublishedBySlugAndType,
+  getPublishedContentByType,
+  getContentCategories,
+  excerptFromMarkdown,
+  listCategoriesWithPostCounts,
+} from "../../lib/content";
 import { processShortcodes } from "../../lib/shortcodes";
+
+function estimateReadingMinutes(markdown: string): number {
+  const words = markdown
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/[#*_~`>|]/g, " ")
+    .split(/\s+/)
+    .filter(Boolean).length;
+  return Math.max(1, Math.round(words / 200));
+}
 
 const { slug } = Astro.params;
 if (!slug) {
@@ -14,26 +30,217 @@ if (!post) {
   return Astro.redirect("/blog");
 }
 
+const [categories, postCategories, allPosts] = await Promise.all([
+  listCategoriesWithPostCounts(Astro.locals),
+  getContentCategories(Astro.locals, post.id),
+  getPublishedContentByType(Astro.locals, "post", 500),
+]);
+
+const recentPosts = allPosts
+  .filter((p) => p.slug !== post.slug)
+  .slice(0, 5)
+  .map((p) => ({
+    slug: p.slug,
+    title: p.title,
+    dateLabel: new Date(p.publishedAt ?? p.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
+  }));
+
+const currentIndex = allPosts.findIndex((p) => p.slug === post.slug);
+const newerPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
+const olderPost = currentIndex >= 0 && currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null;
+
 const html = await processShortcodes(String(await marked.parse(post.markdown)));
 
 const updated = new Date(post.updatedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
 const description = excerptFromMarkdown(post.markdown);
+
+const readingMinutes = estimateReadingMinutes(post.markdown);
+
+const BASE = (Astro.site ?? new URL("https://orboro.net")).origin;
+const canonicalUrl = `${BASE}/blog/${post.slug}`;
+const absoluteImageUrl = post.featuredImageUrl ? new URL(post.featuredImageUrl, BASE).href : undefined;
+
+const publishedIso = new Date(post.publishedAt ?? post.createdAt).toISOString();
+const updatedIso = new Date(post.updatedAt).toISOString();
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.title,
+  description,
+  datePublished: publishedIso,
+  dateModified: updatedIso,
+  mainEntityOfPage: { "@type": "WebPage", "@id": canonicalUrl },
+  ...(absoluteImageUrl ? { image: [absoluteImageUrl] } : {}),
+  author: { "@type": "Organization", name: "Orboro.net" },
+  publisher: {
+    "@type": "Organization",
+    name: "Orboro.net",
+    logo: { "@type": "ImageObject", url: `${BASE}/images/logo.png` },
+  },
+};
 ---
 
-<BaseLayout title={`${post.title} | Orboro.net`} description={description} ogType="article">
-  <article>
-    <h1>{post.title}</h1>
-    <p class="meta">Updated {updated}</p>
-    <hr />
-    <div class="prose" set:html={html} />
-  </article>
+<BaseLayout
+  title={`${post.title} | Orboro.net`}
+  description={description}
+  ogType="article"
+  ogImage={absoluteImageUrl}
+  structuredData={structuredData}
+>
+  <div class="post-layout">
+    <article>
+      <h1>{post.title}</h1>
+      <p class="meta">By Orboro.net · Updated {updated} · {readingMinutes} min read</p>
+      {post.featuredImageUrl && (
+        <img class="hero" src={post.featuredImageUrl} alt="" />
+      )}
+      <hr />
+      <div class="prose" set:html={html} />
+
+      {postCategories.length > 0 && (
+        <div class="tags">
+          {postCategories.map((cat) => (
+            <a class="tag" href={`/blog/category/${cat.slug}`}>{cat.name}</a>
+          ))}
+        </div>
+      )}
+
+      {(olderPost || newerPost) && (
+        <nav class="post-nav" aria-label="More posts">
+          {olderPost ? (
+            <a class="post-nav__link post-nav__link--older" href={`/blog/${olderPost.slug}`}>
+              <span class="post-nav__label">← Older</span>
+              <span class="post-nav__title">{olderPost.title}</span>
+            </a>
+          ) : <span />}
+          {newerPost ? (
+            <a class="post-nav__link post-nav__link--newer" href={`/blog/${newerPost.slug}`}>
+              <span class="post-nav__label">Newer →</span>
+              <span class="post-nav__title">{newerPost.title}</span>
+            </a>
+          ) : <span />}
+        </nav>
+      )}
+    </article>
+    <BlogSidebar categories={categories} recentPosts={recentPosts} />
+  </div>
 </BaseLayout>
 
 <style>
+  .post-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .post-layout :global(aside.blog-sidebar) {
+    position: sticky;
+    top: 1.5rem;
+  }
+
   .meta {
     color: var(--muted);
     font-size: 0.9rem;
     margin: -0.5rem 0 1.5rem;
+  }
+
+  .hero {
+    display: block;
+    width: 100%;
+    max-height: 360px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .tag {
+    padding: 0.35rem 0.85rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgb(0 229 255 / 8%);
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .tag:hover {
+    border-color: var(--accent);
+    background: rgb(0 229 255 / 15%);
+  }
+
+  .post-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .post-nav__link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: linear-gradient(160deg, rgb(12 19 36 / 60%) 0%, rgb(17 26 48 / 60%) 100%);
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.2s ease;
+    min-width: 0;
+  }
+
+  .post-nav__link:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 0.8rem rgb(0 229 255 / 15%);
+  }
+
+  .post-nav__link--newer {
+    text-align: right;
+    align-items: flex-end;
+  }
+
+  .post-nav__label {
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .post-nav__title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+  }
+
+  @media (max-width: 900px) {
+    .post-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .post-nav {
+      grid-template-columns: 1fr;
+    }
+
+    .post-nav__link--newer {
+      text-align: left;
+      align-items: flex-start;
+    }
   }
 </style>

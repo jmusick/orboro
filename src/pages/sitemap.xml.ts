@@ -43,7 +43,6 @@ export const GET: APIRoute = async ({ site, locals }) => {
 
     for (const cat of catResult.results ?? []) {
       categoryPages.push({ loc: `${BASE}/blog/category/${cat.slug}`, lastmod: today });
-      categoryPages.push({ loc: `${BASE}/category/${cat.slug}`, lastmod: today });
     }
   }
 
