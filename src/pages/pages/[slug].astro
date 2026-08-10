@@ -35,12 +35,18 @@ function descriptionFromMarkdown(md: string, maxLen = 155): string {
 }
 
 const description = descriptionFromMarkdown(page.markdown) || `${page.title} on Orboro.net.`;
+
+const BASE = (Astro.site ?? new URL("https://orboro.net")).origin;
+const absoluteImageUrl = page.featuredImageUrl ? new URL(page.featuredImageUrl, BASE).href : undefined;
 ---
 
-<BaseLayout title={`${page.title} | Orboro.net`} description={description} ogType="article">
+<BaseLayout title={`${page.title} | Orboro.net`} description={description} ogType="article" ogImage={absoluteImageUrl}>
   <article class="page-content">
     <h1>{page.title}</h1>
     <p class="meta">Updated {updated}</p>
+    {page.featuredImageUrl && (
+      <img class="hero" src={page.featuredImageUrl} alt="" />
+    )}
     <div class="prose" set:html={html} />
   </article>
 </BaseLayout>
@@ -50,5 +56,14 @@ const description = descriptionFromMarkdown(page.markdown) || `${page.title} on 
     color: var(--muted);
     font-size: 0.9rem;
     margin: -0.5rem 0 1.5rem;
+  }
+
+  .hero {
+    display: block;
+    width: 100%;
+    max-height: 360px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
   }
 </style>
