@@ -53,7 +53,10 @@ function renderCommunityTip(tip: CommunityTip): string {
 function buildHtml(): string {
   const rows = researchData.rows as Row[];
   const responses = [...new Set(rows.map((row) => row.response))];
-  const priorities = [...new Set(rows.map((row) => row.priority))];
+  const priorityOrder = ["Critical", "High", "Medium", "Situational"];
+  const priorities = [...new Set(rows.map((row) => row.priority))].sort(
+    (a, b) => priorityOrder.indexOf(a) - priorityOrder.indexOf(b),
+  );
   const interruptCount = researchData.responseCounts.Interrupt ?? 0;
   const stopCount = researchData.responseCounts["Stop / CC"] ?? 0;
   const utilityCount = rows.length - interruptCount - stopCount;
