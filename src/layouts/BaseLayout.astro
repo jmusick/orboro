@@ -36,10 +36,11 @@ function renderDropdownItems(nodes: NavNode[]): string {
   return nodes.map(node => {
     const active = isActive(node.url) ? ' active' : '';
     if (node.children.length > 0) {
+      const flyoutId = `nav-flyout-${node.id}`;
       return `<div class="nav-flyout-item">` +
         `<a href="${esc(node.url)}" class="nav-dropdown-link${active}">${esc(node.label)} <span class="nav-flyout-arrow" aria-hidden="true"></span></a>` +
-        `<button type="button" class="nav-caret" aria-label="Toggle ${esc(node.label)} submenu" aria-expanded="false"></button>` +
-        `<div class="nav-flyout">${renderDropdownItems(node.children)}</div>` +
+        `<button type="button" class="nav-caret" aria-label="Toggle ${esc(node.label)} submenu" aria-haspopup="true" aria-expanded="false" aria-controls="${flyoutId}"></button>` +
+        `<div class="nav-flyout" id="${flyoutId}">${renderDropdownItems(node.children)}</div>` +
         `</div>`;
     }
     return `<a href="${esc(node.url)}" class="nav-dropdown-link${active}">${esc(node.label)}</a>`;
@@ -137,6 +138,24 @@ function nodeIcon(node: NavNode): string {
       a {
         color: var(--accent);
         text-underline-offset: 2px;
+      }
+      .skip-link {
+        position: absolute;
+        top: -3rem;
+        left: 1rem;
+        z-index: 100;
+        padding: 0.6rem 1.1rem;
+        background: var(--surface);
+        color: var(--text);
+        border: 1px solid var(--accent);
+        border-radius: 8px;
+        text-decoration: none;
+        transition: top 0.15s ease;
+      }
+      .skip-link:focus {
+        top: 1rem;
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
       }
       .container {
         max-width: 1400px;
@@ -790,12 +809,13 @@ function nodeIcon(node: NavNode): string {
       .prose td[data-node="off"] {
         text-align: center;
         font-size: 1.1rem;
-        color: rgb(100 116 139 / 0.45);
+        color: var(--muted);
         background: rgb(0 0 0 / 25%);
       }
     </style>
   </head>
   <body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
     <div class="container">
       <header>
         <a href="/" class="header-logo">
@@ -816,11 +836,12 @@ function nodeIcon(node: NavNode): string {
           <a href="/blog" class={isActive("/blog") ? "active" : ""}><Icon name="file-text" size={15} />Blog</a>
           {navTree.map(node => {
             if (node.children.length > 0) {
+              const dropdownId = `nav-dropdown-${node.id}`;
               return (
                 <div class="nav-dropdown-wrapper">
                   <a href={node.url} class={isActive(node.url) ? "active" : ""}><Icon name={nodeIcon(node)} size={15} />{node.label}</a>
-                  <button type="button" class="nav-caret" aria-label={`Toggle ${node.label} submenu`} aria-expanded="false" />
-                  <div class="nav-dropdown" set:html={renderDropdownItems(node.children)} />
+                  <button type="button" class="nav-caret" aria-label={`Toggle ${node.label} submenu`} aria-haspopup="true" aria-expanded="false" aria-controls={dropdownId} />
+                  <div class="nav-dropdown" id={dropdownId} set:html={renderDropdownItems(node.children)} />
                 </div>
               );
             }
@@ -836,7 +857,7 @@ function nodeIcon(node: NavNode): string {
           </picture>
         </div>
       )}
-      <main>
+      <main id="main-content" tabindex="-1">
         <slot />
       </main>
       <Footer />
@@ -847,8 +868,8 @@ function nodeIcon(node: NavNode): string {
           var isNodeTable = false;
           table.querySelectorAll('td').forEach(function(td) {
             var text = td.textContent.trim();
-            if (text === '✓') { td.setAttribute('data-node', 'on'); isNodeTable = true; }
-            else if (text === '✗') { td.setAttribute('data-node', 'off'); isNodeTable = true; }
+            if (text === '✓') { td.setAttribute('data-node', 'on'); td.setAttribute('aria-label', 'obtained'); isNodeTable = true; }
+            else if (text === '✗') { td.setAttribute('data-node', 'off'); td.setAttribute('aria-label', 'not obtained'); isNodeTable = true; }
           });
           if (isNodeTable) table.setAttribute('data-node-table', '');
         });

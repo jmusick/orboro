@@ -74,6 +74,8 @@ const svg = icons[name] || '';
   stroke-linecap="round"
   stroke-linejoin="round"
   class={`icon ${className}`}
+  aria-hidden="true"
+  focusable="false"
   set:html={svg}
 />
 
