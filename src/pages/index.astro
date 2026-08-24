@@ -8,7 +8,7 @@ import { fetchRecentTracks, LASTFM_PROFILE_URL } from "../lib/lastfm";
 const rawPosts = await getPublishedContentByType(Astro.locals, "post", 8);
 const posts = rawPosts.map((post) => {
 	const date = post.publishedAt ?? post.createdAt;
-	const excerpt = excerptFromMarkdown(post.markdown, 400);
+	const excerpt = excerptFromMarkdown(post.markdown, 300);
 	const truncated = excerpt.endsWith("…");
 	return {
 		...post,
