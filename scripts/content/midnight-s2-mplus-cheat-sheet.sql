@@ -58,7 +58,7 @@ VALUES (
     WHERE content.slug = 'world-of-warcraft'
     LIMIT 1
   ),
-  2,
+  0,
   CAST(strftime('%s', 'now') AS INTEGER) * 1000
 )
 ON CONFLICT(id) DO UPDATE SET
@@ -66,5 +66,25 @@ ON CONFLICT(id) DO UPDATE SET
   content_id = excluded.content_id,
   parent_item_id = excluded.parent_item_id,
   sort_order = excluded.sort_order;
+
+UPDATE nav_items SET sort_order = 1
+WHERE label = 'Assisted Combat Analysis'
+  AND parent_item_id = (
+    SELECT nav_items.id
+    FROM nav_items
+    INNER JOIN content ON content.id = nav_items.content_id
+    WHERE content.slug = 'world-of-warcraft'
+    LIMIT 1
+  );
+
+UPDATE nav_items SET sort_order = 2
+WHERE label = 'Useful WoW Links'
+  AND parent_item_id = (
+    SELECT nav_items.id
+    FROM nav_items
+    INNER JOIN content ON content.id = nav_items.content_id
+    WHERE content.slug = 'world-of-warcraft'
+    LIMIT 1
+  );
 
 COMMIT;
