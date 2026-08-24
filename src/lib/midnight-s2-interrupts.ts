@@ -107,7 +107,9 @@ function buildHtml(): string {
 #m2iu-root details.m2iu-community{margin:1rem 0;border:1px solid rgb(255 63 184 / 24%);border-radius:12px;background:rgb(12 19 36 / 58%);overflow:hidden;}
 #m2iu-root summary.m2iu-community-summary{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.1rem;color:var(--text,#e8f3ff);font-size:1.04rem;font-weight:850;cursor:pointer;list-style:none;}
 #m2iu-root summary.m2iu-community-summary::-webkit-details-marker{display:none;}
-#m2iu-root summary.m2iu-community-summary::after{content:"+";color:var(--accent-2,#ff3fb8);font-size:1.15rem;line-height:1;}
+#m2iu-root summary.m2iu-community-summary::marker{content:"";display:none;}
+#m2iu-root summary.m2iu-community-summary::after{content:"+";flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:1.7rem;height:1.7rem;border:1px solid rgb(255 63 184 / 40%);border-radius:999px;background:rgb(255 63 184 / 10%);color:var(--accent-2,#ff3fb8);font-size:1.05rem;font-weight:850;line-height:1;}
+#m2iu-root summary.m2iu-community-summary:hover::after{background:rgb(255 63 184 / 20%);border-color:rgb(255 63 184 / 65%);}
 #m2iu-root details[open] summary.m2iu-community-summary::after{content:"−";}
 #m2iu-root .m2iu-community-body{padding:0 1.1rem 1.1rem;border-top:1px solid var(--line,#1f2b46);}
 #m2iu-root p.m2iu-community-note{margin:.9rem 0;color:var(--muted,#97a8c4);font-size:.88rem;line-height:1.6;}
@@ -244,7 +246,7 @@ function buildHtml(): string {
     `</div>` +
     `<div class="m2iu-sheet"><p class="m2iu-sheet-copy">Prefer a second-monitor table? The Google Sheet contains the same dataset in a shareable workbook view.</p><a class="m2iu-sheet-link" href="${esc(researchData.sheetUrl)}" target="_blank" rel="noopener noreferrer">Open Google Sheet ↗</a></div>` +
     `</section>` +
-    `<details class="m2iu-community" open><summary class="m2iu-community-summary">Community tips and tricks <span>${communityData.tips.length} curated tips</span></summary>` +
+    `<details class="m2iu-community"><summary class="m2iu-community-summary">Community tips and tricks <span>${communityData.tips.length} curated tips</span></summary>` +
     `<div class="m2iu-community-body"><p class="m2iu-community-note">These are curated community reports from the <a href="${esc(communityData.threadUrl)}" target="_blank" rel="noopener noreferrer">r/CompetitiveWoW Season 2 megathread ↗</a>, captured ${esc(communityData.capturedAt)}. They can be hotfixed or route-dependent, so confidence labels and direct discussion links are included.</p>${tipSections}</div></details>` +
     `<div class="m2iu-toolbar" aria-label="Filter the cheat sheet">` +
     `<label class="m2iu-field">Search<input class="m2iu-input" id="m2iu-search" type="search" placeholder="Enemy, ability, action…" autocomplete="off"></label>` +
