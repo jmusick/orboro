@@ -137,10 +137,18 @@ function buildHtml(): string {
 #m2iu-root .m2iu-dungeon-head h3{margin:0;color:var(--text,#e8f3ff);font-size:1rem;}
 #m2iu-root .m2iu-dungeon-head span{color:var(--muted,#97a8c4);font-size:.72rem;}
 #m2iu-root .m2iu-table-wrap{overflow-x:auto;}
-#m2iu-root table{width:100%;margin:0;border:0;border-collapse:collapse;background:transparent;font-size:.76rem;}
+#m2iu-root table{width:100%;min-width:960px;margin:0;border:0;border-collapse:collapse;background:transparent;font-size:.76rem;table-layout:fixed;}
 #m2iu-root thead{background:rgb(8 19 41 / 92%);}
-#m2iu-root th{padding:.6rem .55rem;border:0;border-bottom:1px solid var(--line,#1f2b46);color:var(--muted,#97a8c4);font-size:.65rem;font-weight:850;letter-spacing:.04em;text-align:left;text-transform:uppercase;white-space:nowrap;}
-#m2iu-root td{padding:.62rem .55rem;border:0;border-bottom:1px solid rgb(31 43 70 / 65%);color:var(--muted,#97a8c4);line-height:1.4;vertical-align:top;}
+#m2iu-root th{padding:.6rem .55rem;border:0;border-bottom:1px solid var(--line,#1f2b46);color:var(--muted,#97a8c4);font-size:.65rem;font-weight:850;letter-spacing:.04em;text-align:left;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#m2iu-root td{padding:.62rem .55rem;border:0;border-bottom:1px solid rgb(31 43 70 / 65%);color:var(--muted,#97a8c4);line-height:1.4;vertical-align:top;overflow-wrap:break-word;}
+#m2iu-root th:nth-child(1),#m2iu-root td:nth-child(1){width:4.5%;}
+#m2iu-root th:nth-child(2),#m2iu-root td:nth-child(2){width:13%;}
+#m2iu-root th:nth-child(3),#m2iu-root td:nth-child(3){width:12%;}
+#m2iu-root th:nth-child(4),#m2iu-root td:nth-child(4){width:9.5%;}
+#m2iu-root th:nth-child(5),#m2iu-root td:nth-child(5){width:8.5%;}
+#m2iu-root th:nth-child(6),#m2iu-root td:nth-child(6){width:13%;}
+#m2iu-root th:nth-child(7),#m2iu-root td:nth-child(7){width:32%;}
+#m2iu-root th:nth-child(8),#m2iu-root td:nth-child(8){width:7.5%;}
 #m2iu-root tbody tr:last-child td{border-bottom:0;}
 #m2iu-root tbody tr:hover{background:rgb(0 229 255 / 3%);}
 #m2iu-root td strong{color:var(--text,#e8f3ff);font-weight:750;}
