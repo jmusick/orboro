@@ -5,6 +5,7 @@ import { generatePoe2Featured, generatePoe2Intro } from "./poe2-featured";
 import { generateWowIntro, generateWowFeatured, generateHiddenLodgeFeature } from "./wow-featured";
 import { generateAssistedCombatAnalysis } from "./assisted-combat-analysis";
 import { generateMidnightSheetLink, generateMidnightTierList } from "./midnight-tier-list";
+import { generateMidnightS2Interrupts } from "./midnight-s2-interrupts";
 
 type ShortcodeFn = (attrs: Record<string, string>) => string | Promise<string>;
 
@@ -20,6 +21,7 @@ const SHORTCODES: Record<string, ShortcodeFn> = {
   assisted_combat_analysis: generateAssistedCombatAnalysis,
   midnight_tier_list: generateMidnightTierList,
   midnight_sheet_link: generateMidnightSheetLink,
+  midnight_s2_interrupts: generateMidnightS2Interrupts,
 };
 
 // Matches {{token}} or {{token attr="value" ...}}. marked wraps a standalone

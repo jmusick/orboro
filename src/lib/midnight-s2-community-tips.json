@@ -1,0 +1,139 @@
+{
+  "threadUrl": "https://www.reddit.com/r/CompetitiveWoW/comments/1vwcdyv/midnight_s2_m_tip_tricks_megathread/",
+  "capturedAt": "2026-08-24",
+  "tips": [
+    {
+      "dungeon": "Altar of Fangs",
+      "category": "Debuff clear",
+      "confidence": "Corroborated",
+      "tip": "Paralyzing Shots can be removed by abilities that clear movement impairments, including Blessing of Freedom, Disengage, Spirit Walk, Tiger's Lust, and Wind Rush Totem with Jet Stream.",
+      "sourceUrl": "https://www.reddit.com/r/CompetitiveWoW/comments/1vwcdyv/comment/p5ftx8e/"
+    },
+    {
+      "dungeon": "Altar of Fangs",
+      "category": "Boss caution",
+      "confidence": "Community report",
+      "tip": "On the final boss, avoid immuning the physical frontal used to clear beam-soak stacks; players report that an immune hit may leave the stacks in place.",
+      "sourceUrl": "https://www.reddit.com/r/CompetitiveWoW/comments/1vwcdyv/comment/p5g144e/"
+    },
+    {
+      "dungeon": "Altar of Fangs",
+      "category": "Movement",
+      "confidence": "Community report",
+      "tip": "When jumping to the first boss, land on the boss platform rather than the surrounding poison. The NPC protection prevents fall damage, but the poison still hurts.",
+      "sourceUrl": "https://www.reddit.com/r/CompetitiveWoW/comments/1vwcdyv/midnight_s2_m_tip_tricks_megathread/"
+    },
+    {
+      "dungeon": "Murder Row",
+      "category": "Dungeon item",
+      "confidence": "Corroborated",
+      "tip": "Pick up the Fel Crystal in the right-hand starting room and spend it near the first boss on the pistol. The frontal applies a bleed and roughly 20% increased damage taken for 16 seconds, making it useful during the first boss burn.",
+      "sourceUrl": "https://www.reddit.com/r/CompetitiveWoW/comments/1vwcdyv/comment/p5fu4ju/"
+    },
+    {
+      "dungeon": "Murder Row",
+      "category": "Bug watch",
+      "confidence": "Hotfix-sensitive",
+      "tip": "Consider doing the right-side snitch room last. Players report that its interaction can fail early and may lock people out if the tank enters the first boss room too soon.",
+      "sourceUrl": "https://www.reddit.com/r/CompetitiveWoW/comments/1vwcdyv/midnight_s2_m_tip_tricks_megathread/"
+    },
+    {
+      "dungeon": "The Blinding Vale",
+      "category": "Boss utility",
+      "confidence": "Community report",
+      "tip": "Dropping the dinosaur boss's fixate with Vanish, Shadowmeld, or a similar target drop ends the fixate and prevents its stack, but it does not clear the root.",
+      "sourceUrl": "https://www.reddit.com/r/CompetitiveWoW/comments/1vwcdyv/comment/p5fyoj9/"
+    },
+    {
+      "dungeon": "The Blinding Vale",
+      "category": "Boss caution",
+      "confidence": "Hotfix-sensitive",
+      "tip": "Do not rely on Shadowmeld canceling the third boss's remaining frontals. Replies report that the targeted hit can still be avoided, but later frontals may continue after recent changes.",
+      "sourceUrl": "https://www.reddit.com/r/CompetitiveWoW/comments/1vwcdyv/midnight_s2_m_tip_tricks_megathread/"
+    },
+    {
+      "dungeon": "Voidscar Arena",
+      "category": "Boss mechanic",
+      "confidence": "Corroborated",
+      "tip": "The final boss's targeted projectile sequence is a dodge mechanic, not a tank soak. Keep moving and aim the projectiles away from the group.",
+      "sourceUrl": "https://www.reddit.com/r/CompetitiveWoW/comments/1vwcdyv/comment/p5fwkag/"
+    },
+    {
+      "dungeon": "Voidscar Arena",
+      "category": "Route idea",
+      "confidence": "Community report",
+      "tip": "The Harrowers on the left after the arena give substantial enemy forces and can be chained into the nearby ogres, but the pull becomes route- and key-level-dependent.",
+      "sourceUrl": "https://www.reddit.com/r/CompetitiveWoW/comments/1vwcdyv/midnight_s2_m_tip_tricks_megathread/"
+    },
+    {
+      "dungeon": "Den of Nalorakk",
+      "category": "Pull control",
+      "confidence": "Community report",
+      "tip": "Mother Bears can often be pulled without their cubs by using a non-splash ranged ability or a taunt.",
+      "sourceUrl": "https://www.reddit.com/r/CompetitiveWoW/comments/1vwcdyv/comment/p5fu05r/"
+    },
+    {
+      "dungeon": "Den of Nalorakk",
+      "category": "Boss positioning",
+      "confidence": "Caution",
+      "tip": "Position the icy bear boss near a wall so one add circle can spawn close for cleave, but keep the boss off the snow because touching it may reset the encounter.",
+      "sourceUrl": "https://www.reddit.com/r/CompetitiveWoW/comments/1vwcdyv/midnight_s2_m_tip_tricks_megathread/"
+    },
+    {
+      "dungeon": "Ruby Life Pools",
+      "category": "Trash mechanic",
+      "confidence": "Corroborated",
+      "tip": "Living Bomb circles no longer damage or knock up enemies. Keep them away from the group instead of dragging them into mobs as in older versions of the dungeon.",
+      "sourceUrl": "https://www.reddit.com/r/CompetitiveWoW/comments/1vwcdyv/comment/p5fuwia/"
+    },
+    {
+      "dungeon": "Ruby Life Pools",
+      "category": "Boss caution",
+      "confidence": "Caution",
+      "tip": "Immunities can clear misplaced ice on the first boss, but several players recommend saving major defensives for the suck-in and knockback unless the field placement is dangerous.",
+      "sourceUrl": "https://www.reddit.com/r/CompetitiveWoW/comments/1vwcdyv/midnight_s2_m_tip_tricks_megathread/"
+    },
+    {
+      "dungeon": "Temple of Sethraliss",
+      "category": "Route recovery",
+      "confidence": "Community report",
+      "tip": "If the group finishes short on enemy forces, teleport to the entrance instead of running back. After collecting count, the post-first-boss puddles can be used to die and return to the dungeon's end.",
+      "sourceUrl": "https://www.reddit.com/r/CompetitiveWoW/comments/1vwcdyv/comment/p5g1pk9/"
+    },
+    {
+      "dungeon": "Temple of Sethraliss",
+      "category": "Purge",
+      "confidence": "Community report",
+      "tip": "Spellsteal or purge the storm elemental empowerment; community reports describe this as increasingly important on higher keys.",
+      "sourceUrl": "https://www.reddit.com/r/CompetitiveWoW/comments/1vwcdyv/comment/p5g1pk9/"
+    },
+    {
+      "dungeon": "Temple of Sethraliss",
+      "category": "CC chain",
+      "confidence": "Community report",
+      "tip": "Temple Disruptors can be chained with crowd control. After an Eye finishes, drag surviving Disruptors toward the next Eye while continuing to control them.",
+      "sourceUrl": "https://www.reddit.com/r/CompetitiveWoW/comments/1vwcdyv/midnight_s2_m_tip_tricks_megathread/"
+    },
+    {
+      "dungeon": "Kings' Rest",
+      "category": "Boss mechanic",
+      "confidence": "Corroborated",
+      "tip": "Constructs in Mchimba's room place Entomb victims in the nearest coffin, so stack beside one coffin for a fast breakout. Mchimba's own Entomb still chooses a random coffin.",
+      "sourceUrl": "https://www.reddit.com/r/CompetitiveWoW/comments/1vwcdyv/comment/p5g8p8v/"
+    },
+    {
+      "dungeon": "Kings' Rest",
+      "category": "Boss utility",
+      "confidence": "Community report",
+      "tip": "Dazar's leap targets the farthest player first. A well-timed Shadowmeld while he is airborne may cancel the remaining jumps, but treat this as hotfix-sensitive.",
+      "sourceUrl": "https://www.reddit.com/r/CompetitiveWoW/comments/1vwcdyv/comment/p5g8p8v/"
+    },
+    {
+      "dungeon": "Kings' Rest",
+      "category": "Skip safety",
+      "confidence": "Community report",
+      "tip": "The small fear mobs near the opening skip can be crowd controlled. Keep moving forward after the CC so a stray fear does not send someone back into the skipped golems.",
+      "sourceUrl": "https://www.reddit.com/r/CompetitiveWoW/comments/1vwcdyv/midnight_s2_m_tip_tricks_megathread/"
+    }
+  ]
+}
