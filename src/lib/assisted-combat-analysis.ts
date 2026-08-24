@@ -20,9 +20,7 @@ type SpecResearch = {
   specId: number;
   assistedCombatId: number;
   role: string;
-  liveSteps: AplStep[];
-  /** null when the PTR list is identical to live — see ptrStepsOf(). */
-  ptrSteps: AplStep[] | null;
+  steps: AplStep[];
   simcComparable: boolean;
   overlap: number | null;
   simcCoverage: number | null;
@@ -32,19 +30,14 @@ type SpecResearch = {
   alignment: string;
   simcProfiles: string[];
   simcActionLines: number[];
+  usesSeason2SimcProfile: boolean;
   blizzardOnlyActions: string[];
   missingActions: string[];
   missingLogic: string[];
   comparisonLimitation: string[];
-  ptrChanged: boolean;
-  ptrChange: string;
-  ptrNotes: string[];
-  ptrAssessment: string;
-  hasTruePtrProfile: boolean;
   icyRating: string;
   icySummary: string;
   icyUrl: string;
-  icyPtrEffect: string;
   /** Vendored spec icon name, or null to fall back to initials. */
   icon: string | null;
 };
@@ -114,7 +107,7 @@ const css = `
 #ac-root p.ac-method__note{margin:.75rem 0 0;color:var(--muted,#97a8c4);font-size:.82rem;line-height:1.6;}
 #ac-root .ac-mono{font-family:"JetBrains Mono",Consolas,monospace;}
 
-#ac-root .ac-stats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:.65rem;margin:1rem 0;}
+#ac-root .ac-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.65rem;margin:1rem 0;}
 #ac-root .ac-stat{min-width:0;padding:.85rem .9rem;border:1px solid var(--line,#1f2b46);border-radius:10px;background:rgb(12 19 36 / 72%);}
 #ac-root .ac-stat__value{display:flex;align-items:center;font-size:1.35rem;font-weight:800;line-height:1;color:var(--accent,#00e5ff);}
 #ac-root .ac-stat:nth-child(2) .ac-stat__value{color:var(--accent-3,#a8ff60);}
@@ -132,12 +125,10 @@ const css = `
 #ac-root li.ac-chip{margin:0;padding:.3rem .58rem;border:1px solid rgb(168 255 96 / 22%);border-radius:999px;background:rgb(168 255 96 / 5%);font-size:.76rem;line-height:1.35;color:var(--muted,#97a8c4);}
 
 #ac-root .ac-explorer{border:1px solid var(--line,#1f2b46);border-radius:14px;overflow:hidden;background:rgb(5 7 15 / 35%);}
-#ac-root .ac-toolbar{display:grid;grid-template-columns:minmax(220px,1.6fr) repeat(2,minmax(145px,.7fr)) auto;gap:.65rem;align-items:end;padding:.9rem;border-bottom:1px solid var(--line,#1f2b46);background:rgb(17 26 48 / 70%);}
+#ac-root .ac-toolbar{display:grid;grid-template-columns:minmax(220px,1.6fr) repeat(2,minmax(145px,.7fr));gap:.65rem;align-items:end;padding:.9rem;border-bottom:1px solid var(--line,#1f2b46);background:rgb(17 26 48 / 70%);}
 #ac-root label.ac-field{display:flex;flex-direction:column;gap:.3rem;margin:0;color:var(--muted,#97a8c4);font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
 #ac-root .ac-input,#ac-root .ac-select{width:100%;min-height:40px;padding:.55rem .7rem;border:1px solid var(--line,#1f2b46);border-radius:8px;background:var(--surface,#0c1324);color:var(--text,#e8f3ff);font-size:.84rem;text-transform:none;letter-spacing:0;outline:none;}
 #ac-root .ac-input:focus,#ac-root .ac-select:focus{border-color:var(--accent,#00e5ff);box-shadow:0 0 0 3px rgb(0 229 255 / 8%);}
-#ac-root .ac-check{display:flex;align-items:center;gap:.5rem;min-height:40px;padding:.55rem .7rem;border:1px solid var(--line,#1f2b46);border-radius:8px;background:var(--surface,#0c1324);color:var(--text,#e8f3ff);font-size:.78rem;white-space:nowrap;cursor:pointer;}
-#ac-root .ac-check input{accent-color:var(--accent-2,#ff3fb8);}
 #ac-root .ac-noscript{display:block;margin:0;padding:.7rem .9rem;border-bottom:1px solid var(--line,#1f2b46);background:rgb(255 63 184 / 6%);color:var(--muted,#97a8c4);font-size:.78rem;line-height:1.55;}
 
 #ac-root .ac-workspace{display:grid;grid-template-columns:minmax(250px,320px) minmax(0,1fr);min-height:640px;}
@@ -160,7 +151,6 @@ const css = `
 #ac-root .ac-score-line .ac-info{width:.82rem;height:.82rem;margin-left:.2rem;font-size:.5rem;}
 #ac-root .ac-score-line--simc strong{color:var(--accent,#00e5ff);}
 #ac-root .ac-score-na{font-size:.68rem;font-weight:800;color:var(--muted,#97a8c4);text-align:right;}
-#ac-root .ac-ptr-dot{width:.48rem;height:.48rem;border-radius:50%;background:var(--accent-2,#ff3fb8);box-shadow:0 0 .45rem rgb(255 63 184 / 55%);}
 #ac-root .ac-empty{padding:2rem 1rem;text-align:center;color:var(--muted,#97a8c4);font-size:.82rem;}
 
 #ac-root .ac-detail{min-width:0;padding:clamp(1rem,2.5vw,1.5rem);background:linear-gradient(145deg,rgb(12 19 36 / 45%),rgb(17 26 48 / 35%));}
@@ -169,7 +159,6 @@ const css = `
 #ac-root h3.ac-detail-title{margin:0;font-size:1.55rem;color:var(--text,#e8f3ff);}
 #ac-root .ac-badges{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:.35rem;}
 #ac-root .ac-badge{display:inline-flex;align-items:center;min-height:1.65rem;padding:.25rem .55rem;border:1px solid var(--line,#1f2b46);border-radius:999px;background:rgb(255 255 255 / 3%);font-size:.68rem;color:var(--muted,#97a8c4);white-space:nowrap;}
-#ac-root .ac-badge--ptr{border-color:rgb(255 63 184 / 35%);color:var(--accent-2,#ff3fb8);}
 #ac-root .ac-badge--overlap{border-color:rgb(168 255 96 / 30%);color:var(--accent-3,#a8ff60);}
 #ac-root .ac-badge--coverage{border-color:rgb(0 229 255 / 30%);color:var(--accent,#00e5ff);}
 #ac-root .ac-badge .ac-info{margin-right:.28rem;}
@@ -197,10 +186,6 @@ const css = `
 #ac-root .ac-mini-value--coverage{color:var(--accent,#00e5ff);}
 #ac-root .ac-mini-label{display:block;margin-top:.18rem;color:var(--muted,#97a8c4);font-size:.64rem;line-height:1.25;}
 
-#ac-root .ac-build-switch{display:flex;flex-wrap:wrap;gap:.4rem;margin:0 0 .75rem;}
-#ac-root button.ac-build{padding:.48rem .72rem;border:1px solid var(--line,#1f2b46);border-radius:8px;background:var(--surface,#0c1324);color:var(--muted,#97a8c4);font-size:.73rem;font-weight:700;cursor:pointer;}
-#ac-root button.ac-build:focus-visible{outline:2px solid var(--accent,#00e5ff);outline-offset:1px;}
-#ac-root button.ac-build[aria-pressed="true"]{border-color:rgb(0 229 255 / 40%);background:rgb(0 229 255 / 9%);color:var(--accent,#00e5ff);}
 #ac-root .ac-apl-note{margin:0 0 .75rem;padding:.65rem .75rem;border-left:2px solid var(--accent,#00e5ff);background:rgb(0 229 255 / 4%);color:var(--muted,#97a8c4);font-size:.72rem;line-height:1.5;}
 #ac-root .ac-apl{display:flex;flex-direction:column;gap:.45rem;max-height:560px;overflow:auto;padding-right:.25rem;scrollbar-color:var(--line,#1f2b46) transparent;}
 #ac-root .ac-step{display:grid;grid-template-columns:2rem minmax(120px,.65fr) minmax(220px,1.7fr);gap:.65rem;align-items:start;padding:.65rem;border:1px solid var(--line,#1f2b46);border-radius:8px;background:rgb(5 7 15 / 28%);}
@@ -380,7 +365,6 @@ const wiring = `
     root.addEventListener('change',function(event){
       if(event.target.id==='ac-class'){state.gameClass=event.target.value;paint();}
       if(event.target.id==='ac-role'){state.role=event.target.value;paint();}
-      if(event.target.id==='ac-ptr-only'){state.ptrOnly=event.target.checked;paint();}
     });
     root.addEventListener('click',function(event){
       var methodButton=event.target.closest('[data-method-toggle]');
@@ -395,17 +379,11 @@ const wiring = `
       if(specButton){
         state.selected=specButton.getAttribute('data-spec-key');
         state.tab='missing';
-        state.build='live';
         paintDetail(null);
         return;
       }
       var tabButton=event.target.closest('[data-detail-tab]');
       if(tabButton){selectTab(tabButton.getAttribute('data-detail-tab'));return;}
-      var buildButton=event.target.closest('[data-apl-build]');
-      if(buildButton){
-        state.build=buildButton.getAttribute('data-apl-build');
-        paintDetail('[data-apl-build="'+state.build+'"]');
-      }
     });
     root.addEventListener('keydown',function(event){
       if(!event.target.closest)return;
@@ -469,11 +447,11 @@ function buildHtml(): string {
         `<p class="ac-lede">Across the ${summary.comparableSpecs} specs with a comparable SimulationCraft profile, the median Blizzard action match is <strong>${summary.medianOverlap}%${infoIconMarkup(medianBlizzardInfo)}</strong>, while Blizzard represents <strong>${summary.medianSimcCoverage}%${infoIconMarkup(medianSimcInfo)}</strong> of SimC actions. Spell selection is largely right; the material gap is build, timing, resource, targeting, and encounter logic. Pick a specialization below for its exact priority list, what SimC does that it doesn't, and how it compares with Icy Veins.</p>` +
         `<button type="button" class="ac-method-toggle" data-method-toggle aria-expanded="false" aria-controls="ac-method"><span class="ac-method-toggle__label">Where the Blizzard APL data comes from</span><span class="ac-method-toggle__icon" aria-hidden="true">+</span></button>` +
         `<div class="ac-method" id="ac-method" hidden>` +
-          `<p class="ac-method__intro">The Blizzard priority lists are reconstructed from three DB2 tables exported by Wago Tools. The same join is run separately for the pinned live and PTR builds.</p>` +
+          `<p class="ac-method__intro">The Blizzard priority lists are reconstructed from three DB2 tables exported by Wago Tools for live build ${esc(data.currentBuild)}.</p>` +
           `<div class="ac-method-flow">` +
-            `<section class="ac-method-card"><span class="ac-method-card__number">1</span><h3 class="ac-method-card__title">AssistedCombat</h3><p class="ac-method-card__copy">Identifies the Assisted Combat list assigned to each specialization.</p><span class="ac-method-card__fields">ID · ChrSpecializationID</span><div class="ac-method-links"><a class="ac-method-link" href="https://wago.tools/db2/AssistedCombat?build=${esc(data.liveBuild)}" target="_blank" rel="noopener noreferrer">Live table ↗</a><a class="ac-method-link" href="https://wago.tools/db2/AssistedCombat?build=${esc(data.ptrBuild)}" target="_blank" rel="noopener noreferrer">PTR table ↗</a></div></section>` +
-            `<section class="ac-method-card"><span class="ac-method-card__number">2</span><h3 class="ac-method-card__title">AssistedCombatStep</h3><p class="ac-method-card__copy">Adds the spell for each step and its position in the priority list. ${summary.liveSteps} steps on live, ${summary.ptrSteps} on PTR.</p><span class="ac-method-card__fields">ID · SpellID · AssistedCombatID · OrderIndex</span><div class="ac-method-links"><a class="ac-method-link" href="https://wago.tools/db2/AssistedCombatStep?build=${esc(data.liveBuild)}" target="_blank" rel="noopener noreferrer">Live table ↗</a><a class="ac-method-link" href="https://wago.tools/db2/AssistedCombatStep?build=${esc(data.ptrBuild)}" target="_blank" rel="noopener noreferrer">PTR table ↗</a></div></section>` +
-            `<section class="ac-method-card"><span class="ac-method-card__number">3</span><h3 class="ac-method-card__title">AssistedCombatRule</h3><p class="ac-method-card__copy">Adds the ordered conditions that must pass before a step can be recommended. ${summary.liveRules.toLocaleString("en-US")} rules on live, ${summary.ptrRules.toLocaleString("en-US")} on PTR.</p><span class="ac-method-card__fields">ID · OrderIndex · ConditionType · ConditionValue1/2/3 · AssistedCombatStepID</span><div class="ac-method-links"><a class="ac-method-link" href="https://wago.tools/db2/AssistedCombatRule?build=${esc(data.liveBuild)}" target="_blank" rel="noopener noreferrer">Live table ↗</a><a class="ac-method-link" href="https://wago.tools/db2/AssistedCombatRule?build=${esc(data.ptrBuild)}" target="_blank" rel="noopener noreferrer">PTR table ↗</a></div></section>` +
+            `<section class="ac-method-card"><span class="ac-method-card__number">1</span><h3 class="ac-method-card__title">AssistedCombat</h3><p class="ac-method-card__copy">Identifies the Assisted Combat list assigned to each specialization.</p><span class="ac-method-card__fields">ID · ChrSpecializationID</span><div class="ac-method-links"><a class="ac-method-link" href="https://wago.tools/db2/AssistedCombat?build=${esc(data.currentBuild)}" target="_blank" rel="noopener noreferrer">Open table ↗</a></div></section>` +
+            `<section class="ac-method-card"><span class="ac-method-card__number">2</span><h3 class="ac-method-card__title">AssistedCombatStep</h3><p class="ac-method-card__copy">Adds the spell for each step and its position in the priority list. ${summary.currentSteps} steps across all specs.</p><span class="ac-method-card__fields">ID · SpellID · AssistedCombatID · OrderIndex</span><div class="ac-method-links"><a class="ac-method-link" href="https://wago.tools/db2/AssistedCombatStep?build=${esc(data.currentBuild)}" target="_blank" rel="noopener noreferrer">Open table ↗</a></div></section>` +
+            `<section class="ac-method-card"><span class="ac-method-card__number">3</span><h3 class="ac-method-card__title">AssistedCombatRule</h3><p class="ac-method-card__copy">Adds the ordered conditions that must pass before a step can be recommended. ${summary.currentRules.toLocaleString("en-US")} rules in the live dataset.</p><span class="ac-method-card__fields">ID · OrderIndex · ConditionType · ConditionValue1/2/3 · AssistedCombatStepID</span><div class="ac-method-links"><a class="ac-method-link" href="https://wago.tools/db2/AssistedCombatRule?build=${esc(data.currentBuild)}" target="_blank" rel="noopener noreferrer">Open table ↗</a></div></section>` +
           `</div>` +
           `<div class="ac-join"><strong>Join:</strong><code>AssistedCombat.ID</code><span>=</span><code>AssistedCombatStep.AssistedCombatID</code><span>then</span><code>AssistedCombatStep.ID</code><span>=</span><code>AssistedCombatRule.AssistedCombatStepID</code></div>` +
           `<p class="ac-method__note">Steps are sorted by <span class="ac-mono">OrderIndex</span>. Rules are grouped under their step and sorted by their own <span class="ac-mono">OrderIndex</span>. The readable condition labels use SimulationCraft's Assisted Combat enum and evaluator; the raw IDs and values are retained in the canonical CSV exports.</p>` +
@@ -483,12 +461,11 @@ function buildHtml(): string {
         `<div class="ac-stat"><span class="ac-stat__value">${summary.specs}</span><span class="ac-stat__label">Specs reviewed · ${summary.classes} classes</span></div>` +
         `<div class="ac-stat"><span class="ac-stat__value">${summary.medianOverlap}%${infoIconMarkup(medianBlizzardInfo)}</span><span class="ac-stat__label">Median Blizzard action match</span></div>` +
         `<div class="ac-stat"><span class="ac-stat__value">${summary.medianSimcCoverage}%${infoIconMarkup(medianSimcInfo)}</span><span class="ac-stat__label">Median SimC actions represented</span></div>` +
-        `<div class="ac-stat"><span class="ac-stat__value">${summary.ptrChangedSpecs}</span><span class="ac-stat__label">Specs changed on PTR</span></div>` +
-        `<div class="ac-stat"><span class="ac-stat__value">${summary.liveSteps}</span><span class="ac-stat__label">Blizzard live steps</span></div>` +
+        `<div class="ac-stat"><span class="ac-stat__value">${summary.currentSteps}</span><span class="ac-stat__label">Blizzard 12.1 steps</span></div>` +
         `<div class="ac-stat"><span class="ac-stat__value">${summary.simcActionLines.toLocaleString("en-US")}${infoIconMarkup(actionLinesInfo)}</span><span class="ac-stat__label">SimC action lines</span></div>` +
       `</div>` +
       `<div class="ac-scope">` +
-        `<section class="ac-callout ac-callout--warning"><h3 class="ac-callout__title">How to read this</h3><p class="ac-callout__text">Assisted Combat is a baseline recommendation system, not a complete raid, dungeon, healing, or mitigation plan. Tanks are mostly shown offensive priorities; healer tables are overwhelmingly damage-oriented.</p></section>` +
+        `<section class="ac-callout ac-callout--warning"><h3 class="ac-callout__title">How to read this</h3><p class="ac-callout__text">Assisted Combat is a baseline recommendation system, not a complete raid, dungeon, healing, or mitigation plan. Tanks are mostly shown offensive priorities; healer tables are overwhelmingly damage-oriented. Comparisons use a 12.1/MID2 SimC profile where one existed in the research snapshot, otherwise the latest available Midnight profile.</p></section>` +
         `<section class="ac-callout ac-callout--omissions"><h3 class="ac-callout__title">Common omissions versus SimC</h3><ul class="ac-chip-list">${omissionChips}</ul></section>` +
       `</div>` +
       `<section class="ac-explorer" aria-label="Specialization research explorer">` +
@@ -496,9 +473,8 @@ function buildHtml(): string {
           `<label class="ac-field">Search<input class="ac-input" id="ac-search" type="search" placeholder="Spec, class, action, or missing logic…" autocomplete="off" /></label>` +
           `<label class="ac-field">Class<select class="ac-select" id="ac-class"><option value="all">All classes</option>${classOptions}</select></label>` +
           `<label class="ac-field">Role<select class="ac-select" id="ac-role"><option value="all">All roles</option><option>DPS</option><option>Tank</option><option>Healer</option><option>Support DPS</option></select></label>` +
-          `<label class="ac-check"><input id="ac-ptr-only" type="checkbox" /> PTR changes only</label>` +
         `</div>` +
-        `<noscript><p class="ac-noscript">Search, filtering, and switching between specializations need JavaScript. Every specialization is listed below and the full analysis for ${initialSpec ? esc(initialSpec.spec + " " + initialSpec.gameClass) : "the first specialization"} is shown, including all four sections.</p></noscript>` +
+        `<noscript><p class="ac-noscript">Search, filtering, and switching between specializations need JavaScript. Every specialization is listed below and the full analysis for ${initialSpec ? esc(initialSpec.spec + " " + initialSpec.gameClass) : "the first specialization"} is shown, including all three sections.</p></noscript>` +
         `<p class="ac-sr" id="ac-status" role="status" aria-live="polite"></p>` +
         `<div class="ac-workspace">` +
           `<aside class="ac-browser"><div class="ac-results-head"><strong>Specializations</strong><span id="ac-result-count">${initialSpecs.length} of ${data.specs.length} specs</span></div><div class="ac-results" id="ac-results">${render.renderCards(initialSpecs, initialState)}</div></aside>` +
@@ -507,13 +483,12 @@ function buildHtml(): string {
       `</section>` +
       `<div class="ac-sources">` +
         `<span class="ac-source-label">Pinned sources</span>` +
-        sourceLink(`Wago live ${data.liveBuild}`, data.sources.wagoLive) +
-        sourceLink(`Wago PTR ${data.ptrBuild}`, data.sources.wagoPtr) +
+        sourceLink(`Wago live ${data.currentBuild}`, data.sources.wagoCurrent) +
         sourceLink("SimulationCraft APLs", data.sources.simc) +
         sourceLink("SimC action list docs", data.sources.simcDocs) +
         sourceLink("Research workbook", data.sources.googleSheet) +
       `</div>` +
-      `<p class="ac-provenance">Research snapshot: ${esc(data.researchedAt)} · SimulationCraft ${esc(data.simcBranch)} commit <span class="ac-mono">${esc(data.simcCommit.slice(0, 12))}</span>. DB2 rows and build-to-build differences are exact; readable rule labels follow SimulationCraft's reverse-engineered condition decoder.</p>` +
+      `<p class="ac-provenance">Blizzard data verified ${esc(data.verifiedAt)} on live build ${esc(data.currentBuild)}. Comparison research snapshot: ${esc(data.researchedAt)} · SimulationCraft ${esc(data.simcBranch)} commit <span class="ac-mono">${esc(data.simcCommit.slice(0, 12))}</span>. DB2 rows are exact; readable rule labels follow SimulationCraft's reverse-engineered condition decoder.</p>` +
       `<script type="application/json" id="ac-data">${safeJson}<\/script>` +
       `<script>${clientJs}<\/script>` +
     `</div>`

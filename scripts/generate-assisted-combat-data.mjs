@@ -3,26 +3,27 @@
  * research outputs.
  *
  * The inputs are not in this repo. Point the script at them with:
- *   ASSISTED_COMBAT_RESEARCH_ROOT  Wago DB2 exports + the SimC comparison run
- *                                  (assisted-combat-<build>.md/.csv,
+ *   ASSISTED_COMBAT_RESEARCH_ROOT  Wago DB2 export + the SimC comparison run
+ *                                  (assisted-combat-<source-build>.md/.csv,
  *                                   simc-comparison-data.json)
  *   ASSISTED_COMBAT_VAULT_ROOT     curated writeups
  *                                  (assisted-combat-whats-missing-by-spec.md,
- *                                   assisted-combat-vs-icy-veins.md,
- *                                   assisted-combat-vs-simulationcraft.md)
+ *                                   assisted-combat-vs-icy-veins.md)
  *
  * Every number written to the payload is derived from those inputs; only the
- * pinned build/commit identifiers below are typed by hand, and the filenames
- * are built from them so the two cannot drift apart.
+ * pinned build/commit identifiers below are typed by hand. The researched
+ * 12.1 source build and the current live build have identical Assisted Combat
+ * tables; keeping both identifiers makes that provenance explicit.
  */
 import fs from "node:fs/promises";
 import path from "node:path";
 
-const LIVE_BUILD = "12.0.7.68974";
-const PTR_BUILD = "12.1.0.69111";
+const CURRENT_BUILD = "12.1.0.69404";
+const SOURCE_BUILD = "12.1.0.69111";
 const SIMC_BRANCH = "midnight";
 const SIMC_COMMIT = "a87874b5bfc88afb06922c7012e89b4b94aabc56";
 const RESEARCHED_AT = "2026-08-06";
+const VERIFIED_AT = "2026-08-24";
 
 const repoRoot = path.resolve(import.meta.dirname, "..");
 const researchRoot =
@@ -50,15 +51,12 @@ async function read(root, name, envVar) {
 const readResearch = (name) => read(researchRoot, name, "ASSISTED_COMBAT_RESEARCH_ROOT");
 const readVault = (name) => read(vaultRoot, name, "ASSISTED_COMBAT_VAULT_ROOT");
 
-const [simcJson, missingMd, icyMd, simcMd, liveMd, ptrMd, liveCsv, ptrCsv] = await Promise.all([
+const [simcJson, missingMd, icyMd, currentMd, currentCsv] = await Promise.all([
   readResearch("simc-comparison-data.json"),
   readVault("assisted-combat-whats-missing-by-spec.md"),
   readVault("assisted-combat-vs-icy-veins.md"),
-  readVault("assisted-combat-vs-simulationcraft.md"),
-  readResearch(`assisted-combat-${buildSlug(LIVE_BUILD)}.md`),
-  readResearch(`assisted-combat-${buildSlug(PTR_BUILD)}.md`),
-  readResearch(`assisted-combat-${buildSlug(LIVE_BUILD)}.csv`),
-  readResearch(`assisted-combat-${buildSlug(PTR_BUILD)}.csv`),
+  readResearch(`assisted-combat-${buildSlug(SOURCE_BUILD)}.md`),
+  readResearch(`assisted-combat-${buildSlug(SOURCE_BUILD)}.csv`),
 ]);
 
 const simcRows = JSON.parse(simcJson);
@@ -122,7 +120,7 @@ function parseMissing(markdown) {
     }
     const specMatch = line.match(/^- \*\*(.+)\*\*$/);
     if (specMatch) {
-      current = { actions: [], logic: [], ptr: [], limitation: [] };
+      current = { actions: [], logic: [], limitation: [] };
       result.set(`${gameClass}|${specMatch[1]}`, current);
       continue;
     }
@@ -131,7 +129,7 @@ function parseMissing(markdown) {
     if (bucketMatch) {
       bucket = bucketMatch[1].startsWith("Missing action") ? "actions"
         : bucketMatch[1] === "Missing logic" ? "logic"
-        : bucketMatch[1] === "PTR" ? "ptr" : "limitation";
+        : bucketMatch[1] === "Not comparable" ? "limitation" : "";
       continue;
     }
     const itemMatch = line.match(/^    - (.+)$/);
@@ -154,37 +152,11 @@ function parseIcy(markdown) {
     if (!specMatch) continue;
     const [, spec, url, rating] = specMatch;
     let summary = "";
-    let ptrEffect = "";
     for (let j = i + 1; j < lines.length && !/^### |^## /.test(lines[j]); j++) {
       const trimmed = lines[j].trim();
       if (!summary && trimmed && !trimmed.startsWith("**PTR effect:**")) summary = trimmed;
-      const ptrMatch = trimmed.match(/^\*\*PTR effect:\*\* (.+)$/);
-      if (ptrMatch) ptrEffect = ptrMatch[1];
     }
-    result.set(`${gameClass}|${spec}`, { rating, url, summary, ptrEffect });
-  }
-  return result;
-}
-
-function parsePtrAssessments(markdown) {
-  const result = new Map();
-  let gameClass = "";
-  let spec = "";
-  for (const line of markdown.split(/\r?\n/)) {
-    const classMatch = line.match(/^## (.+)$/);
-    if (classMatch && !classMatch[1].startsWith("PTR changes") && classMatch[1] !== "Source notes") {
-      gameClass = classMatch[1];
-      continue;
-    }
-    const specMatch = line.match(/^### (.+) — /);
-    if (specMatch) {
-      spec = specMatch[1];
-      continue;
-    }
-    const ptrMatch = line.match(/^\*\*Blizzard PTR change:\*\* (.+?) \*\*Assessment:\*\* (.+)$/);
-    if (ptrMatch && gameClass && spec) {
-      result.set(`${gameClass}|${spec}`, { change: ptrMatch[1], assessment: ptrMatch[2] });
-    }
+    result.set(`${gameClass}|${spec}`, { rating, url, summary });
   }
   return result;
 }
@@ -230,9 +202,26 @@ function parseApl(markdown) {
 
 const missingBySpec = parseMissing(missingMd);
 const icyBySpec = parseIcy(icyMd);
-const ptrAssessments = parsePtrAssessments(simcMd);
-const liveApl = parseApl(liveMd);
-const ptrApl = parseApl(ptrMd);
+const currentApl = parseApl(currentMd);
+
+function currentGuideSummary(summary) {
+  return summary
+    .replace(/\bcurrent live guide\b/gi, "pinned guide snapshot")
+    .replace(/\bLive Assisted Combat\b/g, "Assisted Combat")
+    .replace(/\bThe live list\b/g, "The 12.1 list")
+    .replace(/\bPTR-only\b/g, "specific to 12.1")
+    .replace(/\bPTR’s\b/g, "The 12.1 list’s")
+    .replace(/\bPTR's\b/g, "The 12.1 list's")
+    .replace(/\bPTR\b/g, "The 12.1 list");
+}
+
+function currentMissingActions(items, blizzardActions) {
+  const labels = new Set(blizzardActions.map((action) => action.replace(/_/g, " ").toLowerCase()));
+  return items.filter((item) => {
+    const normalized = item.toLowerCase().replace(/^live /, "").replace(/ handling$/, "");
+    return !labels.has(normalized);
+  });
+}
 
 function median(values) {
   const sorted = [...values].sort((a, b) => a - b);
@@ -244,73 +233,68 @@ function median(values) {
 
 const specs = simcRows.map((row) => {
   const key = `${row.class}|${row.spec}`;
-  const missing = missingBySpec.get(key) ?? { actions: [], logic: [], ptr: [], limitation: [] };
-  const icy = icyBySpec.get(key) ?? { rating: "Not comparable", url: "", summary: "", ptrEffect: "" };
-  const live = liveApl.get(key);
-  const ptr = ptrApl.get(key);
-  if (!live || !ptr) throw new Error(`Missing parsed APL for ${key}`);
-  // 28 of 40 specs are untouched on PTR; storing the duplicate list would be a
-  // quarter of the payload the browser has to download and parse.
-  const ptrIsIdentical = JSON.stringify(ptr.steps) === JSON.stringify(live.steps);
+  const missing = missingBySpec.get(key) ?? { actions: [], logic: [], limitation: [] };
+  const icy = icyBySpec.get(key) ?? { rating: "Not comparable", url: "", summary: "" };
+  const current = currentApl.get(key);
+  if (!current) throw new Error(`Missing parsed APL for ${key}`);
+  const usesSeason2SimcProfile = row.has_true_ptr_profile && row.simc_ptr_actions.length > 0;
+  const simcActions = usesSeason2SimcProfile ? row.simc_ptr_actions : row.simc_live_actions;
+  const simcProfiles = usesSeason2SimcProfile ? row.ptr_profiles : row.live_profiles;
+  const simcActionLines = usesSeason2SimcProfile ? row.simc_ptr_entries : row.simc_live_entries;
+  const blizzardActions = row.blizzard_ptr_actions;
+  const sharedActions = blizzardActions.filter((action) => simcActions.includes(action));
   return {
     gameClass: row.class,
     spec: row.spec,
-    specId: live.specId,
-    assistedCombatId: live.assistedCombatId,
+    specId: current.specId,
+    assistedCombatId: current.assistedCombatId,
     role: roleByKey.get(key) ?? "DPS",
-    liveSteps: live.steps,
-    ptrSteps: ptrIsIdentical ? null : ptr.steps,
+    steps: current.steps,
     simcComparable: row.supported,
-    overlap: row.coverage,
-    simcCoverage: row.supported && row.simc_live_actions.length
-      ? Math.round(100 * row.shared_live.length / row.simc_live_actions.length)
+    overlap: row.supported && blizzardActions.length
+      ? Math.round(100 * sharedActions.length / blizzardActions.length)
       : null,
-    sharedActionCount: row.shared_live.length,
-    blizzardActionCount: row.blizzard_live_actions.length,
-    simcActionCount: row.simc_live_actions.length,
+    simcCoverage: row.supported && simcActions.length
+      ? Math.round(100 * sharedActions.length / simcActions.length)
+      : null,
+    sharedActionCount: sharedActions.length,
+    blizzardActionCount: blizzardActions.length,
+    simcActionCount: simcActions.length,
     alignment: row.alignment,
-    simcProfiles: row.live_profiles,
-    simcActionLines: row.simc_live_entries,
-    blizzardOnlyActions: row.blizzard_only_live,
-    missingActions: missing.actions,
+    simcProfiles,
+    simcActionLines,
+    usesSeason2SimcProfile,
+    blizzardOnlyActions: blizzardActions.filter((action) => !simcActions.includes(action)),
+    missingActions: currentMissingActions(missing.actions, blizzardActions),
     missingLogic: missing.logic,
     comparisonLimitation: missing.limitation,
-    ptrChanged: row.ptr_changed,
-    ptrChange: row.ptr_change,
-    ptrNotes: missing.ptr,
-    ptrAssessment: ptrAssessments.get(key)?.assessment ?? "",
-    hasTruePtrProfile: row.has_true_ptr_profile,
     icyRating: icy.rating,
-    icySummary: icy.summary,
+    icySummary: currentGuideSummary(icy.summary),
     icyUrl: icy.url,
-    icyPtrEffect: icy.ptrEffect,
   };
 });
 
 const comparableSpecs = specs.filter((spec) => spec.simcComparable);
-const comparableRows = simcRows.filter((row) => row.supported);
 
 const payload = {
   researchedAt: RESEARCHED_AT,
-  liveBuild: LIVE_BUILD,
-  ptrBuild: PTR_BUILD,
+  verifiedAt: VERIFIED_AT,
+  currentBuild: CURRENT_BUILD,
+  sourceBuild: SOURCE_BUILD,
   simcBranch: SIMC_BRANCH,
   simcCommit: SIMC_COMMIT,
   summary: {
     specs: specs.length,
     classes: new Set(specs.map((spec) => spec.gameClass)).size,
     comparableSpecs: comparableSpecs.length,
-    ptrChangedSpecs: specs.filter((spec) => spec.ptrChanged).length,
     medianOverlap: median(comparableSpecs.map((spec) => spec.overlap)),
     medianSimcCoverage: median(comparableSpecs.map((spec) => spec.simcCoverage)),
-    liveSteps: specs.reduce((sum, spec) => sum + spec.liveSteps.length, 0),
-    ptrSteps: specs.reduce((sum, spec) => sum + (spec.ptrSteps ?? spec.liveSteps).length, 0),
-    liveRules: countRules(liveCsv, "live"),
-    ptrRules: countRules(ptrCsv, "PTR"),
+    currentSteps: specs.reduce((sum, spec) => sum + spec.steps.length, 0),
+    currentRules: countRules(currentCsv, "current"),
     // The primary profile per comparable spec, matched against the Blizzard
     // step count for those same specs — the two halves of the headline claim.
-    simcActionLines: comparableRows.reduce((sum, row) => sum + row.simc_live_entries[0], 0),
-    comparableBlizzardSteps: comparableRows.reduce((sum, row) => sum + row.blizzard_live_steps, 0),
+    simcActionLines: comparableSpecs.reduce((sum, spec) => sum + (spec.simcActionLines[0] ?? 0), 0),
+    comparableBlizzardSteps: comparableSpecs.reduce((sum, spec) => sum + spec.steps.length, 0),
   },
   commonOmissions: [
     "Talent and hero-tree-specific priorities",
@@ -323,8 +307,7 @@ const payload = {
     "Complete mitigation and defensive planning for tanks",
   ],
   sources: {
-    wagoLive: `https://wago.tools/db2/AssistedCombat?build=${LIVE_BUILD}`,
-    wagoPtr: `https://wago.tools/db2/AssistedCombat?build=${PTR_BUILD}`,
+    wagoCurrent: `https://wago.tools/db2/AssistedCombat?build=${CURRENT_BUILD}`,
     simc: `https://github.com/simulationcraft/simc/tree/${SIMC_COMMIT}/engine/class_modules/apl`,
     simcDocs: "https://github.com/simulationcraft/simc/wiki/ActionLists",
     googleSheet: "https://docs.google.com/spreadsheets/d/1hJo36fYVf36-ubuCwrMRkNQQjqNsc1m2lzy2VaRBff0/edit?usp=sharing",
@@ -335,7 +318,6 @@ const payload = {
 await fs.writeFile(outputPath, `${JSON.stringify(payload, null, 2)}\n`, "utf8");
 console.log(`Wrote ${specs.length} specs to ${outputPath}`);
 console.log(
-  `  ${payload.summary.liveRules} live rules, ${payload.summary.ptrRules} PTR rules, `
+  `  ${payload.summary.currentRules} current rules, `
     + `${payload.summary.simcActionLines} SimC action lines vs ${payload.summary.comparableBlizzardSteps} Blizzard steps`
 );
-console.log(`  ${specs.filter((spec) => spec.ptrSteps === null).length} specs share their live and PTR lists`);

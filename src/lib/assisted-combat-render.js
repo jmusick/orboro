@@ -34,7 +34,6 @@ export var DETAIL_TABS = [
   ["missing", "Versus SimC"],
   ["apl", "Blizzard APL"],
   ["icy", "Icy Veins"],
-  ["ptr", "PTR change"],
 ];
 
 /** Never emit `undefined` into a custom property: it silently kills color-mix(). */
@@ -72,11 +71,6 @@ export function initials(value) {
 
 export function specKey(spec) {
   return spec.gameClass + "|" + spec.spec;
-}
-
-/** `ptrSteps` is omitted from the payload when it is identical to `liveSteps`. */
-export function ptrStepsOf(spec) {
-  return spec.ptrSteps || spec.liveSteps;
 }
 
 /**
@@ -169,10 +163,8 @@ export function defaultState(payload) {
     search: "",
     gameClass: "all",
     role: "all",
-    ptrOnly: false,
     selected: payload.specs.length ? specKey(payload.specs[0]) : "",
     tab: "missing",
-    build: "live",
   };
 }
 
@@ -186,12 +178,9 @@ export function searchHaystack(spec) {
     spec.missingActions.join(" "),
     spec.missingLogic.join(" "),
     spec.comparisonLimitation.join(" "),
-    spec.ptrChange,
-    spec.ptrAssessment,
     spec.icySummary,
     spec.icyRating,
-    spec.liveSteps
-      .concat(ptrStepsOf(spec))
+    spec.steps
       .map(function (step) {
         return step.action;
       })
@@ -206,7 +195,6 @@ export function filterSpecs(payload, state) {
   return payload.specs.filter(function (spec) {
     if (state.gameClass !== "all" && spec.gameClass !== state.gameClass) return false;
     if (state.role !== "all" && spec.role !== state.role) return false;
-    if (state.ptrOnly && !spec.ptrChanged) return false;
     if (!needle) return true;
     return searchHaystack(spec).indexOf(needle) !== -1;
   });
@@ -253,7 +241,6 @@ export function renderCards(specs, state) {
         "</span></span>" +
         '<span class="ac-card-meta">' +
         scores +
-        (spec.ptrChanged ? '<span class="ac-ptr-dot" title="Changed on PTR"></span>' : "") +
         "</span>" +
         "</button>"
       );
@@ -261,9 +248,8 @@ export function renderCards(specs, state) {
     .join("");
 }
 
-export function renderSteps(spec, state) {
-  var steps = state.build === "ptr" ? ptrStepsOf(spec) : spec.liveSteps;
-  return steps
+export function renderSteps(spec) {
+  return spec.steps
     .map(function (step) {
       return (
         '<div class="ac-step' +
@@ -332,12 +318,14 @@ function renderMissingPanel(spec) {
     spec.simcActionCount +
     "</span></div>" +
     '<div class="ac-mini-metric"><span class="ac-mini-value">' +
-    spec.liveSteps.length +
-    '</span><span class="ac-mini-label">Blizzard live priority steps</span></div>' +
+    spec.steps.length +
+    '</span><span class="ac-mini-label">Blizzard 12.1 priority steps</span></div>' +
     '<div class="ac-mini-metric"><span class="ac-mini-value">' +
     escapeHtml(spec.simcActionLines.join(" / ")) +
     infoIcon(profilesInfo(spec)) +
-    '</span><span class="ac-mini-label">SimC lines by profile</span></div>' +
+    '</span><span class="ac-mini-label">SimC lines by profile · ' +
+    (spec.usesSeason2SimcProfile ? "12.1/MID2" : "latest Midnight snapshot") +
+    "</span></div>" +
     "</div>" +
     (spec.blizzardOnlyActions.length
       ? '<p class="ac-muted">Blizzard-only or fallback action names: ' +
@@ -349,25 +337,14 @@ function renderMissingPanel(spec) {
   );
 }
 
-function renderAplPanel(spec, payload, state) {
+function renderAplPanel(spec, payload) {
   return (
-    '<div class="ac-build-switch" role="group" aria-label="APL build">' +
-    '<button type="button" class="ac-build" data-apl-build="live" aria-pressed="' +
-    (state.build === "live") +
-    '">Live ' +
-    escapeHtml(payload.liveBuild) +
+    '<p class="ac-apl-note"><strong>Live 12.1 build ' +
+    escapeHtml(payload.currentBuild) +
     " · " +
-    spec.liveSteps.length +
-    " steps</button>" +
-    '<button type="button" class="ac-build" data-apl-build="ptr" aria-pressed="' +
-    (state.build === "ptr") +
-    '">PTR ' +
-    escapeHtml(payload.ptrBuild) +
-    " · " +
-    ptrStepsOf(spec).length +
-    " steps</button>" +
-    '</div><p class="ac-apl-note">Priority 1 is evaluated first. Every condition shown on a step must pass; “automation only” entries are internal cooldown actions and are not part of Assisted Highlight.</p><div class="ac-apl">' +
-    renderSteps(spec, state) +
+    spec.steps.length +
+    ' steps.</strong> Priority 1 is evaluated first. Every condition shown on a step must pass; “automation only” entries are internal cooldown actions and are not part of Assisted Highlight.</p><div class="ac-apl">' +
+    renderSteps(spec) +
     "</div>"
   );
 }
@@ -390,31 +367,11 @@ function renderIcyPanel(spec) {
   );
 }
 
-function renderPtrPanel(spec) {
-  var ptrCopy = spec.ptrChanged
-    ? spec.ptrChange
-    : "No Blizzard APL data changes between the pinned live and PTR builds.";
-  return (
-    '<div class="ac-panel-grid"><section class="ac-block"><h4 class="ac-block-title">Blizzard change</h4><p class="ac-copy">' +
-    escapeHtml(ptrCopy) +
-    "</p></section>" +
-    '<section class="ac-block"><h4 class="ac-block-title">Relationship to SimulationCraft</h4><p class="ac-copy">' +
-    escapeHtml(spec.ptrAssessment || spec.ptrNotes.join(" ") || "No material change to assess.") +
-    "</p></section>" +
-    '<section class="ac-block ac-block--wide"><h4 class="ac-block-title">Guide and PTR coverage note</h4><p class="ac-copy">' +
-    escapeHtml(spec.icyPtrEffect || "No guide-facing effect was identified.") +
-    '</p><p class="ac-muted">True SimC MID2 profile: ' +
-    (spec.hasTruePtrProfile ? "yes" : "no; comparison uses source/APL support only") +
-    ".</p></section></div>"
-  );
-}
-
 export function renderDetail(spec, payload, state) {
   var panels = {
     missing: renderMissingPanel(spec),
-    apl: renderAplPanel(spec, payload, state),
+    apl: renderAplPanel(spec, payload),
     icy: renderIcyPanel(spec),
-    ptr: renderPtrPanel(spec),
   };
   var tabs = DETAIL_TABS.map(function (tab) {
     var isSelected = state.tab === tab[0];
@@ -475,7 +432,6 @@ export function renderDetail(spec, payload, state) {
         infoIcon(simcCoverageInfo(spec)) +
         " SimC represented</span>"
       : '<span class="ac-badge">Not SimC-comparable</span>') +
-    (spec.ptrChanged ? '<span class="ac-badge ac-badge--ptr">PTR changed</span>' : "") +
     "</div></div>" +
     '<div class="ac-tabs" role="tablist" aria-label="' +
     escapeHtml(spec.spec + " " + spec.gameClass) +

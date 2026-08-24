@@ -1,22 +1,20 @@
 {
   "researchedAt": "2026-08-06",
-  "liveBuild": "12.0.7.68974",
-  "ptrBuild": "12.1.0.69111",
+  "verifiedAt": "2026-08-24",
+  "currentBuild": "12.1.0.69404",
+  "sourceBuild": "12.1.0.69111",
   "simcBranch": "midnight",
   "simcCommit": "a87874b5bfc88afb06922c7012e89b4b94aabc56",
   "summary": {
     "specs": 40,
     "classes": 13,
     "comparableSpecs": 32,
-    "ptrChangedSpecs": 12,
     "medianOverlap": 86,
-    "medianSimcCoverage": 66,
-    "liveSteps": 676,
-    "ptrSteps": 693,
-    "liveRules": 3021,
-    "ptrRules": 3116,
-    "simcActionLines": 1616,
-    "comparableBlizzardSteps": 596
+    "medianSimcCoverage": 67,
+    "currentSteps": 693,
+    "currentRules": 3116,
+    "simcActionLines": 1618,
+    "comparableBlizzardSteps": 613
   },
   "commonOmissions": [
     "Talent and hero-tree-specific priorities",
@@ -29,8 +27,7 @@
     "Complete mitigation and defensive planning for tanks"
   ],
   "sources": {
-    "wagoLive": "https://wago.tools/db2/AssistedCombat?build=12.0.7.68974",
-    "wagoPtr": "https://wago.tools/db2/AssistedCombat?build=12.1.0.69111",
+    "wagoCurrent": "https://wago.tools/db2/AssistedCombat?build=12.1.0.69404",
     "simc": "https://github.com/simulationcraft/simc/tree/a87874b5bfc88afb06922c7012e89b4b94aabc56/engine/class_modules/apl",
     "simcDocs": "https://github.com/simulationcraft/simc/wiki/ActionLists",
     "googleSheet": "https://docs.google.com/spreadsheets/d/1hJo36fYVf36-ubuCwrMRkNQQjqNsc1m2lzy2VaRBff0/edit?usp=sharing"
@@ -42,7 +39,7 @@
       "specId": 250,
       "assistedCombatId": 86,
       "role": "Tank",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Death Strike",
@@ -172,7 +169,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": true,
       "overlap": 89,
       "simcCoverage": 73,
@@ -181,13 +177,14 @@
       "simcActionCount": 11,
       "alignment": "High literal overlap",
       "simcProfiles": [
-        "MID1_Death_Knight_Blood.simc",
-        "MID1_Death_Knight_Blood_Deathbringer.simc"
+        "MID2_Death_Knight_Blood.simc",
+        "MID2_Death_Knight_Blood_Deathbringer.simc"
       ],
       "simcActionLines": [
-        39,
-        39
+        38,
+        38
       ],
+      "usesSeason2SimcProfile": true,
       "blizzardOnlyActions": [
         "rune_strike"
       ],
@@ -201,15 +198,9 @@
         "Dancing Rune Weapon timing"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": true,
       "icyRating": "Large",
       "icySummary": "The Blizzard list covers threat, Death Strike, Bone Shield maintenance, diseases, and a few offensive cooldowns. Icy Veins adds a scripted opener, Runic Power and Coagulopathy management, Dancing Rune Weapon planning, Exterminate handling, and encounter-timed defensives.",
-      "icyUrl": "https://www.icy-veins.com/wow/blood-death-knight-pve-tank-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/blood-death-knight-pve-tank-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Death Knight",
@@ -217,7 +208,7 @@
       "specId": 251,
       "assistedCombatId": 22,
       "role": "DPS",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Pillar of Frost",
@@ -387,7 +378,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": true,
       "overlap": 85,
       "simcCoverage": 85,
@@ -396,13 +386,12 @@
       "simcActionCount": 13,
       "alignment": "High literal overlap",
       "simcProfiles": [
-        "MID1_Death_Knight_Frost.simc",
-        "MID1_Death_Knight_Frost_Rider.simc"
+        "MID2_Death_Knight_Frost_Rider.simc"
       ],
       "simcActionLines": [
-        38,
         38
       ],
+      "usesSeason2SimcProfile": true,
       "blizzardOnlyActions": [
         "rune_strike",
         "soul_reaper"
@@ -416,15 +405,9 @@
         "Pillar of Frost and Breath synchronization"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": true,
       "icyRating": "Moderate",
       "icySummary": "The core Killing Machine, Rime, Runic Power, Obliterate, Frost Strike, and Howling Blast loop is recognizable. Icy Veins adds the opener, Razorice/Shattering Blade thresholds, careful proc-versus-resource decisions, and explicit Breath/Pillar/cooldown synchronization.",
-      "icyUrl": "https://www.icy-veins.com/wow/frost-death-knight-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/frost-death-knight-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Death Knight",
@@ -432,7 +415,7 @@
       "specId": 252,
       "assistedCombatId": 89,
       "role": "DPS",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Raise Dead",
@@ -594,7 +577,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": true,
       "overlap": 91,
       "simcCoverage": 91,
@@ -603,13 +585,14 @@
       "simcActionCount": 11,
       "alignment": "High literal overlap",
       "simcProfiles": [
-        "MID1_Death_Knight_Unholy.simc",
-        "MID1_Death_Knight_Unholy_San'layn.simc"
+        "MID2_Death_Knight_Unholy.simc",
+        "MID2_Death_Knight_Unholy_San'layn.simc"
       ],
       "simcActionLines": [
         23,
         23
       ],
+      "usesSeason2SimcProfile": true,
       "blizzardOnlyActions": [
         "rune_strike"
       ],
@@ -622,15 +605,9 @@
         "Resource and incoming-add planning"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": true,
       "icyRating": "Moderate",
       "icySummary": "Both maintain plagues and use the same builder, spender, execute, and transformation tools. Icy Veins is substantially more exact about Sudden Doom, Lesser Ghoul stacks, Blightburst/Festering Scythe, Dark Transformation windows, Gargoyle, and cooldown sequencing.",
-      "icyUrl": "https://www.icy-veins.com/wow/unholy-death-knight-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/unholy-death-knight-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Demon Hunter",
@@ -638,7 +615,7 @@
       "specId": 1480,
       "assistedCombatId": 542,
       "role": "DPS",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Void Metamorphosis",
@@ -728,7 +705,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": true,
       "overlap": 71,
       "simcCoverage": 31,
@@ -744,6 +720,7 @@
         21,
         21
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "immolation_aura",
         "void_metamorphosis"
@@ -759,15 +736,9 @@
         "Complete Void Metamorphosis sequencing"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": false,
       "icyRating": "Large",
       "icySummary": "The Blizzard list is a compact Reap, Consume, Void Ray, and Void Metamorphosis loop. Icy Veins separates pre- and post-transformation states and adds Soul/Fury planning, Cull/Devour replacements, Collapsing Star, Voidfall, Voidsurge, Voidblade/The Hunt melee combos, Hungering Slash, and Vengeful Retreat.",
-      "icyUrl": "https://www.icy-veins.com/wow/devourer-demon-hunter-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/devourer-demon-hunter-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Demon Hunter",
@@ -775,7 +746,7 @@
       "specId": 577,
       "assistedCombatId": 328,
       "role": "DPS",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Metamorphosis",
@@ -929,7 +900,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": true,
       "overlap": 100,
       "simcCoverage": 73,
@@ -943,6 +913,7 @@
       "simcActionLines": [
         56
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [],
       "missingActions": [
         "Annihilation",
@@ -955,15 +926,9 @@
         "Offensive movement combinations"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": false,
       "icyRating": "Large",
       "icySummary": "The assistant has the basic Blade Dance, Chaos Strike, Eye Beam, Essence Break, and Immolation Aura cycle. Icy Veins adds build-specific Aldrachi/Inertia combos, Reaver’s Glaive sequencing, Demonsurge consumption, Metamorphosis windows, movement abilities used offensively, and The Hunt alignment.",
-      "icyUrl": "https://www.icy-veins.com/wow/havoc-demon-hunter-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/havoc-demon-hunter-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Demon Hunter",
@@ -971,7 +936,7 @@
       "specId": 581,
       "assistedCombatId": 329,
       "role": "Tank",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Metamorphosis",
@@ -1077,7 +1042,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": true,
       "overlap": 90,
       "simcCoverage": 56,
@@ -1093,14 +1057,14 @@
         100,
         100
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "shear"
       ],
       "missingActions": [
         "Demon Spikes",
         "Fiery Brand",
-        "Fel Devastation",
-        "Metamorphosis"
+        "Fel Devastation"
       ],
       "missingLogic": [
         "Active mitigation",
@@ -1108,15 +1072,9 @@
         "Defensive cooldown timing"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": false,
       "icyRating": "Large",
       "icySummary": "The assistant provides a damage/threat loop with fragments and spenders, but not a complete tank plan. Icy Veins adds Fiery Brand and Metamorphosis timing, Art of the Glaive combos, fragment thresholds, defensive holds, Fel Devastation, and mitigation decisions.",
-      "icyUrl": "https://www.icy-veins.com/wow/vengeance-demon-hunter-pve-tank-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/vengeance-demon-hunter-pve-tank-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Druid",
@@ -1124,233 +1082,7 @@
       "specId": 102,
       "assistedCombatId": 90,
       "role": "DPS",
-      "liveSteps": [
-        {
-          "priority": 1,
-          "action": "Mark of the Wild",
-          "spellId": 1126,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Mark of the Wild Highlight [1271910].",
-          "stepId": 19004,
-          "automationOnly": false
-        },
-        {
-          "priority": 2,
-          "action": "Moonkin Form",
-          "spellId": 24858,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Moonkin Form [24858].",
-          "stepId": 2212,
-          "automationOnly": false
-        },
-        {
-          "priority": 3,
-          "action": "Sunfire",
-          "spellId": 93402,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND target missing aura: Sunfire [164815].",
-          "stepId": 1234,
-          "automationOnly": false
-        },
-        {
-          "priority": 4,
-          "action": "Force of Nature",
-          "spellId": 205636,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND target has aura: Dream Surge [433831].",
-          "stepId": 1238,
-          "automationOnly": false
-        },
-        {
-          "priority": 5,
-          "action": "Moonfire",
-          "spellId": 8921,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND target missing aura: Moonfire [164812]; AND player missing aura: Harmony of the Grove [428735].",
-          "stepId": 1235,
-          "automationOnly": false
-        },
-        {
-          "priority": 6,
-          "action": "Celestial Alignment",
-          "spellId": 194223,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Eclipse (Solar) [48517]; AND player missing aura: Eclipse (Lunar) [48518]; AND automation-only (not part of Assisted Highlight).",
-          "stepId": 17598,
-          "automationOnly": true
-        },
-        {
-          "priority": 7,
-          "action": "Starfire",
-          "spellId": 194153,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Eclipse (Solar) [48517]; AND player missing aura: Eclipse (Lunar) [48518]; AND targets near target > 3 (radius/value2=10); AND player missing aura: Lunar Eclipse Override [1233353]; AND player has aura: Eclipse [1239669].",
-          "stepId": 11698,
-          "automationOnly": false
-        },
-        {
-          "priority": 8,
-          "action": "Wrath",
-          "spellId": 190984,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Lunar Calling [429523]; AND player missing aura: Eclipse (Solar) [48517]; AND player missing aura: Eclipse (Lunar) [48518]; AND targets near target <= 2 (radius/value2=10); AND player has aura: Lunar Eclipse Override [1233353]; AND player has aura: Eclipse [1239669].",
-          "stepId": 11757,
-          "automationOnly": false
-        },
-        {
-          "priority": 9,
-          "action": "Fury of Elune",
-          "spellId": 202770,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range; AND player missing aura: Eclipse (Solar) [48517]; AND player missing aura: Eclipse (Lunar) [48518]; AND lunar/astral power >= 55.",
-          "stepId": 1240,
-          "automationOnly": false
-        },
-        {
-          "priority": 10,
-          "action": "Solar Eclipse",
-          "spellId": 1233346,
-          "condition": "player has aura: Eclipse [1239669]; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Eclipse (Solar) [48517]; AND player missing aura: Eclipse (Lunar) [48518]; AND lunar/astral power >= 60.",
-          "stepId": 12058,
-          "automationOnly": false
-        },
-        {
-          "priority": 11,
-          "action": "Starfall",
-          "spellId": 191034,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND targets near player > 3 (radius/value2=45); AND lunar/astral power >= 90.",
-          "stepId": 2117,
-          "automationOnly": false
-        },
-        {
-          "priority": 12,
-          "action": "Starsurge",
-          "spellId": 78674,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND targets near player <= 2 (radius/value2=45); AND lunar/astral power >= 90.",
-          "stepId": 2118,
-          "automationOnly": false
-        },
-        {
-          "priority": 13,
-          "action": "Wrath",
-          "spellId": 190984,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Eclipse (Solar) [48517]; AND player missing aura: Eclipse (Lunar) [48518]; AND player missing aura: Lunar Eclipse Override [1233353]; AND lunar/astral power <= 59.9.",
-          "stepId": 11817,
-          "automationOnly": false
-        },
-        {
-          "priority": 14,
-          "action": "Starfire",
-          "spellId": 194153,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Eclipse (Solar) [48517]; AND player missing aura: Eclipse (Lunar) [48518]; AND player has aura: Lunar Eclipse Override [1233353]; AND lunar/astral power <= 59.9.",
-          "stepId": 11816,
-          "automationOnly": false
-        },
-        {
-          "priority": 15,
-          "action": "Starfall",
-          "spellId": 191034,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Starweaver's Warp [393942].",
-          "stepId": 2654,
-          "automationOnly": false
-        },
-        {
-          "priority": 16,
-          "action": "Starsurge",
-          "spellId": 78674,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Starweaver's Weft [393944].",
-          "stepId": 2773,
-          "automationOnly": false
-        },
-        {
-          "priority": 17,
-          "action": "Starfall",
-          "spellId": 191034,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND targets near player > 3 (radius/value2=45).",
-          "stepId": 1237,
-          "automationOnly": false
-        },
-        {
-          "priority": 18,
-          "action": "Starsurge",
-          "spellId": 78674,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND targets near player <= 2 (radius/value2=45).",
-          "stepId": 1239,
-          "automationOnly": false
-        },
-        {
-          "priority": 19,
-          "action": "Starsurge",
-          "spellId": 78674,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND lunar/astral power >= 50.",
-          "stepId": 9492,
-          "automationOnly": false
-        },
-        {
-          "priority": 20,
-          "action": "Convoke the Spirits",
-          "spellId": 391528,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Eclipse (Solar) [48517].",
-          "stepId": 17599,
-          "automationOnly": false
-        },
-        {
-          "priority": 21,
-          "action": "Convoke the Spirits",
-          "spellId": 391528,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Eclipse (Lunar) [48518].",
-          "stepId": 17600,
-          "automationOnly": false
-        },
-        {
-          "priority": 22,
-          "action": "Fury of Elune",
-          "spellId": 202770,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range.",
-          "stepId": 19768,
-          "automationOnly": false
-        },
-        {
-          "priority": 23,
-          "action": "Wild Mushroom",
-          "spellId": 88747,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND target missing aura: Fungal Growth [81281].",
-          "stepId": 1244,
-          "automationOnly": false
-        },
-        {
-          "priority": 24,
-          "action": "New Moon",
-          "spellId": 274281,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 1243,
-          "automationOnly": false
-        },
-        {
-          "priority": 25,
-          "action": "Starfire",
-          "spellId": 194153,
-          "condition": "targets near target > 3 (radius/value2=10); AND action is learned; AND action cost is affordable; AND action is off cooldown; AND allow casting-success cooldown behavior; AND action is in range.",
-          "stepId": 1247,
-          "automationOnly": false
-        },
-        {
-          "priority": 26,
-          "action": "Starfire",
-          "spellId": 194153,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Lunar Calling [429523]; AND allow casting-success cooldown behavior; AND action is in range.",
-          "stepId": 1248,
-          "automationOnly": false
-        },
-        {
-          "priority": 27,
-          "action": "Wrath",
-          "spellId": 190984,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND allow casting-success cooldown behavior; AND action is in range.",
-          "stepId": 1245,
-          "automationOnly": false
-        },
-        {
-          "priority": 28,
-          "action": "Moonfire",
-          "spellId": 8921,
-          "condition": "always, subject to normal castability.",
-          "stepId": 5853,
-          "automationOnly": false
-        }
-      ],
-      "ptrSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Mark of the Wild",
@@ -1589,6 +1321,7 @@
       "simcActionLines": [
         85
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "mark_of_the_wild"
       ],
@@ -1602,17 +1335,9 @@
         "Cooldown alignment"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": true,
-      "ptrChange": "Force of Nature's Dream Surge check changes from a target aura to a player aura.",
-      "ptrNotes": [
-        "Corrects the Dream Surge aura owner"
-      ],
-      "ptrAssessment": "This is a condition-owner correction rather than a new action. SimC also evaluates player buff/cooldown state, but it does not expose a directly equivalent Dream Surge line for a literal comparison.",
-      "hasTruePtrProfile": false,
       "icyRating": "Moderate",
-      "icySummary": "The core DoTs, Eclipse entry, Astral Power spenders, and fillers agree. Icy Veins adds Astral Power pooling, pre-pull Wraths, DoT refreshes before major windows, cooldown alignment, and build-specific Starweaver/Touch the Cosmos handling. PTR correctly checks Dream Surge on the player for Force of Nature, matching the guide’s description.",
-      "icyUrl": "https://www.icy-veins.com/wow/balance-druid-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Closer."
+      "icySummary": "The core DoTs, Eclipse entry, Astral Power spenders, and fillers agree. Icy Veins adds Astral Power pooling, pre-pull Wraths, DoT refreshes before major windows, cooldown alignment, and build-specific Starweaver/Touch the Cosmos handling. The 12.1 list correctly checks Dream Surge on the player for Force of Nature, matching the guide’s description.",
+      "icyUrl": "https://www.icy-veins.com/wow/balance-druid-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Druid",
@@ -1620,7 +1345,7 @@
       "specId": 103,
       "assistedCombatId": 115,
       "role": "DPS",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Mark of the Wild",
@@ -1806,7 +1531,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": true,
       "overlap": 81,
       "simcCoverage": 76,
@@ -1820,6 +1544,7 @@
       "simcActionLines": [
         35
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "mark_of_the_wild",
         "moonfire",
@@ -1836,15 +1561,9 @@
         "Target cycling"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": false,
       "icyRating": "Moderate",
       "icySummary": "Both maintain Rake/Rip and use the expected builders and finishers. Icy Veins adds snapshotting with Tiger’s Fury, Energy pooling, 5-combo-point rules, Berserk/Convoke synchronization, Apex Predator/Ravage handling, and distinct single-target/AoE priorities.",
-      "icyUrl": "https://www.icy-veins.com/wow/feral-druid-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/feral-druid-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Druid",
@@ -1852,129 +1571,7 @@
       "specId": 104,
       "assistedCombatId": 111,
       "role": "Tank",
-      "liveSteps": [
-        {
-          "priority": 1,
-          "action": "Mark of the Wild",
-          "spellId": 1126,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Mark of the Wild Highlight [1271910].",
-          "stepId": 18946,
-          "automationOnly": false
-        },
-        {
-          "priority": 2,
-          "action": "Bear Form",
-          "spellId": 5487,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Bear Form [5487].",
-          "stepId": 1479,
-          "automationOnly": false
-        },
-        {
-          "priority": 3,
-          "action": "Berserk",
-          "spellId": 50334,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND automation-only (not part of Assisted Highlight).",
-          "stepId": 17719,
-          "automationOnly": true
-        },
-        {
-          "priority": 4,
-          "action": "Convoke the Spirits",
-          "spellId": 391528,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND automation-only (not part of Assisted Highlight).",
-          "stepId": 17720,
-          "automationOnly": true
-        },
-        {
-          "priority": 5,
-          "action": "Thrash",
-          "spellId": 77758,
-          "condition": "target distance <= 8 yd; AND action is learned; AND action cost is affordable; AND action is off cooldown; AND targets near player > 3 (radius/value2=10).",
-          "stepId": 1478,
-          "automationOnly": false
-        },
-        {
-          "priority": 6,
-          "action": "Lunar Beam",
-          "spellId": 204066,
-          "condition": "target distance <= 8 yd; AND action is learned; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 1486,
-          "automationOnly": false
-        },
-        {
-          "priority": 7,
-          "action": "Convoke the Spirits",
-          "spellId": 391528,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND target distance <= 5 yd.",
-          "stepId": 6729,
-          "automationOnly": false
-        },
-        {
-          "priority": 8,
-          "action": "Moonfire",
-          "spellId": 8921,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND target missing aura: Moonfire [164812].",
-          "stepId": 1480,
-          "automationOnly": false
-        },
-        {
-          "priority": 9,
-          "action": "Mangle",
-          "spellId": 33917,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range.",
-          "stepId": 1481,
-          "automationOnly": false
-        },
-        {
-          "priority": 10,
-          "action": "Thrash",
-          "spellId": 77758,
-          "condition": "target distance <= 8 yd; AND action is learned; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 1483,
-          "automationOnly": false
-        },
-        {
-          "priority": 11,
-          "action": "Moonfire",
-          "spellId": 8921,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Galactic Guardian [213708].",
-          "stepId": 1485,
-          "automationOnly": false
-        },
-        {
-          "priority": 12,
-          "action": "Maul",
-          "spellId": 6807,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND rage >= 8; AND action is in range.",
-          "stepId": 1482,
-          "automationOnly": false
-        },
-        {
-          "priority": 13,
-          "action": "Swipe",
-          "spellId": 213764,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND target distance <= 8 yd.",
-          "stepId": 1484,
-          "automationOnly": false
-        },
-        {
-          "priority": 14,
-          "action": "Moonfire",
-          "spellId": 8921,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range; AND target distance > 10 yd.",
-          "stepId": 8228,
-          "automationOnly": false
-        },
-        {
-          "priority": 15,
-          "action": "Swipe",
-          "spellId": 213764,
-          "condition": "always, subject to normal castability.",
-          "stepId": 5880,
-          "automationOnly": false
-        }
-      ],
-      "ptrSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Mark of the Wild",
@@ -2109,6 +1706,7 @@
       "simcActionLines": [
         40
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "mark_of_the_wild"
       ],
@@ -2123,17 +1721,9 @@
         "Defensive and form-weaving decisions"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": true,
-      "ptrChange": "Thrash moves ahead of Mangle.",
-      "ptrNotes": [
-        "Moves Thrash ahead of Mangle"
-      ],
-      "ptrAssessment": "Directionally closer. SimC can place Thrash before Mangle in relevant talent/DoT states, though its order is contextual rather than a permanent global swap.",
-      "hasTruePtrProfile": false,
       "icyRating": "Large",
-      "icySummary": "The assistant mostly supplies an offensive Bear-form loop. Icy Veins adds Ironfur/Raze rage spending, mitigation and cooldown planning, Moonfire/Red Moon uptime, and form/utility decisions. PTR swaps Thrash ahead of Mangle, matching the guide’s listed offensive order, but the survivability gap remains.",
-      "icyUrl": "https://www.icy-veins.com/wow/guardian-druid-pve-tank-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Closer."
+      "icySummary": "The assistant mostly supplies an offensive Bear-form loop. Icy Veins adds Ironfur/Raze rage spending, mitigation and cooldown planning, Moonfire/Red Moon uptime, and form/utility decisions. The 12.1 list swaps Thrash ahead of Mangle, matching the guide’s listed offensive order, but the survivability gap remains.",
+      "icyUrl": "https://www.icy-veins.com/wow/guardian-druid-pve-tank-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Druid",
@@ -2141,7 +1731,7 @@
       "specId": 105,
       "assistedCombatId": 52,
       "role": "Healer",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Mark of the Wild",
@@ -2247,7 +1837,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": false,
       "overlap": null,
       "simcCoverage": null,
@@ -2257,6 +1846,7 @@
       "alignment": "Not comparable",
       "simcProfiles": [],
       "simcActionLines": [],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "ferocious_bite",
         "mark_of_the_wild",
@@ -2276,15 +1866,9 @@
       "comparisonLimitation": [
         "SimulationCraft has no optimized healing APL"
       ],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": false,
       "icyRating": "Not comparable",
       "icySummary": "Blizzard’s list is a damage rotation using Cat/Moonkin abilities; it does not perform the Icy Veins healing rotation. The guide centers on Lifebloom, Rejuvenation, Swiftmend, Wild Growth, Efflorescence, ramp preparation, Tranquility/Convoke/Tree timing, and target selection.",
-      "icyUrl": "https://www.icy-veins.com/wow/restoration-druid-pve-healing-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/restoration-druid-pve-healing-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Evoker",
@@ -2292,7 +1876,7 @@
       "specId": 1473,
       "assistedCombatId": 104,
       "role": "Support DPS",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Blessing of the Bronze",
@@ -2406,7 +1990,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": false,
       "overlap": null,
       "simcCoverage": null,
@@ -2416,6 +1999,7 @@
       "alignment": "Not comparable",
       "simcProfiles": [],
       "simcActionLines": [],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "blessing_of_the_bronze",
         "blistering_scales",
@@ -2434,15 +2018,9 @@
       "comparisonLimitation": [
         "SimulationCraft has no optimized Augmentation APL"
       ],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": false,
       "icyRating": "Large",
       "icySummary": "The assistant contains the core Prescience, Ebon Might, empower, and Eruption framework. Icy Veins adds ally-target selection, Ebon Might extension planning, Breath of Eons group alignment, Deep Breath, Tip the Scales, Time Skip, movement, and support-cooldown timing.",
-      "icyUrl": "https://www.icy-veins.com/wow/augmentation-evoker-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/augmentation-evoker-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Evoker",
@@ -2450,129 +2028,7 @@
       "specId": 1467,
       "assistedCombatId": 105,
       "role": "DPS",
-      "liveSteps": [
-        {
-          "priority": 1,
-          "action": "Blessing of the Bronze",
-          "spellId": 364342,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Blessing of the Bronze Highlight [1271912].",
-          "stepId": 18913,
-          "automationOnly": false
-        },
-        {
-          "priority": 2,
-          "action": "Dragonrage",
-          "spellId": 375087,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND automation-only (not part of Assisted Highlight).",
-          "stepId": 15868,
-          "automationOnly": true
-        },
-        {
-          "priority": 3,
-          "action": "Fire Breath",
-          "spellId": 357208,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND allow casting-success cooldown behavior; AND player has aura: Consume Flame [444088]; AND target missing aura: Fire Breath [357209].",
-          "stepId": 1424,
-          "automationOnly": false
-        },
-        {
-          "priority": 4,
-          "action": "Tip the Scales",
-          "spellId": 370553,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND spell off cooldown: Fire Breath [382266]; AND automation-only (not part of Assisted Highlight).",
-          "stepId": 15914,
-          "automationOnly": true
-        },
-        {
-          "priority": 5,
-          "action": "Fire Breath",
-          "spellId": 357208,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND allow casting-success cooldown behavior; AND player missing aura: Consume Flame [444088].",
-          "stepId": 15126,
-          "automationOnly": false
-        },
-        {
-          "priority": 6,
-          "action": "Eternity Surge",
-          "spellId": 359073,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND allow casting-success cooldown behavior.",
-          "stepId": 1425,
-          "automationOnly": false
-        },
-        {
-          "priority": 7,
-          "action": "Deep Breath",
-          "spellId": 357210,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Recall [371807]; AND target distance <= 40 yd; AND automation-only (not part of Assisted Highlight).",
-          "stepId": 15880,
-          "automationOnly": true
-        },
-        {
-          "priority": 8,
-          "action": "Disintegrate",
-          "spellId": 356995,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND targets near target > 3 (radius/value2=10); AND player has aura: Mass Disintegrate [436336].",
-          "stepId": 1426,
-          "automationOnly": false
-        },
-        {
-          "priority": 9,
-          "action": "Pyre",
-          "spellId": 357211,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND targets near target > 3 (radius/value2=10).",
-          "stepId": 1427,
-          "automationOnly": false
-        },
-        {
-          "priority": 10,
-          "action": "Azure Strike",
-          "spellId": 362969,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Azure Sweep [1265871].",
-          "stepId": 15127,
-          "automationOnly": false
-        },
-        {
-          "priority": 11,
-          "action": "Living Flame",
-          "spellId": 361469,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND targets near target > 3 (radius/value2=10); AND player has aura: Burnout [375802]; AND player has aura: Leaping Flames [370901].",
-          "stepId": 1428,
-          "automationOnly": false
-        },
-        {
-          "priority": 12,
-          "action": "Azure Strike",
-          "spellId": 362969,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND targets near target > 3 (radius/value2=10).",
-          "stepId": 1430,
-          "automationOnly": false
-        },
-        {
-          "priority": 13,
-          "action": "Disintegrate",
-          "spellId": 356995,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 1431,
-          "automationOnly": false
-        },
-        {
-          "priority": 14,
-          "action": "Living Flame",
-          "spellId": 361469,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND allow casting-success cooldown behavior.",
-          "stepId": 1432,
-          "automationOnly": false
-        },
-        {
-          "priority": 15,
-          "action": "Living Flame",
-          "spellId": 361469,
-          "condition": "always, subject to normal castability.",
-          "stepId": 5915,
-          "automationOnly": false
-        }
-      ],
-      "ptrSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Blessing of the Bronze",
@@ -2717,6 +2173,7 @@
         49,
         49
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "blessing_of_the_bronze"
       ],
@@ -2728,17 +2185,9 @@
         "Movement and cooldown alignment"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": true,
-      "ptrChange": "Dragonrage is added.",
-      "ptrNotes": [
-        "Adds Dragonrage"
-      ],
-      "ptrAssessment": "Closer. Dragonrage is a central SimC action with dedicated preparation and extension logic.",
-      "hasTruePtrProfile": false,
       "icyRating": "Moderate",
-      "icySummary": "The basic empower, Essence spender, and filler choices agree. Icy Veins adds empower ranks, Dragonrage extension planning, Deep Breath/Tip the Scales timing, movement choices, and separate hero-talent openers. PTR adds Dragonrage to the list, moving it closer.",
-      "icyUrl": "https://www.icy-veins.com/wow/devastation-evoker-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Closer."
+      "icySummary": "The basic empower, Essence spender, and filler choices agree. Icy Veins adds empower ranks, Dragonrage extension planning, Deep Breath/Tip the Scales timing, movement choices, and separate hero-talent openers. The 12.1 list adds Dragonrage to the list, moving it closer.",
+      "icyUrl": "https://www.icy-veins.com/wow/devastation-evoker-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Evoker",
@@ -2746,7 +2195,7 @@
       "specId": 1468,
       "assistedCombatId": 45,
       "role": "Healer",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Blessing of the Bronze",
@@ -2780,7 +2229,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": false,
       "overlap": null,
       "simcCoverage": null,
@@ -2790,6 +2238,7 @@
       "alignment": "Not comparable",
       "simcProfiles": [],
       "simcActionLines": [],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "blessing_of_the_bronze",
         "fire_breath",
@@ -2800,15 +2249,9 @@
       "comparisonLimitation": [
         "SimulationCraft has no optimized healing APL"
       ],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": false,
       "icyRating": "Not comparable",
       "icySummary": "Blizzard’s list is only Blessing of the Bronze plus damage spells. Icy Veins is a healing plan built around Echo, Temporal Anomaly, Dream Breath, Verdant Embrace, Emerald Blossom, Stasis, Merithra’s Blessing, Rewind, and encounter-specific ramps.",
-      "icyUrl": "https://www.icy-veins.com/wow/preservation-evoker-pve-healing-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/preservation-evoker-pve-healing-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Hunter",
@@ -2816,7 +2259,7 @@
       "specId": 253,
       "assistedCombatId": 331,
       "role": "DPS",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Revive Pet",
@@ -2906,7 +2349,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": true,
       "overlap": 56,
       "simcCoverage": 63,
@@ -2920,6 +2362,7 @@
       "simcActionLines": [
         35
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "arcane_shot",
         "call_pet_1",
@@ -2936,15 +2379,9 @@
         "Bestial Wrath preparation"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": false,
       "icyRating": "Large",
       "icySummary": "Kill Command, Barbed Shot, Black Arrow, Wild Thrash, and Bestial Wrath appear, but the assistant uses a very simplified filler model. Icy Veins adds Barbed Shot dumping before Bestial Wrath, charge holds, Nature’s Ally/Pack Leader conditions, Cobra Shot timing, and precise opener/cooldown sequencing.",
-      "icyUrl": "https://www.icy-veins.com/wow/beast-mastery-hunter-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/beast-mastery-hunter-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Hunter",
@@ -2952,137 +2389,7 @@
       "specId": 254,
       "assistedCombatId": 332,
       "role": "DPS",
-      "liveSteps": [
-        {
-          "priority": 1,
-          "action": "Trueshot",
-          "spellId": 288613,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND automation-only (not part of Assisted Highlight).",
-          "stepId": 17357,
-          "automationOnly": true
-        },
-        {
-          "priority": 2,
-          "action": "Volley",
-          "spellId": 260243,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND target distance <= 50 yd.",
-          "stepId": 4868,
-          "automationOnly": false
-        },
-        {
-          "priority": 3,
-          "action": "Multi-Shot",
-          "spellId": 257620,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range; AND player missing aura: Trick Shots [257622]; AND targets near target > 3 (radius/value2=10).",
-          "stepId": 4969,
-          "automationOnly": false
-        },
-        {
-          "priority": 4,
-          "action": "Multi-Shot",
-          "spellId": 257620,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range; AND player aura remaining <= 2s: Trick Shots [257622]; AND targets near target > 3 (radius/value2=10).",
-          "stepId": 4865,
-          "automationOnly": false
-        },
-        {
-          "priority": 5,
-          "action": "Multi-Shot",
-          "spellId": 257620,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range; AND player has aura: Precise Shots [260242]; AND targets near target > 3 (radius/value2=10).",
-          "stepId": 4866,
-          "automationOnly": false
-        },
-        {
-          "priority": 6,
-          "action": "Kill Shot",
-          "spellId": 53351,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range; AND player has aura: Black Arrow [466932].",
-          "stepId": 4874,
-          "automationOnly": false
-        },
-        {
-          "priority": 7,
-          "action": "Rapid Fire",
-          "spellId": 257044,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range.",
-          "stepId": 4867,
-          "automationOnly": false
-        },
-        {
-          "priority": 8,
-          "action": "Aimed Shot",
-          "spellId": 19434,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range; AND allow casting-success cooldown behavior; AND spell charges greater (raw values: 2, 0, 0).",
-          "stepId": 7692,
-          "automationOnly": false
-        },
-        {
-          "priority": 9,
-          "action": "Aimed Shot",
-          "spellId": 19434,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range.",
-          "stepId": 4870,
-          "automationOnly": false
-        },
-        {
-          "priority": 10,
-          "action": "Kill Shot",
-          "spellId": 53351,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range.",
-          "stepId": 4871,
-          "automationOnly": false
-        },
-        {
-          "priority": 11,
-          "action": "Multi-Shot",
-          "spellId": 2643,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range; AND targets near target > 3 (radius/value2=10); AND focus >= 90.",
-          "stepId": 4873,
-          "automationOnly": false
-        },
-        {
-          "priority": 12,
-          "action": "Arcane Shot",
-          "spellId": 185358,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range; AND player has aura: Precise Shots [260242].",
-          "stepId": 4875,
-          "automationOnly": false
-        },
-        {
-          "priority": 13,
-          "action": "Arcane Shot",
-          "spellId": 185358,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Precise Shots [260240].",
-          "stepId": 10243,
-          "automationOnly": false
-        },
-        {
-          "priority": 14,
-          "action": "Steady Shot",
-          "spellId": 56641,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range; AND allow casting-success cooldown behavior.",
-          "stepId": 4872,
-          "automationOnly": false
-        },
-        {
-          "priority": 15,
-          "action": "Aimed Shot",
-          "spellId": 19434,
-          "condition": "action is learned.",
-          "stepId": 5946,
-          "automationOnly": false
-        },
-        {
-          "priority": 16,
-          "action": "Steady Shot",
-          "spellId": 56641,
-          "condition": "always, subject to normal castability.",
-          "stepId": 7706,
-          "automationOnly": false
-        }
-      ],
-      "ptrSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Trueshot",
@@ -3222,9 +2529,9 @@
       ],
       "simcComparable": true,
       "overlap": 100,
-      "simcCoverage": 62,
-      "sharedActionCount": 8,
-      "blizzardActionCount": 8,
+      "simcCoverage": 69,
+      "sharedActionCount": 9,
+      "blizzardActionCount": 9,
       "simcActionCount": 13,
       "alignment": "High literal overlap",
       "simcProfiles": [
@@ -3233,6 +2540,7 @@
       "simcActionLines": [
         48
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [],
       "missingActions": [
         "Black Arrow",
@@ -3244,17 +2552,9 @@
         "Separate single-target and AoE branches"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": true,
-      "ptrChange": "Explosive Shot is added near the top.",
-      "ptrNotes": [
-        "Adds Explosive Shot"
-      ],
-      "ptrAssessment": "Closer. Explosive Shot already appears in every relevant SimC Marksmanship branch.",
-      "hasTruePtrProfile": false,
       "icyRating": "Moderate",
-      "icySummary": "The assistant captures Aimed Shot, Rapid Fire, Kill Shot, Volley/Multi-Shot, and Arcane Shot. Icy Veins adds Double Tap setup, Trueshot and Bullseye planning, Bulletstorm protection, Precise Shots sequencing, and an opener. PTR adds low-priority Explosive Shot, exactly the use described by the guide.",
-      "icyUrl": "https://www.icy-veins.com/wow/marksmanship-hunter-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Closer."
+      "icySummary": "The assistant captures Aimed Shot, Rapid Fire, Kill Shot, Volley/Multi-Shot, and Arcane Shot. Icy Veins adds Double Tap setup, Trueshot and Bullseye planning, Bulletstorm protection, Precise Shots sequencing, and an opener. The 12.1 list adds low-priority Explosive Shot, exactly the use described by the guide.",
+      "icyUrl": "https://www.icy-veins.com/wow/marksmanship-hunter-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Hunter",
@@ -3262,7 +2562,7 @@
       "specId": 255,
       "assistedCombatId": 330,
       "role": "DPS",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Revive Pet",
@@ -3376,7 +2676,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": true,
       "overlap": 60,
       "simcCoverage": 67,
@@ -3390,6 +2689,7 @@
       "simcActionLines": [
         45
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "arcane_shot",
         "call_pet_1",
@@ -3406,15 +2706,9 @@
         "Target-count and cooldown rules"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": false,
       "icyRating": "Moderate",
       "icySummary": "The core Bomb, Kill Command, Raptor Strike, Boomstick, and Flamefang cycle is represented. Icy Veins adds Takedown windows, Tip of the Spear/proc handling, target gathering and Misdirection, Harpoon/Disengage usage, and distinct opener/AoE sequencing.",
-      "icyUrl": "https://www.icy-veins.com/wow/survival-hunter-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/survival-hunter-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Mage",
@@ -3422,137 +2716,7 @@
       "specId": 62,
       "assistedCombatId": 209,
       "role": "DPS",
-      "liveSteps": [
-        {
-          "priority": 1,
-          "action": "Arcane Intellect",
-          "spellId": 1459,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Arcane Intellect Highlight [1271907].",
-          "stepId": 18862,
-          "automationOnly": false
-        },
-        {
-          "priority": 2,
-          "action": "Arcane Barrage",
-          "spellId": 44425,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND arcane charges >= 4; AND player has aura: Spellfire Salvo [1260616]; AND player aura stacks >= 22: Arcane Salvo [1242974].",
-          "stepId": 3037,
-          "automationOnly": false
-        },
-        {
-          "priority": 3,
-          "action": "Arcane Barrage",
-          "spellId": 44425,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND arcane charges >= 4; AND player missing aura: Spellfire Salvo [1260616]; AND player aura stacks >= 17: Arcane Salvo [1242974].",
-          "stepId": 16332,
-          "automationOnly": false
-        },
-        {
-          "priority": 4,
-          "action": "Touch of the Magi",
-          "spellId": 321507,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND spell off cooldown: Arcane Blast [30451]; AND target missing aura: Touch of the Magi [210824].",
-          "stepId": 6453,
-          "automationOnly": false
-        },
-        {
-          "priority": 5,
-          "action": "Arcane Surge",
-          "spellId": 365350,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND automation-only (not part of Assisted Highlight).",
-          "stepId": 16382,
-          "automationOnly": true
-        },
-        {
-          "priority": 6,
-          "action": "Arcane Missiles",
-          "spellId": 5143,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Overpowered Missiles [1277009].",
-          "stepId": 3046,
-          "automationOnly": false
-        },
-        {
-          "priority": 7,
-          "action": "Arcane Orb",
-          "spellId": 153626,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND arcane charges <= 1; AND targets near target > 2 (radius/value2=10).",
-          "stepId": 3002,
-          "automationOnly": false
-        },
-        {
-          "priority": 8,
-          "action": "Arcane Orb",
-          "spellId": 153626,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND arcane charges <= 1.",
-          "stepId": 3028,
-          "automationOnly": false
-        },
-        {
-          "priority": 9,
-          "action": "Arcane Missiles",
-          "spellId": 5143,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Clearcasting [263725]; AND player missing aura: Nether Precision [383783]; AND player has aura: High Voltage [461248].",
-          "stepId": 3047,
-          "automationOnly": false
-        },
-        {
-          "priority": 10,
-          "action": "Arcane Missiles",
-          "spellId": 5143,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Clearcasting [263725]; AND player missing aura: Nether Precision [383783]; AND targets near target <= 2 (radius/value2=10); AND allow casting-success cooldown behavior.",
-          "stepId": 2995,
-          "automationOnly": false
-        },
-        {
-          "priority": 11,
-          "action": "Evocation",
-          "spellId": 12051,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND mana <= 20%; AND player missing aura: Arcane Surge [365362].",
-          "stepId": 16395,
-          "automationOnly": false
-        },
-        {
-          "priority": 12,
-          "action": "Arcane Barrage",
-          "spellId": 44425,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND mana <= 10%; AND player missing aura: Arcane Surge [365362].",
-          "stepId": 2999,
-          "automationOnly": false
-        },
-        {
-          "priority": 13,
-          "action": "Arcane Explosion",
-          "spellId": 1449,
-          "condition": "spell learned: Arcane Pulse [1241462]; AND action is learned; AND action cost is affordable; AND action is off cooldown; AND targets near target > 3 (radius/value2=10); AND allow casting-success cooldown behavior.",
-          "stepId": 16357,
-          "automationOnly": false
-        },
-        {
-          "priority": 14,
-          "action": "Arcane Explosion",
-          "spellId": 1449,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND targets near player > 3 (radius/value2=10); AND player missing aura: Amplification [236628].",
-          "stepId": 3000,
-          "automationOnly": false
-        },
-        {
-          "priority": 15,
-          "action": "Arcane Blast",
-          "spellId": 30451,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND allow casting-success cooldown behavior.",
-          "stepId": 13278,
-          "automationOnly": false
-        },
-        {
-          "priority": 16,
-          "action": "Arcane Barrage",
-          "spellId": 44425,
-          "condition": "always, subject to normal castability.",
-          "stepId": 5974,
-          "automationOnly": false
-        }
-      ],
-      "ptrSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Arcane Intellect",
@@ -3707,10 +2871,10 @@
         }
       ],
       "simcComparable": true,
-      "overlap": 100,
+      "overlap": 90,
       "simcCoverage": 75,
       "sharedActionCount": 9,
-      "blizzardActionCount": 9,
+      "blizzardActionCount": 10,
       "simcActionCount": 12,
       "alignment": "High literal overlap",
       "simcProfiles": [
@@ -3721,7 +2885,10 @@
         43,
         43
       ],
-      "blizzardOnlyActions": [],
+      "usesSeason2SimcProfile": false,
+      "blizzardOnlyActions": [
+        "prismatic_bolt"
+      ],
       "missingActions": [
         "Arcane Pulse",
         "Presence of Mind",
@@ -3733,19 +2900,9 @@
         "Touch of the Magi and Arcane Surge planning"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": true,
-      "ptrChange": "Adds Arcane Soul Barrage, Orb Mastery/Clearcasting Arcane Orb, and Prismatic Bolt handling.",
-      "ptrNotes": [
-        "Adds Arcane Soul handling",
-        "Adds Orb Mastery and Clearcasting logic",
-        "Adds Prismatic Bolt handling"
-      ],
-      "ptrAssessment": "Closer. SimC already uses Arcane Barrage during Arcane Soul, Arcane Orb with Clearcasting/Orb Mastery logic, and models Prismatic Bolt state, though its conditions are substantially richer.",
-      "hasTruePtrProfile": false,
       "icyRating": "Moderate",
-      "icySummary": "The live list has the central Arcane Charge, Salvo, Missiles, Orb, mana, and Touch rules, but Icy Veins is more exact about Clearcasting, filler selection, movement, and Arcane Surge windows. PTR adds the guide’s Arcane Soul Barrage and Orb Mastery interactions; Prismatic Bolt is PTR-only and is not covered by the current live guide.",
-      "icyUrl": "https://www.icy-veins.com/wow/arcane-mage-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Closer, with PTR-only additions."
+      "icySummary": "The 12.1 list has the central Arcane Charge, Salvo, Missiles, Orb, mana, and Touch rules, but Icy Veins is more exact about Clearcasting, filler selection, movement, and Arcane Surge windows. The 12.1 list adds the guide’s Arcane Soul Barrage and Orb Mastery interactions; Prismatic Bolt is specific to 12.1 and is not covered by the pinned guide snapshot.",
+      "icyUrl": "https://www.icy-veins.com/wow/arcane-mage-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Mage",
@@ -3753,113 +2910,7 @@
       "specId": 63,
       "assistedCombatId": 215,
       "role": "DPS",
-      "liveSteps": [
-        {
-          "priority": 1,
-          "action": "Arcane Intellect",
-          "spellId": 1459,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Arcane Intellect Highlight [1271907].",
-          "stepId": 18873,
-          "automationOnly": false
-        },
-        {
-          "priority": 2,
-          "action": "Flamestrike",
-          "spellId": 2120,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Hyperthermia [383874]; AND targets near target > 3 (radius/value2=10).",
-          "stepId": 18502,
-          "automationOnly": false
-        },
-        {
-          "priority": 3,
-          "action": "Flamestrike",
-          "spellId": 1254851,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Hyperthermia [383874]; AND targets near target > 3 (radius/value2=10).",
-          "stepId": 21451,
-          "automationOnly": false
-        },
-        {
-          "priority": 4,
-          "action": "Pyroblast",
-          "spellId": 11366,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Hyperthermia [383874].",
-          "stepId": 18501,
-          "automationOnly": false
-        },
-        {
-          "priority": 5,
-          "action": "Meteor",
-          "spellId": 153561,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 3052,
-          "automationOnly": false
-        },
-        {
-          "priority": 6,
-          "action": "Combustion",
-          "spellId": 190319,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND automation-only (not part of Assisted Highlight).",
-          "stepId": 16971,
-          "automationOnly": true
-        },
-        {
-          "priority": 7,
-          "action": "Fire Blast",
-          "spellId": 108853,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Heating Up [48107]; AND player missing aura: Hyperthermia [383874].",
-          "stepId": 3048,
-          "automationOnly": false
-        },
-        {
-          "priority": 8,
-          "action": "Flamestrike",
-          "spellId": 2120,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Hot Streak! [48108]; AND targets near target > 3 (radius/value2=10).",
-          "stepId": 3049,
-          "automationOnly": false
-        },
-        {
-          "priority": 9,
-          "action": "Flamestrike",
-          "spellId": 1254851,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Hot Streak! [48108]; AND targets near target > 3 (radius/value2=10).",
-          "stepId": 21452,
-          "automationOnly": false
-        },
-        {
-          "priority": 10,
-          "action": "Pyroblast",
-          "spellId": 11366,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Hot Streak! [48108].",
-          "stepId": 3051,
-          "automationOnly": false
-        },
-        {
-          "priority": 11,
-          "action": "Frostfire Bolt",
-          "spellId": 431044,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND allow casting-success cooldown behavior.",
-          "stepId": 12298,
-          "automationOnly": false
-        },
-        {
-          "priority": 12,
-          "action": "Fireball",
-          "spellId": 133,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND allow casting-success cooldown behavior.",
-          "stepId": 3056,
-          "automationOnly": false
-        },
-        {
-          "priority": 13,
-          "action": "Fireball",
-          "spellId": 133,
-          "condition": "always, subject to normal castability.",
-          "stepId": 5987,
-          "automationOnly": false
-        }
-      ],
-      "ptrSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Arcane Intellect",
@@ -4007,9 +3058,9 @@
       ],
       "simcComparable": true,
       "overlap": 100,
-      "simcCoverage": 80,
-      "sharedActionCount": 8,
-      "blizzardActionCount": 8,
+      "simcCoverage": 90,
+      "sharedActionCount": 9,
+      "blizzardActionCount": 9,
       "simcActionCount": 10,
       "alignment": "High literal overlap",
       "simcProfiles": [
@@ -4020,10 +3071,10 @@
         54,
         54
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [],
       "missingActions": [
-        "Mirror Image",
-        "Live Scorch handling"
+        "Mirror Image"
       ],
       "missingLogic": [
         "Heating Up and Hot Streak sequencing",
@@ -4032,18 +3083,9 @@
         "Execute and AoE branches"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": true,
-      "ptrChange": "Adds Pyroclasm/Heat Shimmer/execute Scorch and Pyroblast entries.",
-      "ptrNotes": [
-        "Adds Pyroclasm and Heat Shimmer rules",
-        "Adds execute Scorch and Pyroblast rules"
-      ],
-      "ptrAssessment": "Closer. SimC uses Pyroblast/Scorch around Pyroclasm, Heat Shimmer, and execute state.",
-      "hasTruePtrProfile": false,
       "icyRating": "Large",
-      "icySummary": "Live Assisted Combat omits much of the hard-cast Pyroclasm, Heat Shimmer, execute-Scorch, and Combustion-state structure. PTR adds five rules matching those guide concepts, but Icy Veins still has a much richer Hot Streak/Heating Up conversion and Combustion sequence.",
-      "icyUrl": "https://www.icy-veins.com/wow/fire-mage-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Much closer."
+      "icySummary": "Assisted Combat omits much of the hard-cast Pyroclasm, Heat Shimmer, execute-Scorch, and Combustion-state structure. The 12.1 list adds five rules matching those guide concepts, but Icy Veins still has a much richer Hot Streak/Heating Up conversion and Combustion sequence.",
+      "icyUrl": "https://www.icy-veins.com/wow/fire-mage-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Mage",
@@ -4051,97 +3093,7 @@
       "specId": 64,
       "assistedCombatId": 85,
       "role": "DPS",
-      "liveSteps": [
-        {
-          "priority": 1,
-          "action": "Arcane Intellect",
-          "spellId": 1459,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Arcane Intellect Highlight [1271907].",
-          "stepId": 18884,
-          "automationOnly": false
-        },
-        {
-          "priority": 2,
-          "action": "Ray of Frost",
-          "spellId": 205021,
-          "condition": "player has aura: Comet Storm! [1247778]; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 18596,
-          "automationOnly": false
-        },
-        {
-          "priority": 3,
-          "action": "Frozen Orb",
-          "spellId": 84714,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 1156,
-          "automationOnly": false
-        },
-        {
-          "priority": 4,
-          "action": "Blizzard",
-          "spellId": 190356,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND targets near target > 3 (radius/value2=10).",
-          "stepId": 1155,
-          "automationOnly": false
-        },
-        {
-          "priority": 5,
-          "action": "Ray of Frost",
-          "spellId": 205021,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND target aura stacks <= 5: Freezing [1221389].",
-          "stepId": 16935,
-          "automationOnly": false
-        },
-        {
-          "priority": 6,
-          "action": "Ice Lance",
-          "spellId": 30455,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Fingers of Frost [44544]; AND target has aura: Freezing [1221389].",
-          "stepId": 1163,
-          "automationOnly": false
-        },
-        {
-          "priority": 7,
-          "action": "Ice Lance",
-          "spellId": 30455,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND target aura stacks >= 5: Freezing [1221389].",
-          "stepId": 1164,
-          "automationOnly": false
-        },
-        {
-          "priority": 8,
-          "action": "Flurry",
-          "spellId": 44614,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 1160,
-          "automationOnly": false
-        },
-        {
-          "priority": 9,
-          "action": "Frostbolt",
-          "spellId": 116,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Frostfire Empowerment [431177].",
-          "stepId": 5728,
-          "automationOnly": false
-        },
-        {
-          "priority": 10,
-          "action": "Frostbolt",
-          "spellId": 116,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND allow casting-success cooldown behavior.",
-          "stepId": 1165,
-          "automationOnly": false
-        },
-        {
-          "priority": 11,
-          "action": "Frostbolt",
-          "spellId": 116,
-          "condition": "always, subject to normal castability.",
-          "stepId": 6000,
-          "automationOnly": false
-        }
-      ],
-      "ptrSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Arcane Intellect",
@@ -4262,6 +3214,7 @@
         92,
         92
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [],
       "missingActions": [
         "Comet Storm",
@@ -4275,17 +3228,9 @@
         "Target swapping"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": true,
-      "ptrChange": "Adds Glacial Spike and Freezing setup entries.",
-      "ptrNotes": [
-        "Adds Glacial Spike setup"
-      ],
-      "ptrAssessment": "Closer. Glacial Spike and Freezing-state setup are already explicit throughout SimC's Frost lists.",
-      "hasTruePtrProfile": false,
       "icyRating": "Moderate",
-      "icySummary": "The main Flurry, Ice Lance, Frozen Orb, Ray of Frost, Blizzard, and filler loop agrees. Icy Veins adds Brain Freeze/Fingers of Frost ordering, Glacial Spike and Freezing-stack thresholds, Comet Storm, and separate AoE priorities. PTR adds two Glacial Spike/Freezing setup rules consistent with that guide.",
-      "icyUrl": "https://www.icy-veins.com/wow/frost-mage-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Closer."
+      "icySummary": "The main Flurry, Ice Lance, Frozen Orb, Ray of Frost, Blizzard, and filler loop agrees. Icy Veins adds Brain Freeze/Fingers of Frost ordering, Glacial Spike and Freezing-stack thresholds, Comet Storm, and separate AoE priorities. The 12.1 list adds two Glacial Spike/Freezing setup rules consistent with that guide.",
+      "icyUrl": "https://www.icy-veins.com/wow/frost-mage-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Monk",
@@ -4293,7 +3238,7 @@
       "specId": 268,
       "assistedCombatId": 324,
       "role": "Tank",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Touch of Death",
@@ -4391,7 +3336,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": true,
       "overlap": 78,
       "simcCoverage": 50,
@@ -4405,6 +3349,7 @@
       "simcActionLines": [
         46
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "spinning_crane_kick",
         "touch_of_death"
@@ -4422,15 +3367,9 @@
         "Defensive cooldown timing"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": false,
       "icyRating": "Large",
       "icySummary": "The offensive priority overlaps well, but it is not a complete tank rotation. Icy Veins adds Stagger purification, Celestial Brew/Infusion, Black Ox Brew resource recovery, Invoke Niuzao, Blackout Combo, defensive timing, and encounter-driven mitigation.",
-      "icyUrl": "https://www.icy-veins.com/wow/brewmaster-monk-pve-tank-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/brewmaster-monk-pve-tank-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Monk",
@@ -4438,7 +3377,7 @@
       "specId": 270,
       "assistedCombatId": 46,
       "role": "Healer",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Touch of Death",
@@ -4536,7 +3475,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": false,
       "overlap": null,
       "simcCoverage": null,
@@ -4546,6 +3484,7 @@
       "alignment": "Not comparable",
       "simcProfiles": [],
       "simcActionLines": [],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "blackout_kick",
         "crackling_jade_lightning",
@@ -4560,15 +3499,9 @@
       "comparisonLimitation": [
         "SimulationCraft has no optimized healing APL"
       ],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": false,
       "icyRating": "Not comparable",
       "icySummary": "Blizzard recommends a damage/fistweaving attack loop rather than a healing rotation. Icy Veins adds Renewing/Enveloping Mist, Vivify, Sheilun’s Gift, Mana Tea, Thunder Focus Tea, Life Cocoon, Spiritfont, and ally-target triage.",
-      "icyUrl": "https://www.icy-veins.com/wow/mistweaver-monk-pve-healing-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/mistweaver-monk-pve-healing-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Monk",
@@ -4576,7 +3509,7 @@
       "specId": 269,
       "assistedCombatId": 325,
       "role": "DPS",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Touch of Death",
@@ -4746,7 +3679,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": true,
       "overlap": 71,
       "simcCoverage": 67,
@@ -4762,6 +3694,7 @@
         102,
         102
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "chi_burst",
         "crackling_jade_lightning",
@@ -4779,15 +3712,9 @@
         "Cooldown-window sequencing"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": false,
       "icyRating": "Moderate",
       "icySummary": "The assistant contains the familiar core attacks and spenders. Icy Veins adds Combo Strikes discipline, proc consumption, Invoke Xuen, Celestial Conduit/Zenith windows, hero-talent sequences, and more exact single-target/AoE branches.",
-      "icyUrl": "https://www.icy-veins.com/wow/windwalker-monk-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/windwalker-monk-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Paladin",
@@ -4795,7 +3722,7 @@
       "specId": 65,
       "assistedCombatId": 51,
       "role": "Healer",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Consecration",
@@ -4877,7 +3804,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": false,
       "overlap": null,
       "simcCoverage": null,
@@ -4887,6 +3813,7 @@
       "alignment": "Not comparable",
       "simcProfiles": [],
       "simcActionLines": [],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "avenging_crusader",
         "consecration",
@@ -4899,15 +3826,9 @@
       "comparisonLimitation": [
         "SimulationCraft has no optimized healing APL"
       ],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": false,
       "icyRating": "Not comparable",
       "icySummary": "Blizzard provides a damage loop with Judgment, Consecration, Hammer of Wrath, and Holy Shock. Icy Veins instead prioritizes ally healing, Holy Power spending, Infusion consumption, Beacon timing, Divine Toll/Prism/Armaments, and emergency cooldowns.",
-      "icyUrl": "https://www.icy-veins.com/wow/holy-paladin-pve-healing-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/holy-paladin-pve-healing-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Paladin",
@@ -4915,7 +3836,7 @@
       "specId": 66,
       "assistedCombatId": 323,
       "role": "Tank",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Avenging Wrath",
@@ -5021,7 +3942,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": true,
       "overlap": 78,
       "simcCoverage": 47,
@@ -5037,6 +3957,7 @@
         26,
         26
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "crusader_strike",
         "sentinel"
@@ -5052,15 +3973,9 @@
         "Defensive cooldown timing"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": false,
       "icyRating": "Large",
       "icySummary": "The assistant covers the core damage and Holy Power loop but omits a full mitigation plan. Icy Veins adds Shield of the Righteous uptime planning, Word of Glory/Shining Light decisions, Blessed Hammer alternatives, Avenging Wrath/Sentinel windows, taunts, and defensive cooldown timing.",
-      "icyUrl": "https://www.icy-veins.com/wow/protection-paladin-pve-tank-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/protection-paladin-pve-tank-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Paladin",
@@ -5068,7 +3983,7 @@
       "specId": 70,
       "assistedCombatId": 117,
       "role": "DPS",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Avenging Wrath",
@@ -5214,7 +4129,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": true,
       "overlap": 100,
       "simcCoverage": 69,
@@ -5230,6 +4144,7 @@
         16,
         16
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [],
       "missingActions": [
         "Hammer of Light",
@@ -5242,15 +4157,9 @@
         "Cooldown-window sequencing"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": false,
       "icyRating": "Moderate",
       "icySummary": "The main generators, spenders, Wake, Execution Sentence, Divine Toll, and Avenging Wrath are present. Icy Veins adds a fixed opener, Hammer of Light and Final Verdict transformations, Holy Power pooling, Empyrean procs, and precise cooldown-window sequencing.",
-      "icyUrl": "https://www.icy-veins.com/wow/retribution-paladin-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/retribution-paladin-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Priest",
@@ -5258,7 +4167,7 @@
       "specId": 256,
       "assistedCombatId": 44,
       "role": "Healer",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Power Word: Fortitude",
@@ -5332,7 +4241,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": false,
       "overlap": null,
       "simcCoverage": null,
@@ -5342,6 +4250,7 @@
       "alignment": "Not comparable",
       "simcProfiles": [],
       "simcActionLines": [],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "holy_nova",
         "mind_blast",
@@ -5356,15 +4265,9 @@
       "comparisonLimitation": [
         "SimulationCraft has no optimized healing APL"
       ],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": false,
       "icyRating": "Not comparable",
       "icySummary": "The Blizzard list is a solo damage rotation. Icy Veins revolves around Atonement application, Radiance ramps, Shield/Flash Heal targeting, Evangelism, Mindbender/Voidwraith, Ultimate Penitence, and planning healing around incoming damage.",
-      "icyUrl": "https://www.icy-veins.com/wow/discipline-priest-pve-healing-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/discipline-priest-pve-healing-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Priest",
@@ -5372,7 +4275,7 @@
       "specId": 257,
       "assistedCombatId": 36,
       "role": "Healer",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Power Word: Fortitude",
@@ -5438,7 +4341,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": false,
       "overlap": null,
       "simcCoverage": null,
@@ -5448,6 +4350,7 @@
       "alignment": "Not comparable",
       "simcProfiles": [],
       "simcActionLines": [],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "holy_nova",
         "holy_word_chastise",
@@ -5460,15 +4363,9 @@
       "comparisonLimitation": [
         "SimulationCraft has no optimized healing APL"
       ],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": false,
       "icyRating": "Not comparable",
       "icySummary": "The Blizzard list is almost entirely damage. Icy Veins prioritizes Prayer of Mending, Holy Words, Flash Heal/Heal interactions, Prayer of Healing, Spiritwell, Apotheosis, Divine Hymn, Guardian Spirit, and reactive target selection.",
-      "icyUrl": "https://www.icy-veins.com/wow/holy-priest-pve-healing-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/holy-priest-pve-healing-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Priest",
@@ -5476,225 +4373,7 @@
       "specId": 258,
       "assistedCombatId": 67,
       "role": "DPS",
-      "liveSteps": [
-        {
-          "priority": 1,
-          "action": "Power Word: Fortitude",
-          "spellId": 21562,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Power Word: Fortitude Highlight [1271911].",
-          "stepId": 18846,
-          "automationOnly": false
-        },
-        {
-          "priority": 2,
-          "action": "Shadowform",
-          "spellId": 232698,
-          "condition": "player missing aura: Shadowform [232698]; AND player missing aura: Voidform [194249]; AND action is learned; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 846,
-          "automationOnly": false
-        },
-        {
-          "priority": 3,
-          "action": "Tentacle Slam",
-          "spellId": 1227280,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND targets near target <= 2 (radius/value2=8); AND target missing aura: Vampiric Touch [34914]; AND player missing aura: Tentacle Slam [1243723].",
-          "stepId": 15210,
-          "automationOnly": false
-        },
-        {
-          "priority": 4,
-          "action": "Tentacle Slam",
-          "spellId": 1227280,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND targets near target > 3 (radius/value2=8).",
-          "stepId": 844,
-          "automationOnly": false
-        },
-        {
-          "priority": 5,
-          "action": "Vampiric Touch",
-          "spellId": 34914,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND target missing aura: Vampiric Touch [34914]; AND player missing aura: Tentacle Slam [1243723].",
-          "stepId": 851,
-          "automationOnly": false
-        },
-        {
-          "priority": 6,
-          "action": "Shadow Word: Pain",
-          "spellId": 589,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND target missing aura: Shadow Word: Pain [589]; AND player missing aura: Misery [238558].",
-          "stepId": 853,
-          "automationOnly": false
-        },
-        {
-          "priority": 7,
-          "action": "Voidform",
-          "spellId": 228260,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND automation-only (not part of Assisted Highlight); AND player missing aura: Voidform [194249].",
-          "stepId": 15699,
-          "automationOnly": true
-        },
-        {
-          "priority": 8,
-          "action": "Power Infusion",
-          "spellId": 10060,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND automation-only (not part of Assisted Highlight); AND player has aura: Voidform [194249].",
-          "stepId": 15772,
-          "automationOnly": true
-        },
-        {
-          "priority": 9,
-          "action": "Shadow Word: Madness",
-          "spellId": 335467,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND target missing aura: Shadow Word: Madness [335467].",
-          "stepId": 1065,
-          "automationOnly": false
-        },
-        {
-          "priority": 10,
-          "action": "Shadow Word: Madness",
-          "spellId": 335467,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND target aura remaining <= 1.5s: Shadow Word: Madness [335467].",
-          "stepId": 8017,
-          "automationOnly": false
-        },
-        {
-          "priority": 11,
-          "action": "Shadow Word: Madness",
-          "spellId": 335467,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND insanity >= 90; AND player missing aura: Voidtouched [407430].",
-          "stepId": 849,
-          "automationOnly": false
-        },
-        {
-          "priority": 12,
-          "action": "Shadow Word: Madness",
-          "spellId": 335467,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND insanity >= 140; AND player has aura: Voidtouched [407430].",
-          "stepId": 850,
-          "automationOnly": false
-        },
-        {
-          "priority": 13,
-          "action": "Halo",
-          "spellId": 120644,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 847,
-          "automationOnly": false
-        },
-        {
-          "priority": 14,
-          "action": "Mind Blast",
-          "spellId": 8092,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Void Blast [450404]; AND spell charges greater (raw values: 2, 0, 0); AND allow casting-success cooldown behavior.",
-          "stepId": 8041,
-          "automationOnly": false
-        },
-        {
-          "priority": 15,
-          "action": "Mind Blast",
-          "spellId": 8092,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Void Blast [450404].",
-          "stepId": 1063,
-          "automationOnly": false
-        },
-        {
-          "priority": 16,
-          "action": "Voidform",
-          "spellId": 228260,
-          "condition": "action cost is affordable; AND action is off cooldown; AND action is learned; AND player has aura: Voidform [194249].",
-          "stepId": 1130,
-          "automationOnly": false
-        },
-        {
-          "priority": 17,
-          "action": "Voidform",
-          "spellId": 228260,
-          "condition": "action cost is affordable; AND action is off cooldown; AND action is learned; AND player has aura: Crushing Void [1279437].",
-          "stepId": 19115,
-          "automationOnly": false
-        },
-        {
-          "priority": 18,
-          "action": "Mind Blast",
-          "spellId": 8092,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Void Blast [450405]; AND spell charges greater (raw values: 2, 0, 0); AND allow casting-success cooldown behavior.",
-          "stepId": 15069,
-          "automationOnly": false
-        },
-        {
-          "priority": 19,
-          "action": "Mind Blast",
-          "spellId": 8092,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Void Blast [450405].",
-          "stepId": 1066,
-          "automationOnly": false
-        },
-        {
-          "priority": 20,
-          "action": "Mind Blast",
-          "spellId": 8092,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Void Blast [450405]; AND spell charges greater (raw values: 2, 0, 0); AND cooldown remaining <= 5s: Void Torrent [263165].",
-          "stepId": 8042,
-          "automationOnly": false
-        },
-        {
-          "priority": 21,
-          "action": "Mind Blast",
-          "spellId": 8092,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Void Blast [450405]; AND cooldown remaining >= 5s: Void Torrent [263165].",
-          "stepId": 8043,
-          "automationOnly": false
-        },
-        {
-          "priority": 22,
-          "action": "Void Torrent",
-          "spellId": 263165,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 1064,
-          "automationOnly": false
-        },
-        {
-          "priority": 23,
-          "action": "Shadow Word: Death",
-          "spellId": 32379,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Deathspeaker [392507]; AND target health <= 35%.",
-          "stepId": 1067,
-          "automationOnly": false
-        },
-        {
-          "priority": 24,
-          "action": "Shadow Word: Death",
-          "spellId": 32379,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND target health <= 20%.",
-          "stepId": 1068,
-          "automationOnly": false
-        },
-        {
-          "priority": 25,
-          "action": "Shadow Word: Madness",
-          "spellId": 335467,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 8894,
-          "automationOnly": false
-        },
-        {
-          "priority": 26,
-          "action": "Mind Flay",
-          "spellId": 15407,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND allow casting-success cooldown behavior.",
-          "stepId": 1069,
-          "automationOnly": false
-        },
-        {
-          "priority": 27,
-          "action": "Mind Blast",
-          "spellId": 8092,
-          "condition": "always, subject to normal castability.",
-          "stepId": 6125,
-          "automationOnly": false
-        }
-      ],
-      "ptrSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Power Word: Fortitude",
@@ -5928,13 +4607,14 @@
       "simcActionCount": 18,
       "alignment": "High literal overlap",
       "simcProfiles": [
-        "MID1_Priest_Shadow.simc",
-        "MID1_Priest_Shadow_Archon.simc"
+        "MID2_Priest_Shadow.simc",
+        "MID2_Priest_Shadow_Archon.simc"
       ],
       "simcActionLines": [
-        27,
-        27
+        29,
+        29
       ],
+      "usesSeason2SimcProfile": true,
       "blizzardOnlyActions": [
         "power_word_fortitude"
       ],
@@ -5949,17 +4629,9 @@
         "Movement and cooldown alignment"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": true,
-      "ptrChange": "Adds a two-charge Tentacle Slam entry.",
-      "ptrNotes": [
-        "Adds Tentacle Slam charge protection"
-      ],
-      "ptrAssessment": "Direct PTR match. Both add Tentacle Slam charge protection; SimC goes further with target selection, DoT refresh, movement, and future-add timing.",
-      "hasTruePtrProfile": true,
       "icyRating": "Close",
-      "icySummary": "The assistant already follows the same DoT, Tentacle Slam, Madness, Mind Blast, Voidform, Void Torrent, execute, and filler structure. Icy Veins adds multi-target DoT selection, charge holding, pandemic timing, openers, and cooldown planning. PTR’s extra anti-cap Tentacle Slam rule directly matches the guide.",
-      "icyUrl": "https://www.icy-veins.com/wow/shadow-priest-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Closer."
+      "icySummary": "The assistant already follows the same DoT, Tentacle Slam, Madness, Mind Blast, Voidform, Void Torrent, execute, and filler structure. Icy Veins adds multi-target DoT selection, charge holding, pandemic timing, openers, and cooldown planning. The 12.1 list’s extra anti-cap Tentacle Slam rule directly matches the guide.",
+      "icyUrl": "https://www.icy-veins.com/wow/shadow-priest-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Rogue",
@@ -5967,265 +4639,7 @@
       "specId": 259,
       "assistedCombatId": 4,
       "role": "DPS",
-      "liveSteps": [
-        {
-          "priority": 1,
-          "action": "Deadly Poison",
-          "spellId": 2823,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Deadly Poison [2823]; AND player has aura: Dragon-Tempered Blades [381801].",
-          "stepId": 12657,
-          "automationOnly": false
-        },
-        {
-          "priority": 2,
-          "action": "Deadly Poison",
-          "spellId": 2823,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Deadly Poison [2823]; AND player missing aura: Wound Poison [8679]; AND player missing aura: Dragon-Tempered Blades [381801].",
-          "stepId": 3587,
-          "automationOnly": false
-        },
-        {
-          "priority": 3,
-          "action": "Amplifying Poison",
-          "spellId": 381664,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Amplifying Poison [381664]; AND player has aura: Dragon-Tempered Blades [381801]; AND player missing aura: PvP Rules Enabled (HARDCODED) [134735].",
-          "stepId": 12818,
-          "automationOnly": false
-        },
-        {
-          "priority": 4,
-          "action": "Amplifying Poison",
-          "spellId": 381664,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Amplifying Poison [381664]; AND player has aura: Dragon-Tempered Blades [381801]; AND player missing aura: Wound Poison [8679]; AND player has aura: PvP Rules Enabled (HARDCODED) [134735].",
-          "stepId": 12658,
-          "automationOnly": false
-        },
-        {
-          "priority": 5,
-          "action": "Wound Poison",
-          "spellId": 8679,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Wound Poison [8679]; AND player has aura: PvP Rules Enabled (HARDCODED) [134735]; AND player missing aura: Amplifying Poison [381664]; AND player has aura: Dragon-Tempered Blades [381801].",
-          "stepId": 12659,
-          "automationOnly": false
-        },
-        {
-          "priority": 6,
-          "action": "Instant Poison",
-          "spellId": 315584,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Amplifying Poison [381664]; AND player has aura: Dragon-Tempered Blades [381801]; AND player missing aura: Wound Poison [8679]; AND player missing aura: Instant Poison [315584].",
-          "stepId": 12722,
-          "automationOnly": false
-        },
-        {
-          "priority": 7,
-          "action": "Atrophic Poison",
-          "spellId": 381637,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Atrophic Poison [381637].",
-          "stepId": 12625,
-          "automationOnly": false
-        },
-        {
-          "priority": 8,
-          "action": "Numbing Poison",
-          "spellId": 5761,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Numbing Poison [5761].",
-          "stepId": 12754,
-          "automationOnly": false
-        },
-        {
-          "priority": 9,
-          "action": "Crippling Poison",
-          "spellId": 3408,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Dragon-Tempered Blades [381801]; AND player missing aura: Crippling Poison [3408].",
-          "stepId": 12974,
-          "automationOnly": false
-        },
-        {
-          "priority": 10,
-          "action": "Crippling Poison",
-          "spellId": 3408,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Numbing Poison [5761]; AND player missing aura: Atrophic Poison [381637]; AND player missing aura: Crippling Poison [3408]; AND player missing aura: Dragon-Tempered Blades [381801].",
-          "stepId": 12755,
-          "automationOnly": false
-        },
-        {
-          "priority": 11,
-          "action": "Deathmark",
-          "spellId": 360194,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range; AND target has aura: Garrote [703]; AND target has aura: Rupture [1943]; AND automation-only (not part of Assisted Highlight).",
-          "stepId": 17415,
-          "automationOnly": true
-        },
-        {
-          "priority": 12,
-          "action": "Kingsbane",
-          "spellId": 385627,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range; AND target has aura: Garrote [703]; AND target has aura: Rupture [1943]; AND player has aura: Implacable [1265387]; AND combo points <= 1.",
-          "stepId": 34,
-          "automationOnly": false
-        },
-        {
-          "priority": 13,
-          "action": "Kingsbane",
-          "spellId": 385627,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range; AND target has aura: Garrote [703]; AND target has aura: Rupture [1943]; AND player missing aura: Implacable [1265387].",
-          "stepId": 19320,
-          "automationOnly": false
-        },
-        {
-          "priority": 14,
-          "action": "Eviscerate",
-          "spellId": 196819,
-          "condition": "action cost is affordable; AND action is off cooldown; AND action is learned; AND combo points >= 5; AND action is in range; AND player has aura: Darkest Night [457280]; AND player missing aura: Deeper Stratagem [193531]; AND player missing aura: Sanguine Stratagem [457512].",
-          "stepId": 9757,
-          "automationOnly": false
-        },
-        {
-          "priority": 15,
-          "action": "Eviscerate",
-          "spellId": 196819,
-          "condition": "action cost is affordable; AND action is off cooldown; AND action is learned; AND combo points >= 6; AND action is in range; AND player has aura: Darkest Night [457280]; AND player missing aura: Sanguine Stratagem [457512]; AND player has aura: Deeper Stratagem [193531].",
-          "stepId": 9758,
-          "automationOnly": false
-        },
-        {
-          "priority": 16,
-          "action": "Eviscerate",
-          "spellId": 196819,
-          "condition": "action cost is affordable; AND action is off cooldown; AND action is learned; AND combo points >= 6; AND action is in range; AND player has aura: Darkest Night [457280]; AND player missing aura: Deeper Stratagem [193531]; AND player has aura: Sanguine Stratagem [457512].",
-          "stepId": 9759,
-          "automationOnly": false
-        },
-        {
-          "priority": 17,
-          "action": "Eviscerate",
-          "spellId": 196819,
-          "condition": "action cost is affordable; AND action is off cooldown; AND action is learned; AND combo points >= 7; AND action is in range; AND player has aura: Darkest Night [457280]; AND player has aura: Deeper Stratagem [193531]; AND player has aura: Sanguine Stratagem [457512].",
-          "stepId": 9760,
-          "automationOnly": false
-        },
-        {
-          "priority": 18,
-          "action": "Slice and Dice",
-          "spellId": 315496,
-          "condition": "player missing aura: Slice and Dice [315496]; AND combo points >= 5; AND action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Cut to the Chase [51667].",
-          "stepId": 10820,
-          "automationOnly": false
-        },
-        {
-          "priority": 19,
-          "action": "Rupture",
-          "spellId": 1943,
-          "condition": "target missing aura: Rupture [1943]; AND combo points >= 5; AND action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range; AND player missing aura: Darkest Night [457280].",
-          "stepId": 21,
-          "automationOnly": false
-        },
-        {
-          "priority": 20,
-          "action": "Eviscerate",
-          "spellId": 196819,
-          "condition": "combo points >= 5; AND action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range; AND player missing aura: Darkest Night [457280].",
-          "stepId": 87,
-          "automationOnly": false
-        },
-        {
-          "priority": 21,
-          "action": "Ambush",
-          "spellId": 8676,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND target distance <= 40 yd; AND player has aura: Stealth [1784]; AND player missing aura: Improved Garrote [381632].",
-          "stepId": 10846,
-          "automationOnly": false
-        },
-        {
-          "priority": 22,
-          "action": "Ambush",
-          "spellId": 8676,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND target distance <= 40 yd; AND player has aura: Stealth [115191]; AND player missing aura: Improved Garrote [381632].",
-          "stepId": 10847,
-          "automationOnly": false
-        },
-        {
-          "priority": 23,
-          "action": "Ambush",
-          "spellId": 8676,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND target distance <= 40 yd; AND player has aura: Vanish [11327]; AND player missing aura: Improved Garrote [381632].",
-          "stepId": 10848,
-          "automationOnly": false
-        },
-        {
-          "priority": 24,
-          "action": "Garrote",
-          "spellId": 703,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND target distance <= 40 yd; AND player has aura: Stealth [1784].",
-          "stepId": 10874,
-          "automationOnly": false
-        },
-        {
-          "priority": 25,
-          "action": "Garrote",
-          "spellId": 703,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND target distance <= 40 yd; AND player has aura: Stealth [115191].",
-          "stepId": 10875,
-          "automationOnly": false
-        },
-        {
-          "priority": 26,
-          "action": "Garrote",
-          "spellId": 703,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND target distance <= 40 yd; AND player has aura: Vanish [11327].",
-          "stepId": 10876,
-          "automationOnly": false
-        },
-        {
-          "priority": 27,
-          "action": "Garrote",
-          "spellId": 703,
-          "condition": "target missing aura: Garrote [703]; AND action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range.",
-          "stepId": 9,
-          "automationOnly": false
-        },
-        {
-          "priority": 28,
-          "action": "Ambush",
-          "spellId": 8676,
-          "condition": "player has aura: Blindside [121153]; AND action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range.",
-          "stepId": 112,
-          "automationOnly": false
-        },
-        {
-          "priority": 29,
-          "action": "Fan of Knives",
-          "spellId": 51723,
-          "condition": "targets near player > 3 (radius/value2=10); AND action is learned; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 114,
-          "automationOnly": false
-        },
-        {
-          "priority": 30,
-          "action": "Sinister Strike",
-          "spellId": 1752,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range.",
-          "stepId": 101,
-          "automationOnly": false
-        },
-        {
-          "priority": 31,
-          "action": "Poisoned Knife",
-          "spellId": 185565,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range; AND player missing aura: Stealth [1784]; AND player missing aura: Vanish [11327]; AND energy >= 70; AND target distance > 15 yd.",
-          "stepId": 202,
-          "automationOnly": false
-        },
-        {
-          "priority": 32,
-          "action": "Sinister Strike",
-          "spellId": 1752,
-          "condition": "always, subject to normal castability.",
-          "stepId": 6161,
-          "automationOnly": false
-        }
-      ],
-      "ptrSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Deadly Poison",
@@ -6508,10 +4922,10 @@
         }
       ],
       "simcComparable": true,
-      "overlap": 41,
-      "simcCoverage": 47,
-      "sharedActionCount": 7,
-      "blizzardActionCount": 17,
+      "overlap": 44,
+      "simcCoverage": 53,
+      "sharedActionCount": 8,
+      "blizzardActionCount": 18,
       "simcActionCount": 15,
       "alignment": "Low literal overlap",
       "simcProfiles": [
@@ -6520,6 +4934,7 @@
       "simcActionLines": [
         24
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "amplifying_poison",
         "atrophic_poison",
@@ -6535,7 +4950,6 @@
       "missingActions": [
         "Mutilate",
         "Envenom",
-        "Crimson Tempest",
         "Shiv",
         "Thistle Tea",
         "Stealth and Vanish"
@@ -6546,17 +4960,9 @@
         "Cooldown-window preparation"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": true,
-      "ptrChange": "Adds three Crimson Tempest AoE tiers.",
-      "ptrNotes": [
-        "Adds Crimson Tempest AoE tiers"
-      ],
-      "ptrAssessment": "Closer. SimC already uses Crimson Tempest conditionally for AoE bleed coverage and Energy state.",
-      "hasTruePtrProfile": false,
       "icyRating": "Large",
-      "icySummary": "The raw Blizzard data uses several base/replacement spell IDs, but its practical list is still much simpler than the guide’s Garrote/Rupture upkeep, Envenom windows, Deathmark/Kingsbane alignment, Vanish re-stealthing, and opener. PTR adds three Crimson Tempest AoE bleed-spreading tiers that align closely with Icy Veins.",
-      "icyUrl": "https://www.icy-veins.com/wow/assassination-rogue-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Closer in AoE."
+      "icySummary": "The raw Blizzard data uses several base/replacement spell IDs, but its practical list is still much simpler than the guide’s Garrote/Rupture upkeep, Envenom windows, Deathmark/Kingsbane alignment, Vanish re-stealthing, and opener. The 12.1 list adds three Crimson Tempest AoE bleed-spreading tiers that align closely with Icy Veins.",
+      "icyUrl": "https://www.icy-veins.com/wow/assassination-rogue-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Rogue",
@@ -6564,201 +4970,7 @@
       "specId": 260,
       "assistedCombatId": 327,
       "role": "DPS",
-      "liveSteps": [
-        {
-          "priority": 1,
-          "action": "Wound Poison",
-          "spellId": 8679,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Wound Poison [8679]; AND player has aura: PvP Rules Enabled (HARDCODED) [134735].",
-          "stepId": 12561,
-          "automationOnly": false
-        },
-        {
-          "priority": 2,
-          "action": "Instant Poison",
-          "spellId": 315584,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Instant Poison [315584]; AND player missing aura: PvP Rules Enabled (HARDCODED) [134735].",
-          "stepId": 12562,
-          "automationOnly": false
-        },
-        {
-          "priority": 3,
-          "action": "Atrophic Poison",
-          "spellId": 381637,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Atrophic Poison [381637].",
-          "stepId": 12998,
-          "automationOnly": false
-        },
-        {
-          "priority": 4,
-          "action": "Numbing Poison",
-          "spellId": 5761,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Numbing Poison [5761].",
-          "stepId": 12999,
-          "automationOnly": false
-        },
-        {
-          "priority": 5,
-          "action": "Crippling Poison",
-          "spellId": 3408,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: Numbing Poison [5761]; AND player missing aura: Atrophic Poison [381637]; AND player missing aura: Crippling Poison [3408].",
-          "stepId": 12997,
-          "automationOnly": false
-        },
-        {
-          "priority": 6,
-          "action": "Roll the Bones",
-          "spellId": 1214909,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player missing aura: One of a Kind [1214933]; AND player missing aura: Double Trouble [1214934]; AND player missing aura: Triple Threat [1214935]; AND player missing aura: Jackpot [1214937].",
-          "stepId": 4623,
-          "automationOnly": false
-        },
-        {
-          "priority": 7,
-          "action": "Ambush",
-          "spellId": 8676,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Stealth [1784]; AND target distance <= 40 yd; AND combo points <= 4.",
-          "stepId": 9826,
-          "automationOnly": false
-        },
-        {
-          "priority": 8,
-          "action": "Ambush",
-          "spellId": 8676,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Stealth [115191]; AND target distance <= 40 yd; AND combo points <= 4.",
-          "stepId": 6879,
-          "automationOnly": false
-        },
-        {
-          "priority": 9,
-          "action": "Ambush",
-          "spellId": 8676,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Vanish [11327]; AND target distance <= 40 yd; AND combo points <= 4.",
-          "stepId": 6880,
-          "automationOnly": false
-        },
-        {
-          "priority": 10,
-          "action": "Blade Flurry",
-          "spellId": 13877,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND targets near player > 2 (radius/value2=10); AND player missing aura: Blade Flurry [13877].",
-          "stepId": 4624,
-          "automationOnly": false
-        },
-        {
-          "priority": 11,
-          "action": "Preparation",
-          "spellId": 1277933,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND spell on cooldown: Adrenaline Rush [13750]; AND spell on cooldown: Between the Eyes [315341]; AND spell on cooldown: Blade Rush [271877].",
-          "stepId": 19433,
-          "automationOnly": false
-        },
-        {
-          "priority": 12,
-          "action": "Adrenaline Rush",
-          "spellId": 13750,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND automation-only (not part of Assisted Highlight); AND player missing aura: Improved Adrenaline Rush [395422].",
-          "stepId": 19474,
-          "automationOnly": true
-        },
-        {
-          "priority": 13,
-          "action": "Adrenaline Rush",
-          "spellId": 13750,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND automation-only (not part of Assisted Highlight); AND player has aura: Improved Adrenaline Rush [395422]; AND combo points <= 2.",
-          "stepId": 17481,
-          "automationOnly": true
-        },
-        {
-          "priority": 14,
-          "action": "Blade Rush",
-          "spellId": 271877,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range; AND player has aura: Vigor [14983]; AND energy <= 174.",
-          "stepId": 4828,
-          "automationOnly": false
-        },
-        {
-          "priority": 15,
-          "action": "Blade Rush",
-          "spellId": 271877,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range; AND player missing aura: Vigor [14983]; AND energy <= 74.",
-          "stepId": 19392,
-          "automationOnly": false
-        },
-        {
-          "priority": 16,
-          "action": "Between the Eyes",
-          "spellId": 315341,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range; AND combo points >= 5.",
-          "stepId": 4803,
-          "automationOnly": false
-        },
-        {
-          "priority": 17,
-          "action": "Killing Spree",
-          "spellId": 51690,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND combo points >= 5; AND targets near player > 1 (radius/value2=8).",
-          "stepId": 4625,
-          "automationOnly": false
-        },
-        {
-          "priority": 18,
-          "action": "Eviscerate",
-          "spellId": 196819,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range; AND combo points >= 5.",
-          "stepId": 4817,
-          "automationOnly": false
-        },
-        {
-          "priority": 19,
-          "action": "Blade Flurry",
-          "spellId": 13877,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND targets near player > 4 (radius/value2=10); AND combo points <= 4; AND player has aura: Deft Maneuvers [381878].",
-          "stepId": 19347,
-          "automationOnly": false
-        },
-        {
-          "priority": 20,
-          "action": "Ambush",
-          "spellId": 8676,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range; AND player has aura: Hidden Opportunity [383281].",
-          "stepId": 4818,
-          "automationOnly": false
-        },
-        {
-          "priority": 21,
-          "action": "Pistol Shot",
-          "spellId": 185763,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range; AND player has aura: Opportunity [195627].",
-          "stepId": 4819,
-          "automationOnly": false
-        },
-        {
-          "priority": 22,
-          "action": "Sinister Strike",
-          "spellId": 193315,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range.",
-          "stepId": 4820,
-          "automationOnly": false
-        },
-        {
-          "priority": 23,
-          "action": "Pistol Shot",
-          "spellId": 185763,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND energy >= 99; AND target distance > 15 yd.",
-          "stepId": 4821,
-          "automationOnly": false
-        },
-        {
-          "priority": 24,
-          "action": "Sinister Strike",
-          "spellId": 193315,
-          "condition": "always, subject to normal castability.",
-          "stepId": 6177,
-          "automationOnly": false
-        }
-      ],
-      "ptrSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Wound Poison",
@@ -6961,7 +5173,7 @@
         }
       ],
       "simcComparable": true,
-      "overlap": 62,
+      "overlap": 63,
       "simcCoverage": 59,
       "sharedActionCount": 10,
       "blizzardActionCount": 16,
@@ -6975,6 +5187,7 @@
         26,
         26
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "atrophic_poison",
         "crippling_poison",
@@ -6996,18 +5209,9 @@
         "Stealth-window preparation"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": true,
-      "ptrChange": "Adds a Fang Strike-conditioned Eviscerate entry.",
-      "ptrNotes": [
-        "Adds Fang Strike-conditioned Eviscerate",
-        "SimC still uses Dispatch"
-      ],
-      "ptrAssessment": "Mixed. SimC models Fang Strike as the MID2 set-bonus buff, but its checked-in APL still uses Dispatch rather than Blizzard's new Eviscerate entry.",
-      "hasTruePtrProfile": false,
       "icyRating": "Moderate",
-      "icySummary": "The assistant has Roll the Bones, Blade Flurry, builders, finishers, and major attacks. Icy Veins adds Adrenaline Rush and Slice and Dice pre-pull setup, Keep It Rolling stage logic, charge/proc management, and exact combo-point thresholds. PTR adds a Fang Strike-conditioned Eviscerate rule, but the current live guide does not discuss that PTR mechanic.",
-      "icyUrl": "https://www.icy-veins.com/wow/outlaw-rogue-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "PTR-specific; not yet covered."
+      "icySummary": "The assistant has Roll the Bones, Blade Flurry, builders, finishers, and major attacks. Icy Veins adds Adrenaline Rush and Slice and Dice pre-pull setup, Keep It Rolling stage logic, charge/proc management, and exact combo-point thresholds. The 12.1 list adds a Fang Strike-conditioned Eviscerate rule, but the pinned guide snapshot does not discuss that The 12.1 list mechanic.",
+      "icyUrl": "https://www.icy-veins.com/wow/outlaw-rogue-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Rogue",
@@ -7015,7 +5219,7 @@
       "specId": 261,
       "assistedCombatId": 326,
       "role": "DPS",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Wound Poison",
@@ -7185,7 +5389,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": true,
       "overlap": 53,
       "simcCoverage": 57,
@@ -7199,6 +5402,7 @@
       "simcActionLines": [
         21
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "atrophic_poison",
         "crippling_poison",
@@ -7218,15 +5422,9 @@
         "Shadow Dance preparation and sequencing"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": false,
       "icyRating": "Large",
       "icySummary": "The assistant has Shadow Dance, core builders/finishers, Secret Technique, and AoE spenders. Icy Veins adds Stealth/Vanish openers, Shadow Blades alignment, Darkest Night and Deathstalker sequencing, charge pooling, and strict burst-window planning.",
-      "icyUrl": "https://www.icy-veins.com/wow/subtlety-rogue-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/subtlety-rogue-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Shaman",
@@ -7234,7 +5432,7 @@
       "specId": 262,
       "assistedCombatId": 61,
       "role": "DPS",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Skyfury",
@@ -7468,7 +5666,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": true,
       "overlap": 93,
       "simcCoverage": 72,
@@ -7482,6 +5679,7 @@
       "simcActionLines": [
         43
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "skyfury"
       ],
@@ -7498,15 +5696,9 @@
         "Movement and target-count rules"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": false,
       "icyRating": "Moderate",
       "icySummary": "The core shocks, Lava Burst, Lightning Bolt/Chain Lightning, Stormkeeper, and spenders agree. Icy Veins adds Stormkeeper holds for Ascendance, Aftershock and Lava Surge reactions, Tempest/Voltaic Blaze rules, opener sequencing, and target-count-specific spender choices.",
-      "icyUrl": "https://www.icy-veins.com/wow/elemental-shaman-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/elemental-shaman-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Shaman",
@@ -7514,7 +5706,7 @@
       "specId": 263,
       "assistedCombatId": 73,
       "role": "DPS",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Skyfury",
@@ -7740,7 +5932,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": true,
       "overlap": 87,
       "simcCoverage": 72,
@@ -7756,6 +5947,7 @@
         81,
         81
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "frost_shock",
         "skyfury"
@@ -7771,15 +5963,9 @@
         "Cooldown sequencing"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": false,
       "icyRating": "Large",
       "icySummary": "The assistant has many core buttons but compresses a highly conditional rotation. Icy Veins adds 10-stack Maelstrom rules, Whirling Elements states, Hot Hand, Ascendance/Windstrike, Doom Winds and Surging Totem alignment, Tempest/Primordial Storm, and detailed target-count branches.",
-      "icyUrl": "https://www.icy-veins.com/wow/enhancement-shaman-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/enhancement-shaman-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Shaman",
@@ -7787,7 +5973,7 @@
       "specId": 264,
       "assistedCombatId": 25,
       "role": "Healer",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Skyfury",
@@ -7869,7 +6055,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": false,
       "overlap": null,
       "simcCoverage": null,
@@ -7879,6 +6064,7 @@
       "alignment": "Not comparable",
       "simcProfiles": [],
       "simcActionLines": [],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "chain_lightning",
         "earthliving_weapon",
@@ -7894,15 +6080,9 @@
       "comparisonLimitation": [
         "SimulationCraft has no optimized healing APL"
       ],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": false,
       "icyRating": "Not comparable",
       "icySummary": "Blizzard’s list is a damage rotation using Flame Shock, Lava Burst, Lightning Bolt, and Chain Lightning. Icy Veins focuses on Riptide/Healing Surge/Chain Heal, Cloudburst and totem planning, Earth Shield, major healing cooldowns, mana management, and ally triage.",
-      "icyUrl": "https://www.icy-veins.com/wow/restoration-shaman-pve-healing-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/restoration-shaman-pve-healing-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Warlock",
@@ -7910,7 +6090,7 @@
       "specId": 265,
       "assistedCombatId": 60,
       "role": "DPS",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Summon Felhunter",
@@ -8080,7 +6260,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": true,
       "overlap": 83,
       "simcCoverage": 71,
@@ -8096,6 +6275,7 @@
         72,
         72
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "summon_felhunter",
         "summon_imp"
@@ -8111,15 +6291,9 @@
         "Darkglare timing"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": false,
       "icyRating": "Moderate",
       "icySummary": "Both maintain DoTs and use Unstable Affliction, Haunt, Dark Harvest/Malevolence, Seed, and a filler. Icy Veins adds per-target multidot caps, shard planning, free-cast windows, Darkglare timing, and talent-dependent Corruption/Wither and Drain Soul choices.",
-      "icyUrl": "https://www.icy-veins.com/wow/affliction-warlock-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/affliction-warlock-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Warlock",
@@ -8127,7 +6301,7 @@
       "specId": 266,
       "assistedCombatId": 272,
       "role": "DPS",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Summon Felguard",
@@ -8233,7 +6407,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": true,
       "overlap": 60,
       "simcCoverage": 46,
@@ -8247,6 +6420,7 @@
       "simcActionLines": [
         34
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "summon_felguard",
         "summon_felhunter",
@@ -8265,15 +6439,9 @@
         "Tyrant preparation and extension"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": false,
       "icyRating": "Large",
       "icySummary": "The core shard builders, Hand of Gul’dan, Dreadstalkers, Demonbolt, and Power Siphon are represented. Icy Veins adds Wild Imp counts, Implosion thresholds, Demonic Core management, Grimoire summons, Doomguard, and deliberate Tyrant setup rather than a generic cooldown entry.",
-      "icyUrl": "https://www.icy-veins.com/wow/demonology-warlock-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/demonology-warlock-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Warlock",
@@ -8281,7 +6449,7 @@
       "specId": 267,
       "assistedCombatId": 66,
       "role": "DPS",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Summon Felhunter",
@@ -8459,7 +6627,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": true,
       "overlap": 64,
       "simcCoverage": 56,
@@ -8468,15 +6635,14 @@
       "simcActionCount": 16,
       "alignment": "Moderate literal overlap",
       "simcProfiles": [
-        "MID1_Warlock_Destruction.simc",
-        "MID1_Warlock_Destruction_Diabolist.simc",
-        "MID1_Warlock_Destruction_Hellcaller.simc"
+        "MID2_Warlock_Destruction.simc",
+        "MID2_Warlock_Destruction_Diabolist.simc"
       ],
       "simcActionLines": [
-        49,
-        49,
-        49
+        50,
+        50
       ],
+      "usesSeason2SimcProfile": true,
       "blizzardOnlyActions": [
         "channel_demonfire",
         "corruption",
@@ -8496,15 +6662,9 @@
         "Cooldown timing"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": true,
       "icyRating": "Moderate",
       "icySummary": "The assistant includes the main shard builders/spenders and AoE Rain of Fire logic, sometimes through base/replacement spell IDs. Icy Veins adds Immolate/Wither upkeep, Backdraft handling, Havoc targeting, Infernal timing, shard-cap protection, and clearer single-target/AoE branching.",
-      "icyUrl": "https://www.icy-veins.com/wow/destruction-warlock-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/destruction-warlock-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Warrior",
@@ -8512,161 +6672,7 @@
       "specId": 71,
       "assistedCombatId": 28,
       "role": "DPS",
-      "liveSteps": [
-        {
-          "priority": 1,
-          "action": "Battle Shout",
-          "spellId": 6673,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Battle Shout Highlight [1271909].",
-          "stepId": 18802,
-          "automationOnly": false
-        },
-        {
-          "priority": 2,
-          "action": "Thunder Clap",
-          "spellId": 6343,
-          "condition": "target missing aura: Rend [388539]; AND action is learned; AND action cost is affordable; AND action is off cooldown; AND spell learned: Rend [772].",
-          "stepId": 300,
-          "automationOnly": false
-        },
-        {
-          "priority": 3,
-          "action": "Rend",
-          "spellId": 772,
-          "condition": "target missing aura: Rend [388539]; AND action is learned; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 301,
-          "automationOnly": false
-        },
-        {
-          "priority": 4,
-          "action": "Sweeping Strikes",
-          "spellId": 260708,
-          "condition": "targets near player > 2 (radius/value2=10); AND action is learned; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 302,
-          "automationOnly": false
-        },
-        {
-          "priority": 5,
-          "action": "Ravager",
-          "spellId": 228920,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range.",
-          "stepId": 304,
-          "automationOnly": false
-        },
-        {
-          "priority": 6,
-          "action": "Colossus Smash",
-          "spellId": 167105,
-          "condition": "target distance <= 5 yd; AND action is learned; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 305,
-          "automationOnly": false
-        },
-        {
-          "priority": 7,
-          "action": "Avatar",
-          "spellId": 107574,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND spell off cooldown: Slam [1464].",
-          "stepId": 17006,
-          "automationOnly": false
-        },
-        {
-          "priority": 8,
-          "action": "Whirlwind",
-          "spellId": 1680,
-          "condition": "target distance <= 5 yd; AND spell learned: Cleave [845]; AND action cost is affordable; AND action is off cooldown; AND targets near player > 3 (radius/value2=10).",
-          "stepId": 2530,
-          "automationOnly": false
-        },
-        {
-          "priority": 9,
-          "action": "Demolish",
-          "spellId": 436358,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range.",
-          "stepId": 307,
-          "automationOnly": false
-        },
-        {
-          "priority": 10,
-          "action": "Bladestorm",
-          "spellId": 227847,
-          "condition": "target distance <= 10 yd; AND action is learned; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 308,
-          "automationOnly": false
-        },
-        {
-          "priority": 11,
-          "action": "Slam",
-          "spellId": 1464,
-          "condition": "player has aura: Master of Warfare [1269391]; AND action cost is affordable; AND action is off cooldown; AND action is in range.",
-          "stepId": 17985,
-          "automationOnly": false
-        },
-        {
-          "priority": 12,
-          "action": "Mortal Strike",
-          "spellId": 12294,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range.",
-          "stepId": 309,
-          "automationOnly": false
-        },
-        {
-          "priority": 13,
-          "action": "Execute",
-          "spellId": 163201,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range.",
-          "stepId": 312,
-          "automationOnly": false
-        },
-        {
-          "priority": 14,
-          "action": "Overpower",
-          "spellId": 7384,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range.",
-          "stepId": 310,
-          "automationOnly": false
-        },
-        {
-          "priority": 15,
-          "action": "Whirlwind",
-          "spellId": 1680,
-          "condition": "targets near player > 3 (radius/value2=10); AND action is learned; AND action is off cooldown; AND action cost is affordable.",
-          "stepId": 11141,
-          "automationOnly": false
-        },
-        {
-          "priority": 16,
-          "action": "Slam",
-          "spellId": 1464,
-          "condition": "rage >= 50; AND action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range.",
-          "stepId": 315,
-          "automationOnly": false
-        },
-        {
-          "priority": 17,
-          "action": "Heroic Throw",
-          "spellId": 57755,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range; AND target distance > 15 yd.",
-          "stepId": 317,
-          "automationOnly": false
-        },
-        {
-          "priority": 18,
-          "action": "Mortal Strike",
-          "spellId": 12294,
-          "condition": "action is learned.",
-          "stepId": 6316,
-          "automationOnly": false
-        },
-        {
-          "priority": 19,
-          "action": "Slam",
-          "spellId": 1464,
-          "condition": "always, subject to normal castability.",
-          "stepId": 8343,
-          "automationOnly": false
-        }
-      ],
-      "ptrSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Battle Shout",
@@ -8833,12 +6839,12 @@
       "simcActionLines": [
         120
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "battle_shout",
         "heroic_throw"
       ],
       "missingActions": [
-        "Cleave",
         "Champion's Spear",
         "Selected-build actions"
       ],
@@ -8848,17 +6854,9 @@
         "Cooldown sequencing"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": true,
-      "ptrChange": "Changes a Thunder Clap step to Cleave with a 4+ target condition.",
-      "ptrNotes": [
-        "Adds Cleave at four or more targets"
-      ],
-      "ptrAssessment": "Closer in ability choice. SimC uses Cleave in several contextual branches, not simply at Blizzard's fixed 4+ target threshold.",
-      "hasTruePtrProfile": false,
       "icyRating": "Moderate",
-      "icySummary": "The core Rend, Colossus Smash, Mortal Strike, Overpower, Execute, Bladestorm/Demolish, and Ravager loop agrees. Icy Veins adds the opener, rage and proc management, cooldown stacking, stances/utility, and a Cleave-centered multi-target list. PTR changes Thunder Clap to Cleave at 4+ nearby targets; that is closer, though Icy Veins emphasizes Cleave from 3+.",
-      "icyUrl": "https://www.icy-veins.com/wow/arms-warrior-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Closer in AoE."
+      "icySummary": "The core Rend, Colossus Smash, Mortal Strike, Overpower, Execute, Bladestorm/Demolish, and Ravager loop agrees. Icy Veins adds the opener, rage and proc management, cooldown stacking, stances/utility, and a Cleave-centered multi-target list. The 12.1 list changes Thunder Clap to Cleave at 4+ nearby targets; that is closer, though Icy Veins emphasizes Cleave from 3+.",
+      "icyUrl": "https://www.icy-veins.com/wow/arms-warrior-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Warrior",
@@ -8866,169 +6864,7 @@
       "specId": 72,
       "assistedCombatId": 29,
       "role": "DPS",
-      "liveSteps": [
-        {
-          "priority": 1,
-          "action": "Battle Shout",
-          "spellId": 6673,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND player has aura: Battle Shout Highlight [1271909].",
-          "stepId": 18783,
-          "automationOnly": false
-        },
-        {
-          "priority": 2,
-          "action": "Thunder Clap",
-          "spellId": 6343,
-          "condition": "target missing aura: Rend [388539]; AND action is learned; AND action cost is affordable; AND action is off cooldown; AND spell learned: Rend [772].",
-          "stepId": 18071,
-          "automationOnly": false
-        },
-        {
-          "priority": 3,
-          "action": "Rend",
-          "spellId": 772,
-          "condition": "target missing aura: Rend [388539]; AND action is learned; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 18072,
-          "automationOnly": false
-        },
-        {
-          "priority": 4,
-          "action": "Recklessness",
-          "spellId": 1719,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND spell off cooldown: Slam [1464]; AND automation-only (not part of Assisted Highlight).",
-          "stepId": 17040,
-          "automationOnly": true
-        },
-        {
-          "priority": 5,
-          "action": "Avatar",
-          "spellId": 107574,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND spell off cooldown: Slam [1464]; AND automation-only (not part of Assisted Highlight).",
-          "stepId": 17041,
-          "automationOnly": true
-        },
-        {
-          "priority": 6,
-          "action": "Odyn's Fury",
-          "spellId": 385059,
-          "condition": "target distance <= 12 yd; AND action is learned; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 328,
-          "automationOnly": false
-        },
-        {
-          "priority": 7,
-          "action": "Rampage",
-          "spellId": 184367,
-          "condition": "player missing aura: Enrage [184362]; AND action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range.",
-          "stepId": 318,
-          "automationOnly": false
-        },
-        {
-          "priority": 8,
-          "action": "Thunder Clap",
-          "spellId": 6343,
-          "condition": "player has aura: Thunder Blast [435615]; AND target distance <= 5 yd; AND player has aura: Enrage [184362]; AND action is learned; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 319,
-          "automationOnly": false
-        },
-        {
-          "priority": 9,
-          "action": "Thunder Clap",
-          "spellId": 6343,
-          "condition": "target distance <= 5 yd; AND player has aura: Crashing Thunder [436707]; AND spell learned: Improved Whirlwind [12950]; AND player missing aura: Whirlwind [85739]; AND action is learned; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 329,
-          "automationOnly": false
-        },
-        {
-          "priority": 10,
-          "action": "Whirlwind",
-          "spellId": 190411,
-          "condition": "target distance <= 10 yd; AND player missing aura: Crashing Thunder [436707]; AND spell learned: Improved Whirlwind [12950]; AND player missing aura: Whirlwind [85739]; AND targets near player > 3 (radius/value2=0); AND action is learned; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 330,
-          "automationOnly": false
-        },
-        {
-          "priority": 11,
-          "action": "Bladestorm",
-          "spellId": 227847,
-          "condition": "target distance <= 10 yd; AND player has aura: Enrage [184362]; AND action is learned; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 332,
-          "automationOnly": false
-        },
-        {
-          "priority": 12,
-          "action": "Rampage",
-          "spellId": 184367,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range.",
-          "stepId": 334,
-          "automationOnly": false
-        },
-        {
-          "priority": 13,
-          "action": "Execute",
-          "spellId": 5308,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range.",
-          "stepId": 335,
-          "automationOnly": false
-        },
-        {
-          "priority": 14,
-          "action": "Thunder Clap",
-          "spellId": 6343,
-          "condition": "target distance <= 5 yd; AND player has aura: Crashing Thunder [436707]; AND targets near player > 3 (radius/value2=0); AND action is learned; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 338,
-          "automationOnly": false
-        },
-        {
-          "priority": 15,
-          "action": "Bloodthirst",
-          "spellId": 23881,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range.",
-          "stepId": 340,
-          "automationOnly": false
-        },
-        {
-          "priority": 16,
-          "action": "Raging Blow",
-          "spellId": 85288,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range.",
-          "stepId": 339,
-          "automationOnly": false
-        },
-        {
-          "priority": 17,
-          "action": "Thunder Clap",
-          "spellId": 6343,
-          "condition": "target distance <= 5 yd; AND player has aura: Crashing Thunder [436707]; AND action is learned; AND action cost is affordable; AND action is off cooldown.",
-          "stepId": 341,
-          "automationOnly": false
-        },
-        {
-          "priority": 18,
-          "action": "Heroic Throw",
-          "spellId": 57755,
-          "condition": "action is learned; AND action cost is affordable; AND action is off cooldown; AND action is in range; AND target distance > 15 yd.",
-          "stepId": 344,
-          "automationOnly": false
-        },
-        {
-          "priority": 19,
-          "action": "Slam",
-          "spellId": 1464,
-          "condition": "player missing aura: Rampage! [209694].",
-          "stepId": 8323,
-          "automationOnly": false
-        },
-        {
-          "priority": 20,
-          "action": "Whirlwind",
-          "spellId": 190411,
-          "condition": "always, subject to normal castability.",
-          "stepId": 18147,
-          "automationOnly": false
-        }
-      ],
-      "ptrSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Battle Shout",
@@ -9191,10 +7027,10 @@
         }
       ],
       "simcComparable": true,
-      "overlap": 79,
-      "simcCoverage": 58,
-      "sharedActionCount": 11,
-      "blizzardActionCount": 14,
+      "overlap": 77,
+      "simcCoverage": 53,
+      "sharedActionCount": 10,
+      "blizzardActionCount": 13,
       "simcActionCount": 19,
       "alignment": "High literal overlap",
       "simcProfiles": [
@@ -9203,6 +7039,7 @@
       "simcActionLines": [
         72
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "battle_shout",
         "heroic_throw",
@@ -9219,18 +7056,9 @@
         "Cooldown sequencing"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": true,
-      "ptrChange": "Removes Rend, adds Storm of Blood Whirlwind, and revises Thunder Clap/Whirlwind conditions.",
-      "ptrNotes": [
-        "Revises Whirlwind and Thunder Clap rules",
-        "Removes the assistant's Rend entry"
-      ],
-      "ptrAssessment": "Closer overall. SimC also branches Whirlwind and Thunder Clap by talents/hero tree, but it still uses Rend in some AoE cases, so the removal is not a full match.",
-      "hasTruePtrProfile": false,
       "icyRating": "Moderate",
-      "icySummary": "The assistant covers Enrage spenders, Bloodthirst/Raging Blow, execute, and AoE fillers, but major cooldowns are separate automation entries. Icy Veins adds Recklessness/Avatar stacking, Enrage maintenance, Thunder Blast, Sudden Death, and hero-talent-specific Whirlwind/Thunder Clap rules. PTR’s Storm of Blood/Rend and Whirlwind changes move in the same direction, though some mechanics are PTR-only.",
-      "icyUrl": "https://www.icy-veins.com/wow/fury-warrior-pve-dps-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Closer conceptually."
+      "icySummary": "The assistant covers Enrage spenders, Bloodthirst/Raging Blow, execute, and AoE fillers, but major cooldowns are separate automation entries. Icy Veins adds Recklessness/Avatar stacking, Enrage maintenance, Thunder Blast, Sudden Death, and hero-talent-specific Whirlwind/Thunder Clap rules. The 12.1 list’s Storm of Blood/Rend and Whirlwind changes move in the same direction, though some mechanics are specific to 12.1.",
+      "icyUrl": "https://www.icy-veins.com/wow/fury-warrior-pve-dps-rotation-cooldowns-abilities"
     },
     {
       "gameClass": "Warrior",
@@ -9238,7 +7066,7 @@
       "specId": 73,
       "assistedCombatId": 26,
       "role": "Tank",
-      "liveSteps": [
+      "steps": [
         {
           "priority": 1,
           "action": "Battle Shout",
@@ -9352,7 +7180,6 @@
           "automationOnly": false
         }
       ],
-      "ptrSteps": null,
       "simcComparable": true,
       "overlap": 83,
       "simcCoverage": 50,
@@ -9366,6 +7193,7 @@
       "simcActionLines": [
         54
       ],
+      "usesSeason2SimcProfile": false,
       "blizzardOnlyActions": [
         "battle_shout",
         "heroic_throw"
@@ -9382,15 +7210,9 @@
         "Defensive cooldown planning"
       ],
       "comparisonLimitation": [],
-      "ptrChanged": false,
-      "ptrChange": "Unchanged in Blizzard's PTR data.",
-      "ptrNotes": [],
-      "ptrAssessment": "",
-      "hasTruePtrProfile": false,
       "icyRating": "Large",
       "icySummary": "The assistant is primarily an offensive threat rotation. Icy Veins adds Shield Block and Ignore Pain uptime, Demoralizing Shout and Shield Charge windows, Avatar/Ravager planning, rage budgeting, taunts, and encounter-specific defensive cooldown usage.",
-      "icyUrl": "https://www.icy-veins.com/wow/protection-warrior-pve-tank-rotation-cooldowns-abilities",
-      "icyPtrEffect": "Unchanged."
+      "icyUrl": "https://www.icy-veins.com/wow/protection-warrior-pve-tank-rotation-cooldowns-abilities"
     }
   ]
 }
