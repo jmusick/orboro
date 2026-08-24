@@ -66,7 +66,7 @@ const profiles = [
 
 
 <BaseLayout title="Orboro.net" description="Latest posts and gamer profiles from Orboro.net.">
-	<div class={`home-layout ${recentTracks.length === 0 ? "home-layout--no-lastfm" : ""}`}>
+	<div class="home-layout">
 		<section class="feed-section">
 			<div class="feed-header">
 				<h2>Latest Posts</h2>
@@ -97,55 +97,57 @@ const profiles = [
 			)}
 		</section>
 
-		{recentTracks.length > 0 && (
-			<aside class="lastfm-column">
-				<div class="lastfm-header">
-					<h2>Recently Playing</h2>
-					<a class="lastfm-header__link" href={LASTFM_PROFILE_URL} target="_blank" rel="noopener noreferrer">
-						<Icon name="lastfm" size={16} filled={true} />
-						View on Last.fm
-					</a>
-				</div>
-				<div class="lastfm-list">
-					{recentTracks.map((track) => (
-						<a class="lastfm-row" href={track.url} target="_blank" rel="noopener noreferrer">
-							{track.image ? (
-								<img class="lastfm-row__art" src={track.image} alt="" loading="lazy" referrerpolicy="no-referrer" />
-							) : (
-								<span class="lastfm-row__art lastfm-row__art--placeholder" aria-hidden="true">
-									<Icon name="music" size={16} />
+		<div class="side-column">
+			<aside class="profiles-column">
+				<h2>Find Me Elsewhere</h2>
+				<div class="profiles-list">
+					{profiles.map((profile) => {
+						const Tag = profile.url ? "a" : "div";
+						const linkProps = profile.url ? { href: profile.url, target: "_blank", rel: "noopener noreferrer" } : {};
+						return (
+							<Tag class="profile-row" {...linkProps}>
+								<Icon name={profile.icon} size={20} filled={true} />
+								<span class="profile-row__text">
+									<strong>{profile.platform}</strong>
+									<span>{profile.handle}</span>
 								</span>
-							)}
-							<span class="profile-row__text">
-								<strong>{track.name}</strong>
-								<span>{track.artist}</span>
-							</span>
-							{track.nowPlaying && <span class="lastfm-row__live">Live</span>}
-						</a>
-					))}
+								{profile.url && <Icon name="external-link" size={14} class="profile-row__external" />}
+							</Tag>
+						);
+					})}
 				</div>
 			</aside>
-		)}
 
-		<aside class="profiles-column">
-			<h2>Find Me Elsewhere</h2>
-			<div class="profiles-list">
-				{profiles.map((profile) => {
-					const Tag = profile.url ? "a" : "div";
-					const linkProps = profile.url ? { href: profile.url, target: "_blank", rel: "noopener noreferrer" } : {};
-					return (
-						<Tag class="profile-row" {...linkProps}>
-							<Icon name={profile.icon} size={20} filled={true} />
-							<span class="profile-row__text">
-								<strong>{profile.platform}</strong>
-								<span>{profile.handle}</span>
-							</span>
-							{profile.url && <Icon name="external-link" size={14} class="profile-row__external" />}
-						</Tag>
-					);
-				})}
-			</div>
-		</aside>
+			{recentTracks.length > 0 && (
+				<aside class="lastfm-column">
+					<div class="lastfm-header">
+						<h2>Recently Playing</h2>
+						<a class="lastfm-header__link" href={LASTFM_PROFILE_URL} target="_blank" rel="noopener noreferrer">
+							<Icon name="lastfm" size={16} filled={true} />
+							View on Last.fm
+						</a>
+					</div>
+					<div class="lastfm-list">
+						{recentTracks.map((track) => (
+							<a class="lastfm-row" href={track.url} target="_blank" rel="noopener noreferrer">
+								{track.image ? (
+									<img class="lastfm-row__art" src={track.image} alt="" loading="lazy" referrerpolicy="no-referrer" />
+								) : (
+									<span class="lastfm-row__art lastfm-row__art--placeholder" aria-hidden="true">
+										<Icon name="music" size={16} />
+									</span>
+								)}
+								<span class="profile-row__text">
+									<strong>{track.name}</strong>
+									<span>{track.artist}</span>
+								</span>
+								{track.nowPlaying && <span class="lastfm-row__live">Live</span>}
+							</a>
+						))}
+					</div>
+				</aside>
+			)}
+		</div>
 	</div>
 </BaseLayout>
 
@@ -248,13 +250,15 @@ const profiles = [
 <style>
 	.home-layout {
 		display: grid;
-		grid-template-columns: 2fr 1fr 1fr;
+		grid-template-columns: 2fr 1fr;
 		gap: 2.5rem;
 		align-items: start;
 	}
 
-	.home-layout--no-lastfm {
-		grid-template-columns: 2fr 1fr;
+	.side-column {
+		display: flex;
+		flex-direction: column;
+		gap: 2.5rem;
 	}
 
 	.feed-header {
@@ -527,19 +531,11 @@ const profiles = [
 
 	@media (max-width: 1150px) {
 		.home-layout {
-			grid-template-columns: 1fr 1fr;
-		}
-
-		.feed-section {
-			grid-column: 1 / -1;
+			grid-template-columns: 1fr;
 		}
 	}
 
 	@media (max-width: 700px) {
-		.home-layout {
-			grid-template-columns: 1fr;
-		}
-
 		.profiles-list {
 			flex-direction: row;
 			flex-wrap: wrap;
