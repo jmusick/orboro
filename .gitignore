@@ -32,3 +32,6 @@ Thumbs.db
 .idea/
 .claude/
 .vscode/settings.json
+
+# Local audit / working notes (not tracked)
+TODO.md

@@ -53,7 +53,7 @@ export function generatePoe2Featured(): string {
 @media (max-width:768px){.pf-grid{grid-template-columns:1fr 1fr;}}
 @media (max-width:520px){.pf-grid{grid-template-columns:1fr;}}
 
-.pf-card{display:flex;flex-direction:column;gap:.6rem;padding:1.1rem;border:1px solid var(--line,#1f2b46);border-radius:12px;background:linear-gradient(160deg,rgb(12 19 36 / 60%) 0%,rgb(17 26 48 / 60%) 100%);text-decoration:none;color:var(--text,#e8f3ff);transition:all .2s ease;}
+.pf-card{display:flex;flex-direction:column;gap:.6rem;padding:1.1rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-md,10px);background:linear-gradient(160deg,rgb(12 19 36 / 60%) 0%,rgb(17 26 48 / 60%) 100%);text-decoration:none;color:var(--text,#e8f3ff);transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease;}
 .pf-card:hover{border-color:var(--accent,#00e5ff);box-shadow:0 0 1rem rgb(0 229 255 / 15%);transform:translateY(-2px);}
 
 .pf-icon{color:var(--accent,#00e5ff);flex:none;}
@@ -90,8 +90,8 @@ export function generatePoe2Intro(): string {
 .pi-links{flex:0 0 400px;display:flex;flex-direction:column;gap:.75rem;}
 @media (max-width:700px){.pi-links{flex-basis:auto;}}
 
-.pi-link{display:flex;align-items:center;gap:.9rem;padding:.9rem 1.1rem;border:1px solid var(--line,#1f2b46);border-left:3px solid var(--accent-2,#ff3fb8);border-radius:8px;background:linear-gradient(90deg,rgb(255 63 184 / 6%) 0%,transparent 60%);text-decoration:none;color:var(--text,#e8f3ff);transition:all .18s ease;}
-.pi-link:hover{border-color:var(--accent-2,#ff3fb8);background:linear-gradient(90deg,rgb(255 63 184 / 10%) 0%,transparent 60%);box-shadow:0 0 .8rem rgb(255 63 184 / 15%);}
+.pi-link{display:flex;align-items:center;gap:.9rem;padding:.9rem 1.1rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-md,10px);background:rgb(255 63 184 / 4%);text-decoration:none;color:var(--text,#e8f3ff);transition:border-color .18s ease,background .18s ease,box-shadow .18s ease;}
+.pi-link:hover{border-color:var(--accent-2,#ff3fb8);background:rgb(255 63 184 / 8%);box-shadow:0 0 .8rem rgb(255 63 184 / 15%);}
 
 .pi-icon{color:var(--accent-2,#ff3fb8);flex:none;}
 

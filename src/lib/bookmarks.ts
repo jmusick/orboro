@@ -128,10 +128,10 @@ export async function generateBookmarksList(attrs: Record<string, string>): Prom
 .bml-list{display:grid;grid-template-columns:repeat(2,1fr);gap:.4rem;}
 @media (max-width:640px){.bml-list{grid-template-columns:1fr;}}
 
-.bml-item{display:flex;align-items:center;gap:.6rem;padding:.5rem .75rem;border:1px solid var(--line,#1f2b46);border-left:3px solid var(--accent,#00e5ff);border-radius:6px;background:linear-gradient(90deg,rgb(0 229 255 / 5%) 0%,transparent 60%);text-decoration:none;color:var(--text,#e8f3ff);transition:all .18s ease;min-width:0;}
-.bml-item:hover{border-color:var(--accent,#00e5ff);background:linear-gradient(90deg,rgb(0 229 255 / 10%) 0%,transparent 60%);box-shadow:0 0 .8rem rgb(0 229 255 / 15%);}
+.bml-item{display:flex;align-items:center;gap:.6rem;padding:.5rem .75rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-sm,6px);background:rgb(0 229 255 / 3%);text-decoration:none;color:var(--text,#e8f3ff);transition:border-color .18s ease,background .18s ease,box-shadow .18s ease;min-width:0;}
+.bml-item:hover{border-color:var(--accent,#00e5ff);background:rgb(0 229 255 / 8%);box-shadow:0 0 .8rem rgb(0 229 255 / 15%);}
 
-.bml-favicon{width:16px;height:16px;flex:none;border-radius:3px;}
+.bml-favicon{width:16px;height:16px;flex:none;border-radius:var(--r-sm,6px);}
 .bml-favicon--placeholder{background:var(--surface,#0c1324);border:1px solid var(--line,#1f2b46);}
 
 .bml-body{display:flex;flex-direction:column;gap:.1rem;min-width:0;}
@@ -143,7 +143,7 @@ export async function generateBookmarksList(attrs: Record<string, string>): Prom
 .bml-item[hidden]{display:none;}
 
 .bml-cats{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.7rem;}
-.bml-cat{display:inline-flex;align-items:center;gap:.35rem;background:transparent;border:1px solid var(--line,#1f2b46);color:var(--muted,#97a8c4);padding:.3rem .65rem;border-radius:999px;font:inherit;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .15s ease;}
+.bml-cat{display:inline-flex;align-items:center;gap:.35rem;background:transparent;border:1px solid var(--line,#1f2b46);color:var(--muted,#97a8c4);padding:.3rem .65rem;border-radius:var(--r-pill,999px);font:inherit;font-size:.78rem;font-weight:600;cursor:pointer;transition:color .15s ease,border-color .15s ease,background .15s ease;}
 .bml-cat:hover{color:var(--text,#e8f3ff);border-color:var(--muted,#97a8c4);}
 .bml-cat--active{color:#04141a;background:var(--accent,#00e5ff);border-color:var(--accent,#00e5ff);}
 .bml-cat--active:hover{color:#04141a;}
@@ -151,12 +151,12 @@ export async function generateBookmarksList(attrs: Record<string, string>): Prom
 
 #bml-root hr.bml-divider{border:none;border-top:1px solid var(--line,#1f2b46);margin:1.25rem 0;}
 
-#bml-root p.bml-credit{display:flex;align-items:center;gap:.7rem;margin:0;padding:.75rem 1rem;border:1px solid rgb(0 229 255 / 25%);border-radius:8px;background:linear-gradient(90deg,rgb(0 229 255 / 8%) 0%,transparent 70%);font-size:.85rem;color:var(--text,#e8f3ff);}
+#bml-root p.bml-credit{display:flex;align-items:center;gap:.7rem;margin:0;padding:.75rem 1rem;border:1px solid rgb(0 229 255 / 25%);border-radius:var(--r-md,10px);background:rgb(0 229 255 / 5%);font-size:.85rem;color:var(--text,#e8f3ff);}
 .bml-credit-icon{flex:none;color:var(--accent,#00e5ff);}
 .bml-credit-text{flex:1 1 auto;min-width:0;}
 .bml-credit a{display:inline-flex;align-items:center;gap:.3rem;color:var(--accent,#00e5ff);text-decoration:none;font-weight:700;}
 .bml-credit a:hover{text-decoration:underline;}
-.bml-credit-favicon{width:16px;height:16px;border-radius:3px;}
+.bml-credit-favicon{width:16px;height:16px;border-radius:var(--r-sm,6px);}
 `;
 
   const credit =

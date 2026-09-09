@@ -118,6 +118,14 @@ function nodeIcon(node: NavNode): string {
         --accent-2: #ff3fb8;
         --accent-3: #a8ff60;
         --line: #1f2b46;
+
+        /* Radius scale. Three tiers plus a pill; see AGENTS.md. Small = inline
+           controls (chips, code, favicons, buttons), medium = cards, panels and
+           callouts, large = page-level shells and heroes. Don't add a fourth. */
+        --r-sm: 6px;
+        --r-md: 10px;
+        --r-lg: 16px;
+        --r-pill: 999px;
       }
       * {
         box-sizing: border-box;
@@ -148,7 +156,7 @@ function nodeIcon(node: NavNode): string {
         background: var(--surface);
         color: var(--text);
         border: 1px solid var(--accent);
-        border-radius: 8px;
+        border-radius: var(--r-md,10px);
         text-decoration: none;
         transition: top 0.15s ease;
       }
@@ -189,7 +197,7 @@ function nodeIcon(node: NavNode): string {
         height: 38px;
         background: var(--surface);
         border: 1px solid var(--line);
-        border-radius: 8px;
+        border-radius: var(--r-md,10px);
         cursor: pointer;
         flex-shrink: 0;
       }
@@ -217,7 +225,7 @@ function nodeIcon(node: NavNode): string {
         margin-bottom: 1rem;
         background: var(--surface);
         border: 1px solid var(--line);
-        border-radius: 10px;
+        border-radius: var(--r-md,10px);
         padding: 0.25rem;
         flex-wrap: wrap;
       }
@@ -225,10 +233,10 @@ function nodeIcon(node: NavNode): string {
         display: flex;
         align-items: center;
         gap: 0.4rem;
-        border-radius: 7px;
+        border-radius: var(--r-sm,6px);
         padding: 0.55rem 1.35rem;
         text-decoration: none;
-        transition: all 0.18s ease;
+        transition: color 0.18s ease, background 0.18s ease;
         font-weight: 500;
         font-size: 0.95rem;
         color: var(--muted);
@@ -269,7 +277,7 @@ function nodeIcon(node: NavNode): string {
         flex-direction: column;
         background: var(--surface);
         border: 1px solid var(--line);
-        border-radius: 10px;
+        border-radius: var(--r-md,10px);
         padding: 0.25rem;
         min-width: 180px;
         z-index: 50;
@@ -279,7 +287,7 @@ function nodeIcon(node: NavNode): string {
         display: none;
         background: rgb(255 255 255 / 5%);
         border: 1px solid var(--line);
-        border-radius: 7px;
+        border-radius: var(--r-sm,6px);
         color: var(--accent);
         cursor: pointer;
         align-items: center;
@@ -334,7 +342,7 @@ function nodeIcon(node: NavNode): string {
       .nav-dropdown a, .nav-dropdown-link {
         padding: 0.5rem 1rem;
         font-size: 0.9rem;
-        border-radius: 7px;
+        border-radius: var(--r-sm,6px);
         box-shadow: none;
         display: block;
         text-decoration: none;
@@ -384,7 +392,7 @@ function nodeIcon(node: NavNode): string {
         flex-direction: column;
         background: var(--surface);
         border: 1px solid var(--line);
-        border-radius: 10px;
+        border-radius: var(--r-md,10px);
         padding: 0.25rem;
         min-width: 180px;
         z-index: 51;
@@ -410,7 +418,7 @@ function nodeIcon(node: NavNode): string {
       }
       .header-banner {
         margin-bottom: 1.2rem;
-        border-radius: 16px;
+        border-radius: var(--r-lg,16px);
         overflow: hidden;
         line-height: 0;
       }
@@ -425,7 +433,7 @@ function nodeIcon(node: NavNode): string {
       main {
         background: linear-gradient(160deg, rgb(12 19 36 / 94%) 0%, rgb(17 26 48 / 94%) 100%);
         border: 1px solid var(--line);
-        border-radius: 16px;
+        border-radius: var(--r-lg,16px);
         box-shadow:
           0 0 1.2rem rgb(0 229 255 / 14%),
           0 1.5rem 3rem rgb(0 0 0 / 45%);
@@ -601,7 +609,7 @@ function nodeIcon(node: NavNode): string {
         font-size: 0.9rem;
         margin: 1.25rem 0;
         border: 1px solid var(--line);
-        border-radius: 10px;
+        border-radius: var(--r-md,10px);
         overflow: hidden;
       }
       .prose thead {
@@ -626,9 +634,9 @@ function nodeIcon(node: NavNode): string {
       .prose blockquote {
         margin: 1.25rem 0;
         padding: 1rem 1.25rem;
-        border-left: 3px solid var(--accent);
         background: rgb(0 229 255 / 6%);
-        border-radius: 0 8px 8px 0;
+        border-radius: var(--r-md,10px);
+        border: 1px solid rgb(0 229 255 / 18%);
       }
       .prose blockquote p { margin: 0; line-height: 1.9; }
 
@@ -645,7 +653,7 @@ function nodeIcon(node: NavNode): string {
       .prose code {
         background: #111a30;
         border: 1px solid #1f2b46;
-        border-radius: 0.35rem;
+        border-radius: var(--r-sm,6px);
         padding: 0.1rem 0.4rem;
         font-size: 0.875em;
         font-family: "JetBrains Mono", Consolas, monospace;
@@ -653,7 +661,7 @@ function nodeIcon(node: NavNode): string {
       .prose pre {
         background: #0c1324;
         border: 1px solid #1f2b46;
-        border-radius: 10px;
+        border-radius: var(--r-md,10px);
         padding: 1.25rem 1.5rem;
         overflow-x: auto;
         margin: 1.25rem 0;
@@ -690,7 +698,7 @@ function nodeIcon(node: NavNode): string {
         background: var(--surface);
         border: 1px solid var(--line);
         border-top: 2px solid var(--accent);
-        border-radius: 10px;
+        border-radius: var(--r-md,10px);
         transition: box-shadow 0.2s ease, border-color 0.2s ease;
       }
       .prose .overview-card:hover {
@@ -713,7 +721,7 @@ function nodeIcon(node: NavNode): string {
 
       .prose img {
         max-width: 100%;
-        border-radius: 10px;
+        border-radius: var(--r-md,10px);
         border: 1px solid var(--line);
         margin: 1rem 0;
         display: block;
@@ -752,8 +760,7 @@ function nodeIcon(node: NavNode): string {
       /* ── Accordion (details/summary) ── */
       .prose details {
         border: 1px solid var(--line);
-        border-left: 3px solid var(--accent);
-        border-radius: 0 10px 10px 0;
+        border-radius: var(--r-md,10px);
         margin: 0.75rem 0;
         background: var(--surface);
         overflow: hidden;

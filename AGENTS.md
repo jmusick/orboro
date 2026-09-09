@@ -9,6 +9,26 @@ Conventions and gotchas for anyone (human or agent) working on this codebase. Se
 - Auth is custom (PBKDF2 password hashing, session cookie), not a third-party library. See `src/lib/auth.ts`, `src/middleware.ts`.
 - Styling is hand-written scoped CSS per component using the CSS variables defined in `BaseLayout.astro` (`--bg`, `--surface`, `--text`, `--muted`, `--accent`, `--accent-2`, `--accent-3`, `--line`). No Tailwind, no component library.
 
+## Card accents
+
+Cards, callouts, and blockquotes use a **uniform 1px frame** — `border: 1px solid var(--line)`, or a tinted `rgb(<accent> / ~22%)` where the block carries semantic color — with a symmetric `border-radius`. No colored left bar, no corner tick, no directional gradient wash. Color lives in the icon, the title, the hover state, and the border tint; the frame itself stays even on all four sides.
+
+Don't reintroduce `border-left: 3px solid var(--accent)` paired with an asymmetric `border-radius: 0 8px 8px 0` and a `linear-gradient(90deg, <tint>, transparent)` background — that combination was removed sitewide and is not wanted back. A top-left corner tick (a 2px `::before` elbow) was tried as a replacement and also rejected.
+
+The one surviving left border is `.nav-item--child` in `src/pages/admin/nav/index.astro`, where it encodes tree nesting in the admin nav editor rather than decorating a card.
+
+## Radius and transitions
+
+`BaseLayout.astro` defines a **three-tier radius scale** in `:root` — `--r-sm: 6px` (inline controls: chips, code, favicons, small buttons), `--r-md: 10px` (cards, panels, callouts, inputs), `--r-lg: 16px` (page-level shells and heroes), plus `--r-pill: 999px`. Every component references them with the usual fallback form:
+
+```css
+border-radius: var(--r-md, 10px);
+```
+
+Shortcode `<style>` blocks are injected into the page, so they inherit these from `:root` — the fallback is belt-and-braces, matching the `var(--line,#1f2b46)` convention. Before this was consolidated the site used 13 distinct radii for the same handful of jobs (`.ac-stat` 10px, `.m2iu-stat` 9px, `.bml-item` 6px, `.pi-link` 8px), because each widget was styled in isolation. **Don't add a fourth tier** — pick the nearest existing one. Bare values are still correct for `0` resets, `50%` circles, and hairlines.
+
+**Never use `transition: all`.** Enumerate exactly the properties the `:hover` / `:focus` rule changes, so the transition can't pick up layout properties by accident. Note that children animate independently: `Card.astro` transitions `transform` on `.card__image img` and `opacity` on `.card__bg-icon` in their own rules, not via the parent.
+
 ## The shortcode system
 
 Page/post markdown can embed rich, self-contained widgets via `{{token}}` or `{{token attr="value"}}` syntax, processed by `src/lib/shortcodes.ts` after `marked.parse()`. Each shortcode is a hardcoded, page-specific TS module in `src/lib/*.ts` (e.g. `atlas-farming-strategies.ts`, `bookmarks.ts`, `poe2-featured.ts`, `wow-featured.ts`, `assisted-combat-analysis.ts`) that returns a self-contained HTML string with its own inline `<style>` (and `<script>` if interactive), registered in the `SHORTCODES` map in `shortcodes.ts`.
@@ -130,3 +150,7 @@ Always fail gracefully (return a small `<p><em>…</em></p>` fallback, not a thr
 **Gotcha — the Cache API cache survives a dev server restart:** Miniflare persists `caches.default` to disk at `.wrangler/state/v3/cache`, not just in memory. Restarting `npm run dev` / `npm run dev:astro` does **not** clear it, so a stale cached response (e.g. from `bookmarks.ts`) can keep serving after the upstream data changed. To force a fresh fetch locally: stop the dev server (it holds the cache's sqlite files open), delete `.wrangler/state/v3/cache/miniflare-CacheObject`, then restart. Waiting out the `Cache-Control: max-age` TTL also works without touching anything.
 
 `bookmarks.ts` also demonstrates a reusable pattern for turning a flat tag list into filterable UI categories: exclude tags via an explicit shortcode attribute (e.g. `exclude_categories="arpg,gaming"`) rather than trying to auto-detect which tags are "shared by everything" — that heuristic breaks the moment one item is missing a tag the rest share.
+
+## Public content API (cross-site consumers)
+
+`src/pages/api/posts/by-category/[slug].ts` is a public, edge-cached (`Cache-Control`, 10 min) JSON endpoint returning published posts for a category — `title`, `slug`, absolute `url`/`featuredImageUrl`, and a plain-text `excerpt` via `excerptFromMarkdown` in `content.ts`. It's the same request/cache shape as the external calls described above, just serving data out instead of fetching it in. First (and currently only) consumer is HiddenLodgeWebsite's `/articles` page (`world-of-warcraft` category), a sibling repo. **Gotcha:** the endpoint returns plain excerpt text, not rendered HTML — shortcode tokens (`{{token}}`) only resolve inside this repo's own Astro render pipeline, so a cross-site consumer can't render a full post body from this API; they link back to `/blog/[slug]` here instead. Keep that in mind before adding fields that assume rendered content. If you add another public content endpoint, follow the same pattern: absolute URLs (not relative paths — a relative `featured_image_url` needs `new URL(path, site.origin)`), edge cache, and a `404` JSON body for an unknown slug rather than an empty array.

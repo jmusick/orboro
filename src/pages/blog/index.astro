@@ -189,12 +189,12 @@ const postCards = posts.map((post) => {
     min-width: 200px;
     padding: 0.6rem 0.9rem;
     border: 1px solid var(--line);
-    border-radius: 8px;
+    border-radius: var(--r-md,10px);
     background: var(--surface);
     color: var(--text);
     font-family: inherit;
     font-size: 0.9rem;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
   .blog-search:focus {
@@ -215,13 +215,13 @@ const postCards = posts.map((post) => {
   .blog-sort {
     padding: 0.6rem 0.9rem;
     border: 1px solid var(--line);
-    border-radius: 8px;
+    border-radius: var(--r-md,10px);
     background: var(--surface);
     color: var(--text);
     font-family: inherit;
     font-size: 0.9rem;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
   .blog-sort:focus {

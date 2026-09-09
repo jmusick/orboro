@@ -309,7 +309,7 @@ const profiles = [
 		display: block;
 		width: 120px;
 		height: 90px;
-		border-radius: 10px;
+		border-radius: var(--r-md,10px);
 		overflow: hidden;
 	}
 
@@ -365,14 +365,14 @@ const profiles = [
 		margin-top: 0.75rem;
 		padding: 0.4rem 0.9rem;
 		border: 1px solid var(--line);
-		border-radius: 8px;
+		border-radius: var(--r-md,10px);
 		background: var(--surface);
 		color: var(--accent);
 		font-family: inherit;
 		font-size: 0.85rem;
 		font-weight: 500;
 		text-decoration: none;
-		transition: all 0.2s ease;
+		transition: border-color 0.2s ease, background 0.2s ease;
 	}
 
 	.feed-item__more:hover {
@@ -393,10 +393,10 @@ const profiles = [
 		padding: 0.6rem 0.75rem;
 		background: linear-gradient(160deg, rgb(12 19 36 / 60%) 0%, rgb(17 26 48 / 60%) 100%);
 		border: 1px solid var(--line);
-		border-radius: 10px;
+		border-radius: var(--r-md,10px);
 		color: inherit;
 		text-decoration: none;
-		transition: all 0.2s ease;
+		transition: border-color 0.2s ease, box-shadow 0.2s ease;
 	}
 
 	a.profile-row:hover {
@@ -464,10 +464,10 @@ const profiles = [
 		padding: 0.6rem 0.75rem;
 		background: linear-gradient(160deg, rgb(12 19 36 / 60%) 0%, rgb(17 26 48 / 60%) 100%);
 		border: 1px solid var(--line);
-		border-radius: 10px;
+		border-radius: var(--r-md,10px);
 		color: inherit;
 		text-decoration: none;
-		transition: all 0.2s ease;
+		transition: border-color 0.2s ease, box-shadow 0.2s ease;
 	}
 
 	.lastfm-row:hover {
@@ -479,7 +479,7 @@ const profiles = [
 		flex-shrink: 0;
 		width: 32px;
 		height: 32px;
-		border-radius: 6px;
+		border-radius: var(--r-sm,6px);
 		object-fit: cover;
 	}
 
@@ -506,7 +506,7 @@ const profiles = [
 		flex-shrink: 0;
 		margin-left: auto;
 		padding: 0.15rem 0.5rem;
-		border-radius: 999px;
+		border-radius: var(--r-pill,999px);
 		background: rgb(0 229 255 / 12%);
 		color: var(--accent);
 		font-size: 0.7rem;

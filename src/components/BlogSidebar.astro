@@ -78,11 +78,11 @@ const { categories, recentPosts, activeCategorySlug } = Astro.props;
     padding: 0.55rem 0.75rem;
     background: linear-gradient(160deg, rgb(12 19 36 / 60%) 0%, rgb(17 26 48 / 60%) 100%);
     border: 1px solid var(--line);
-    border-radius: 8px;
+    border-radius: var(--r-md,10px);
     color: var(--text);
     text-decoration: none;
     font-size: 0.85rem;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
   .sidebar-row:hover {
@@ -123,7 +123,7 @@ const { categories, recentPosts, activeCategorySlug } = Astro.props;
   .sidebar-row__count {
     flex-shrink: 0;
     padding: 0.1rem 0.5rem;
-    border-radius: 999px;
+    border-radius: var(--r-pill,999px);
     background: rgb(0 229 255 / 10%);
     color: var(--accent);
     font-size: 0.75rem;

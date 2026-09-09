@@ -152,7 +152,7 @@ const structuredData = {
     width: 100%;
     max-height: 360px;
     object-fit: cover;
-    border-radius: 12px;
+    border-radius: var(--r-md,10px);
     margin-bottom: 1.5rem;
   }
 
@@ -168,13 +168,13 @@ const structuredData = {
   .tag {
     padding: 0.35rem 0.85rem;
     border: 1px solid var(--line);
-    border-radius: 999px;
+    border-radius: var(--r-pill,999px);
     background: rgb(0 229 255 / 8%);
     color: var(--accent);
     text-decoration: none;
     font-size: 0.82rem;
     font-weight: 500;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, background 0.2s ease;
   }
 
   .tag:hover {
@@ -195,11 +195,11 @@ const structuredData = {
     gap: 0.35rem;
     padding: 1rem 1.1rem;
     border: 1px solid var(--line);
-    border-radius: 10px;
+    border-radius: var(--r-md,10px);
     background: linear-gradient(160deg, rgb(12 19 36 / 60%) 0%, rgb(17 26 48 / 60%) 100%);
     text-decoration: none;
     color: var(--text);
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
     min-width: 0;
   }
 
