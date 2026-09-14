@@ -111,7 +111,7 @@ Tables:
 
 ## Notes
 
-- Content markdown is stored in D1 (`content.markdown`).
+- Content markdown is stored in D1 (`content.markdown`). Reusable, re-runnable seed scripts for individual pages/posts (content row + categories + nav) live in `scripts/content/*.sql` — see [AGENTS.md](AGENTS.md) for the pattern.
 - Media management currently stores metadata and source URLs.
 - To support uploads later, pair this with Cloudflare R2 and add upload endpoints.
 - To support additional content types later, add new values in `content.page_type` and build matching routes.

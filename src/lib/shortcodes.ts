@@ -6,6 +6,7 @@ import { generateWowIntro, generateWowFeatured, generateHiddenLodgeFeature } fro
 import { generateAssistedCombatAnalysis } from "./assisted-combat-analysis";
 import { generateMidnightSheetLink, generateMidnightTierList } from "./midnight-tier-list";
 import { generateMidnightS2Interrupts } from "./midnight-s2-interrupts";
+import { generateSpellQueueLab } from "./spell-queue-lab";
 
 type ShortcodeFn = (attrs: Record<string, string>) => string | Promise<string>;
 
@@ -22,6 +23,7 @@ const SHORTCODES: Record<string, ShortcodeFn> = {
   midnight_tier_list: generateMidnightTierList,
   midnight_sheet_link: generateMidnightSheetLink,
   midnight_s2_interrupts: generateMidnightS2Interrupts,
+  spell_queue_lab: generateSpellQueueLab,
 };
 
 // Matches {{token}} or {{token attr="value" ...}}. marked wraps a standalone

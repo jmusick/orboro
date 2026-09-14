@@ -69,6 +69,13 @@ interface FeaturedItem {
 
 const FEATURED_ITEMS: FeaturedItem[] = [
   {
+    title: "Spell Queue Window Guide & Simulator",
+    description:
+      "A full guide to the Spell Queue Window plus an interactive simulator testing how queue size, GCD length, latency, and keypress rhythm combine to create or prevent rotational gaps.",
+    href: "/pages/spell-queue-window-simulator",
+    iconSvg: '<path d="M3 12h4l2-7 4 14 3-9 2 5h3"/>',
+  },
+  {
     title: "Assisted Combat Analysis",
     description:
       "Blizzard's built-in rotation priority list for every specialization, pulled straight from the game's data "

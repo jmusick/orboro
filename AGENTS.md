@@ -78,6 +78,8 @@ Skipping this means the widget silently does nothing for any visitor who navigat
 
 The symptom is misleading: unexplained gaps, stray borders, or indentation that looks like a flexbox/layout bug and sends you rewriting the layout instead of the specificity. `bookmarks.ts` (`#bml-root p.bml-credit`, `#bml-root hr.bml-divider`) and `wow-featured.ts` both use this pattern.
 
+**Gotcha — a class-level `display` beats the `hidden` attribute:** the browser's UA stylesheet sets `[hidden]{display:none}` at the same specificity as a class selector like `.sql-live{display:flex}`, and your page's `<style>` block loads after the UA sheet — so on a tie, your class wins and toggling `el.hidden = true` visibly does nothing. `spell-queue-lab.ts`'s `#sql-root .sql-live[hidden]{display:none;}` is the fix: pair every element you show/hide via the `hidden` property with an explicit `<root> .your-class[hidden]{display:none;}` rule if that class also sets its own `display`.
+
 **Same gotcha applies to Google Analytics:** the gtag.js snippet in `BaseLayout.astro`'s `<head>` is identical on every page, so Astro's head-diffing persists it across View Transitions rather than re-running it — meaning `gtag('config', ...)`'s automatic page-view fires exactly once per browser session, not on every in-site navigation. The site sets `send_page_view: false` and instead sends `gtag('event', 'page_view', ...)` manually on `astro:page-load` (which fires on the initial load and every subsequent client-side navigation), so don't "simplify" that back to the stock snippet or analytics will undercount navigation. Both `<script>` tags there also need `is:inline` — without it, Astro tries to process/type-check the inline script as a module and fails on the untyped `dataLayer`/`gtag` globals.
 
 ## Content model
@@ -95,6 +97,8 @@ wrangler d1 execute DB --local --file=./scratch.sql
 ```
 
 SQL-escape single quotes in markdown content as `''` (not `\'`) — it's SQLite. Drop `--local` (and add `--remote`) to target production; do that deliberately, per the local-vs-remote section below.
+
+**A new shortcode-backed page gets a seed script in `scripts/content/`**, not a one-off scratch file — see `spell-queue-window-simulator.sql` or `bis-lists-are-bait.sql` for the shape. It's a single idempotent transaction: `INSERT INTO content (...) VALUES (...) ON CONFLICT(slug) DO UPDATE SET ...` for the page itself, `INSERT OR IGNORE INTO content_categories ...` for tagging, and (if it should appear in the header) an `INSERT INTO nav_items (...) ON CONFLICT(id) DO UPDATE SET ...` with a hardcoded `id` so re-running the script never creates a duplicate nav row. Because the script is safe to re-run, it doubles as the way you ship an edit to a page's intro prose or nav label — change the script, then re-run it against whichever environment(s) you're targeting, rather than hand-editing D1 rows directly. Resolve `author_id` with `(SELECT id FROM users WHERE role = 'admin' ORDER BY created_at ASC LIMIT 1)` instead of a literal UUID, since local and remote `users.id` values don't match (see the local-vs-remote section below) — this is what lets the same script run unmodified against both.
 
 ## Verifying a change without a browser
 
