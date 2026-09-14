@@ -1,6 +1,5 @@
 PRAGMA foreign_keys = ON;
 
-BEGIN TRANSACTION;
 
 INSERT INTO content (
   id,
@@ -84,4 +83,3 @@ WHERE label = 'Useful WoW Links'
     LIMIT 1
   );
 
-COMMIT;

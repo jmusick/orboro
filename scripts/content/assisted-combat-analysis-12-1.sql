@@ -1,4 +1,3 @@
-BEGIN TRANSACTION;
 
 UPDATE content
 SET
@@ -8,4 +7,3 @@ SET
   updated_at = CAST(strftime('%s', '2026-08-24 12:00:00') AS INTEGER) * 1000
 WHERE slug = 'assisted-combat-analysis';
 
-COMMIT;

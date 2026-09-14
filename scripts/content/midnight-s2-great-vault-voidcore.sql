@@ -1,6 +1,5 @@
 PRAGMA foreign_keys = ON;
 
-BEGIN TRANSACTION;
 
 INSERT INTO content (
   id,
@@ -146,4 +145,3 @@ SELECT
 FROM categories
 WHERE slug IN ('gaming', 'world-of-warcraft');
 
-COMMIT;
