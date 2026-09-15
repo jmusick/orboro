@@ -82,6 +82,27 @@ The symptom is misleading: unexplained gaps, stray borders, or indentation that 
 
 **Same gotcha applies to Google Analytics:** the gtag.js snippet in `BaseLayout.astro`'s `<head>` is identical on every page, so Astro's head-diffing persists it across View Transitions rather than re-running it — meaning `gtag('config', ...)`'s automatic page-view fires exactly once per browser session, not on every in-site navigation. The site sets `send_page_view: false` and instead sends `gtag('event', 'page_view', ...)` manually on `astro:page-load` (which fires on the initial load and every subsequent client-side navigation), so don't "simplify" that back to the stock snippet or analytics will undercount navigation. Both `<script>` tags there also need `is:inline` — without it, Astro tries to process/type-check the inline script as a module and fails on the untyped `dataLayer`/`gtag` globals.
 
+## Security response headers
+
+Because this is `output: "server"`, every page and API route is rendered by the Worker — **not**
+served from Cloudflare Pages' static-asset layer. `public/_headers` only affects responses served
+directly from that static layer (images, `robots.txt`, `admin-editor.js`, `_astro/*`); it does
+nothing for SSR'd HTML. Don't try to fix a missing-security-header issue by only editing
+`public/_headers` — you'll get a clean `dist/_headers` and no actual change on `curl -I` for any
+real page.
+
+The fix is `src/middleware.ts`, which sets `Strict-Transport-Security`,
+`X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`, and a
+`Content-Security-Policy-Report-Only` on every response after `next()` returns, so it covers all
+routes uniformly. `public/_headers` still carries the same non-CSP headers for the static-asset
+paths the Worker never touches.
+
+The CSP is Report-Only with `'unsafe-inline'` for `script-src`/`style-src` — enforcing it would
+break every shortcode's inlined `<style>`/`<script>` and the `gtag`/nav/accordion inline scripts in
+`BaseLayout.astro` (see the View Transitions gotcha above). Moving to an enforcing, nonce-based
+policy means threading a per-request nonce through the layout **and** every shortcode renderer that
+emits inline script/style, not just adding a header — treat that as its own project, not a tweak.
+
 ## Content model
 
 - `content` table holds both pages and posts, distinguished by `page_type` (`"page"` renders at `/pages/[slug]`, `"post"` at `/blog/[slug]`). Markdown lives in `content.markdown`; shortcodes (see above) get expanded at render time, not stored expanded.

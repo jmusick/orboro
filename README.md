@@ -24,6 +24,7 @@ Astro + Cloudflare starter for a markdown-first CMS/blog with role-based auth an
 - Basic media library records (URL + alt + caption)
 - `sitemap.xml` (generated from published D1 content) and SEO meta tags; `robots.txt` is a static file in `public/`
 - Google Analytics (gtag.js), wired into `BaseLayout.astro` with page views tracked manually per Astro View Transitions navigation (see [AGENTS.md](AGENTS.md))
+- Security response headers (HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`, and a report-only CSP) set in `src/middleware.ts` for all SSR'd routes, plus `public/_headers` for static assets — see [AGENTS.md](AGENTS.md)
 
 ## Quick Start
 
