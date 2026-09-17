@@ -9,6 +9,13 @@ interface SpecScore {
   score: number;
 }
 
+interface CreatorScore {
+  rank: number;
+  name: string;
+  score: number;
+  url: string;
+}
+
 type TierBoard = Record<Tier, SpecScore[]>;
 
 const TIER_ORDER: Tier[] = ["S", "A", "B", "C", "D"];
@@ -90,6 +97,29 @@ const BOARDS: Record<string, { label: string; tiers: TierBoard }> = {
       ],
     },
   },
+};
+
+const CREATOR_ACCURACY_TIERS: Record<Tier, CreatorScore[]> = {
+  S: [],
+  A: [],
+  B: [
+    { rank: 1, name: "izen", score: 61.6, url: "https://www.youtube.com/watch?v=KktdoK1OZVY" },
+    { rank: 2, name: "YoDaTV", score: 60.6, url: "https://www.youtube.com/watch?v=Zc-pNsazA90" },
+    { rank: 3, name: "Petko", score: 59.7, url: "https://www.youtube.com/watch?v=bUlSIg2dFCI" },
+    { rank: 4, name: "Tactyks / Method", score: 59.3, url: "https://www.method.gg/guides/tier-list/mythic-plus" },
+    { rank: 5, name: "Tettles", score: 57.5, url: "https://www.youtube.com/watch?v=8W_Ezsy1u6I" },
+    { rank: 6, name: "Naowh / Robin panel", score: 55.8, url: "https://www.youtube.com/watch?v=LLe9lSftDRs" },
+    { rank: 7, name: "zor thas", score: 53.6, url: "https://www.youtube.com/watch?v=SV3Snl21XC8" },
+  ],
+  C: [
+    { rank: 8, name: "Saltii", score: 49.0, url: "https://www.youtube.com/watch?v=qrXc0jCNskE" },
+    { rank: 9, name: "mulltiy", score: 46.7, url: "https://www.youtube.com/watch?v=CTlLWOcIx40" },
+    { rank: 10, name: "Casualaddict", score: 42.8, url: "https://www.youtube.com/watch?v=GKA7XF7sRtE" },
+    { rank: 11, name: "Chorsh", score: 38.9, url: "https://www.youtube.com/watch?v=9n0fHh5ouLg" },
+  ],
+  D: [
+    { rank: 12, name: "Kushi", score: 22.1, url: "https://www.youtube.com/watch?v=Ux9DoFKaddY" },
+  ],
 };
 
 function esc(value: string): string {
@@ -198,6 +228,63 @@ export function generateMidnightTierList(attrs: Record<string, string>, nonce?: 
 
   return (
     `<div id="mtl-${scopeId}" class="mtl-board" role="table" aria-label="${esc(board.label)} weighted aggregate tier list">` +
+    `<style${nonceAttr(nonce)}>${css}</style>${rows}</div>`
+  );
+}
+
+export function generateMidnightCreatorAccuracyTierList(
+  _attrs: Record<string, string>,
+  nonce?: string,
+): string {
+  const rows = TIER_ORDER.map((tier) => {
+    const creators = CREATOR_ACCURACY_TIERS[tier];
+    const contents = creators.length
+      ? creators.map((creator) => (
+          `<a class="mcal-card" href="${esc(creator.url)}" target="_blank" rel="noopener noreferrer" aria-label="Open ${esc(creator.name)} forecast source">` +
+          `<span class="mcal-rank">#${creator.rank}</span>` +
+          `<span class="mcal-name">${esc(creator.name)}</span>` +
+          `<span class="mcal-score" aria-label="Accuracy score ${creator.score.toFixed(1)}">${creator.score.toFixed(1)}</span>` +
+          `</a>`
+        )).join("")
+      : `<span class="mcal-empty">No creators</span>`;
+
+    return (
+      `<div class="mcal-row mcal-${tier.toLowerCase()}" role="row">` +
+      `<div class="mcal-tier" role="rowheader" aria-label="${tier} tier">${tier}</div>` +
+      `<div class="mcal-creators" role="cell">${contents}</div>` +
+      `</div>`
+    );
+  }).join("");
+
+  const css = `
+#mcal-root{margin:1rem 0 2rem;font-family:inherit;}
+#mcal-root *{box-sizing:border-box;}
+#mcal-root.mcal-board{display:flex;flex-direction:column;gap:.45rem;}
+#mcal-root .mcal-row{display:grid;grid-template-columns:4.25rem minmax(0,1fr);min-height:4.25rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-md,10px);overflow:hidden;background:rgb(12 19 36 / 72%);}
+#mcal-root .mcal-tier{display:flex;align-items:center;justify-content:center;font-size:1.65rem;font-weight:900;line-height:1;color:#101522;text-shadow:0 1px rgb(255 255 255 / 18%);}
+#mcal-root .mcal-s .mcal-tier{background:#ff6b6b;}
+#mcal-root .mcal-a .mcal-tier{background:#ffad66;}
+#mcal-root .mcal-b .mcal-tier{background:#ffd966;}
+#mcal-root .mcal-c .mcal-tier{background:#8bd17c;}
+#mcal-root .mcal-d .mcal-tier{background:#72b7e8;}
+#mcal-root .mcal-creators{display:flex;flex-wrap:wrap;align-items:center;gap:.55rem;padding:.65rem;min-width:0;}
+#mcal-root a.mcal-card{display:inline-grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:.55rem;min-height:2.9rem;padding:.42rem .55rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-md,10px);background:var(--surface,#111a30);box-shadow:0 2px 7px rgb(0 0 0 / 18%);color:var(--text,#e8f3ff);text-decoration:none;transition:border-color .18s,box-shadow .18s,transform .18s;}
+#mcal-root a.mcal-card:hover{border-color:rgb(0 229 255 / 48%);box-shadow:0 4px 12px rgb(0 0 0 / 24%);transform:translateY(-1px);text-decoration:none;}
+#mcal-root a.mcal-card:focus-visible{outline:2px solid var(--accent,#00e5ff);outline-offset:2px;}
+#mcal-root .mcal-rank{display:inline-flex;align-items:center;justify-content:center;min-width:2.1rem;padding:.2rem .35rem;border-radius:var(--r-sm,6px);background:rgb(0 229 255 / 9%);color:var(--accent,#00e5ff);font-size:.68rem;font-weight:800;font-variant-numeric:tabular-nums;}
+#mcal-root .mcal-name{font-size:.84rem;font-weight:700;line-height:1.2;}
+#mcal-root .mcal-score{display:inline-flex;align-items:center;justify-content:center;min-width:2.9rem;padding:.2rem .38rem;border-radius:var(--r-sm,6px);background:rgb(255 255 255 / 7%);color:var(--muted,#97a8c4);font-size:.72rem;font-variant-numeric:tabular-nums;}
+#mcal-root .mcal-empty{color:var(--muted,#97a8c4);font-size:.8rem;font-style:italic;}
+@media (max-width:560px){
+  #mcal-root .mcal-row{grid-template-columns:3.25rem minmax(0,1fr);min-height:3.75rem;}
+  #mcal-root .mcal-tier{font-size:1.35rem;}
+  #mcal-root .mcal-creators{gap:.4rem;padding:.5rem;}
+  #mcal-root a.mcal-card{width:100%;}
+}
+`;
+
+  return (
+    `<div id="mcal-root" class="mcal-board" role="table" aria-label="Creator prediction accuracy tier list">` +
     `<style${nonceAttr(nonce)}>${css}</style>${rows}</div>`
   );
 }

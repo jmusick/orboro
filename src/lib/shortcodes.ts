@@ -4,7 +4,11 @@ import { generateBookmarksList } from "./bookmarks";
 import { generatePoe2Featured, generatePoe2Intro } from "./poe2-featured";
 import { generateWowIntro, generateWowFeatured, generateHiddenLodgeFeature } from "./wow-featured";
 import { generateAssistedCombatAnalysis } from "./assisted-combat-analysis";
-import { generateMidnightSheetLink, generateMidnightTierList } from "./midnight-tier-list";
+import {
+  generateMidnightCreatorAccuracyTierList,
+  generateMidnightSheetLink,
+  generateMidnightTierList,
+} from "./midnight-tier-list";
 import { generateMidnightS2Interrupts } from "./midnight-s2-interrupts";
 import { generateSpellQueueLab } from "./spell-queue-lab";
 
@@ -21,6 +25,7 @@ const SHORTCODES: Record<string, ShortcodeFn> = {
   hidden_lodge_feature: generateHiddenLodgeFeature,
   assisted_combat_analysis: generateAssistedCombatAnalysis,
   midnight_tier_list: generateMidnightTierList,
+  midnight_creator_accuracy_tier_list: generateMidnightCreatorAccuracyTierList,
   midnight_sheet_link: generateMidnightSheetLink,
   midnight_s2_interrupts: generateMidnightS2Interrupts,
   spell_queue_lab: generateSpellQueueLab,
