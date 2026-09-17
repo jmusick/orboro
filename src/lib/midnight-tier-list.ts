@@ -107,18 +107,19 @@ const CREATOR_ACCURACY_TIERS: Record<Tier, CreatorScore[]> = {
     { rank: 2, name: "YoDaTV", score: 60.6, url: "https://www.youtube.com/watch?v=Zc-pNsazA90" },
     { rank: 3, name: "Petko", score: 59.7, url: "https://www.youtube.com/watch?v=bUlSIg2dFCI" },
     { rank: 4, name: "Tactyks / Method", score: 59.3, url: "https://www.method.gg/guides/tier-list/mythic-plus" },
-    { rank: 5, name: "Tettles", score: 57.5, url: "https://www.youtube.com/watch?v=8W_Ezsy1u6I" },
-    { rank: 6, name: "Naowh / Robin panel", score: 55.8, url: "https://www.youtube.com/watch?v=LLe9lSftDRs" },
-    { rank: 7, name: "zor thas", score: 53.6, url: "https://www.youtube.com/watch?v=SV3Snl21XC8" },
+    { rank: 5, name: "Dorki", score: 58.4, url: "https://www.youtube.com/watch?v=3r_vwmTUZXs" },
+    { rank: 6, name: "Tettles", score: 57.5, url: "https://www.youtube.com/watch?v=8W_Ezsy1u6I" },
+    { rank: 7, name: "Naowh / Robin panel", score: 55.8, url: "https://www.youtube.com/watch?v=LLe9lSftDRs" },
+    { rank: 8, name: "zor thas", score: 53.6, url: "https://www.youtube.com/watch?v=SV3Snl21XC8" },
   ],
   C: [
-    { rank: 8, name: "Saltii", score: 49.0, url: "https://www.youtube.com/watch?v=qrXc0jCNskE" },
-    { rank: 9, name: "mulltiy", score: 46.7, url: "https://www.youtube.com/watch?v=CTlLWOcIx40" },
-    { rank: 10, name: "Casualaddict", score: 42.8, url: "https://www.youtube.com/watch?v=GKA7XF7sRtE" },
-    { rank: 11, name: "Chorsh", score: 38.9, url: "https://www.youtube.com/watch?v=9n0fHh5ouLg" },
+    { rank: 9, name: "Saltii", score: 49.1, url: "https://www.youtube.com/watch?v=qrXc0jCNskE" },
+    { rank: 10, name: "mulltiy", score: 46.7, url: "https://www.youtube.com/watch?v=CTlLWOcIx40" },
+    { rank: 11, name: "Casualaddict", score: 42.8, url: "https://www.youtube.com/watch?v=GKA7XF7sRtE" },
+    { rank: 12, name: "Chorsh", score: 38.9, url: "https://www.youtube.com/watch?v=9n0fHh5ouLg" },
   ],
   D: [
-    { rank: 12, name: "Kushi", score: 22.1, url: "https://www.youtube.com/watch?v=Ux9DoFKaddY" },
+    { rank: 13, name: "Kushi", score: 22.1, url: "https://www.youtube.com/watch?v=Ux9DoFKaddY" },
   ],
 };
 
