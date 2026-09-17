@@ -22,12 +22,12 @@ function estimateReadingMinutes(markdown: string): number {
 
 const { slug } = Astro.params;
 if (!slug) {
-  return Astro.redirect("/blog");
+  return Astro.rewrite("/404");
 }
 
 const post = await getPublishedBySlugAndType(Astro.locals, slug, "post");
 if (!post) {
-  return Astro.redirect("/blog");
+  return Astro.rewrite("/404");
 }
 
 const [categories, postCategories, allPosts] = await Promise.all([

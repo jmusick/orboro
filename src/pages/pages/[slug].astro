@@ -5,10 +5,10 @@ import { getPublishedBySlugAndType } from "../../lib/content";
 import { processShortcodes } from "../../lib/shortcodes";
 
 const { slug } = Astro.params;
-if (!slug) return Astro.redirect("/");
+if (!slug) return Astro.rewrite("/404");
 
 const page = await getPublishedBySlugAndType(Astro.locals, slug, "page");
-if (!page) return Astro.redirect("/");
+if (!page) return Astro.rewrite("/404");
 
 const html = await processShortcodes(String(await marked.parse(page.markdown)));
 const updated = new Date(page.updatedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });

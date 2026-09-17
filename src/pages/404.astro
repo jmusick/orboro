@@ -1,0 +1,47 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Button from "../components/Button.astro";
+
+Astro.response.status = 404;
+Astro.response.statusText = "Not Found";
+---
+
+<BaseLayout title="Page Not Found | Orboro.net" description="The page you're looking for doesn't exist.">
+  <div class="not-found">
+    <h1>404</h1>
+    <p>That page doesn't exist, or it's moved.</p>
+    <div class="actions">
+      <Button href="/" variant="primary">Back to Home</Button>
+      <Button href="/blog" variant="tertiary">Browse the Blog</Button>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .not-found {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+    padding: 4rem 1rem;
+  }
+
+  .not-found h1 {
+    font-size: 4rem;
+    margin: 0;
+    color: var(--accent);
+  }
+
+  .not-found p {
+    color: var(--muted);
+    margin: 0 0 1rem;
+  }
+
+  .actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+</style>
