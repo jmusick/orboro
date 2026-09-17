@@ -1,3 +1,5 @@
+import { nonceAttr } from "./csp";
+
 type SimulationResult = {
   windowMs: number;
   gcd: number;
@@ -419,7 +421,7 @@ const js = `
 })();
 `.trim();
 
-export function generateSpellQueueLab(): string {
+export function generateSpellQueueLab(_attrs: Record<string, string>, nonce?: string): string {
   const guideSection = (
     `<section class="sql-guide" aria-labelledby="sql-guide-title">` +
     `<header class="sql-guide-head"><p class="sql-eyebrow">The complete guide</p><h2 class="sql-guide-title" id="sql-guide-title">What the Spell Queue Window changes, and what it does not</h2><p class="sql-guide-lead">The setting is easiest to understand as a deadline that opens before your current action finishes. It does not shorten the global cooldown or make the server run faster. It gives your next eligible input a place to wait so it can begin as soon as the current action allows it.</p></header>` +
@@ -443,7 +445,7 @@ export function generateSpellQueueLab(): string {
 
   return (
     `<div id="sql-root">` +
-    `<style>${css}</style>` +
+    `<style${nonceAttr(nonce)}>${css}</style>` +
     guideSection +
     `<div class="sql-intro"><p class="sql-intro-copy"><strong>Now try it yourself.</strong> Press during the highlighted end of the global cooldown below and WoW can hold the action until the GCD finishes. Press too early and the input is ignored. Press after the GCD and the delay becomes a rotational gap.</p><span class="sql-retail">Retail model</span></div>` +
     `<div class="sql-workspace">` +
@@ -462,7 +464,7 @@ export function generateSpellQueueLab(): string {
     `</div>` +
     `<section class="sql-panel sql-bench" aria-labelledby="sql-bench-title"><div class="sql-bench-head"><div><p class="sql-eyebrow">Same player, four settings</p><h2 class="sql-heading" id="sql-bench-title">Queue window comparison</h2><p class="sql-bench-copy">Each card runs the same 30-cast input pattern. GCD uptime falls whenever no press reaches the open queue before the cooldown ends.</p></div><span class="sql-run-summary" id="sql-run-summary">1.00s GCD · 250ms rhythm · ±30ms</span></div><div class="sql-compare-grid" id="sql-compare-grid">${initialCards}</div>` +
     `<div class="sql-notes"><div class="sql-note"><strong>How the model works.</strong> A press before the queue opens is ignored. A press inside the window is held and fires when the GCD ends. A press arriving afterward fires immediately, but its delay becomes a gap. Latency delays arrival by half of the displayed round-trip time. This is a teaching model, not a frame-perfect recreation of Blizzard's server.</div><div class="sql-note"><strong>In game:</strong> check with <code>/dump GetCVar("SpellQueueWindow")</code> and set with <code>/console SpellQueueWindow 400</code>, the documented default.</div></div></section>` +
-    `<script>${js}<\/script>` +
+    `<script${nonceAttr(nonce)}>${js}<\/script>` +
     `</div>`
   );
 }

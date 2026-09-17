@@ -62,7 +62,7 @@ const saved = url.searchParams.get("saved") === "1";
     </section>
   </section>
 
-  <script is:inline>
+  <script is:inline nonce={Astro.locals.nonce}>
     (function () {
       var nameEl = document.querySelector('#name');
       var slugEl = document.querySelector('#slug');

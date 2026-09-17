@@ -19,5 +19,7 @@ declare namespace App {
   interface Locals {
     user: UserRecord | null;
     session: SessionRecord | null;
+    /** Per-request CSP nonce, set in middleware. See AGENTS.md#security-response-headers. */
+    nonce: string;
   }
 }

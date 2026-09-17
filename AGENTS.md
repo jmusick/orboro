@@ -97,11 +97,30 @@ The fix is `src/middleware.ts`, which sets `Strict-Transport-Security`,
 routes uniformly. `public/_headers` still carries the same non-CSP headers for the static-asset
 paths the Worker never touches.
 
-The CSP is Report-Only with `'unsafe-inline'` for `script-src`/`style-src` — enforcing it would
-break every shortcode's inlined `<style>`/`<script>` and the `gtag`/nav/accordion inline scripts in
-`BaseLayout.astro` (see the View Transitions gotcha above). Moving to an enforcing, nonce-based
-policy means threading a per-request nonce through the layout **and** every shortcode renderer that
-emits inline script/style, not just adding a header — treat that as its own project, not a tweak.
+The CSP is Report-Only, with a per-request nonce (generated in `middleware.ts`, exposed as
+`Astro.locals.nonce`) on `script-src`/`style-src` instead of `'unsafe-inline'`. `'unsafe-inline'` is
+dropped entirely, so **every** inline `<script>`/`<style>` — `BaseLayout.astro`'s `gtag`/nav/accordion
+scripts, `index.astro`'s last.fm poller, the handful of admin-page inline scripts, and each
+shortcode's own `<style>`/`<script>` — must carry `nonce={Astro.locals.nonce}` (Astro components) or
+`nonceAttr(nonce)` from `src/lib/csp.ts` (shortcode HTML strings, threaded through
+`processShortcodes(html, nonce)` → each `ShortcodeFn(attrs, nonce)`). A `<script type="application/json">`
+or `type="application/ld+json"` data block needs no nonce — CSP's `script-src` only governs elements
+the browser would execute. `build.inlineStylesheets: 'never'` (astro.config.mjs) keeps Astro's own
+component-scoped `<style>` blocks (e.g. `Icon.astro`) always extracted to external CSS, so they never
+need a nonce and never flip between inlined/extracted depending on their compiled size.
+
+**Gotcha — memoized shortcode HTML can't bake in a real nonce.** `assisted-combat-analysis.ts` and
+`midnight-s2-interrupts.ts` cache their built HTML in a module-level `cachedHtml` (see the shortcode
+section above), but the nonce is per-request. Both cache the HTML with a `NONCE_PLACEHOLDER` string in
+place of the real nonce, then `.replaceAll()` it with the actual per-request `nonce` (or strip the
+attribute entirely if no nonce is given) on every call — don't "simplify" that back to embedding
+`nonce` directly in `buildHtml()`, or every request after the first would ship a stale, non-matching
+nonce.
+
+Still open: this is Report-Only, not enforcing — `'unsafe-inline'` is gone from the policy, but
+nothing blocks yet, so a missed nonce only shows up as a violation in `Content-Security-Policy-Report-Only`
+reports (there's still no `report-to` endpoint — see the TODO). Flip to `Content-Security-Policy` once
+that's been watched for a while with no unexpected violations.
 
 ## Content model
 

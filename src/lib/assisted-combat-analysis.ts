@@ -1,4 +1,5 @@
 import researchData from "./assisted-combat-data.json";
+import { nonceAttr } from "./csp";
 import specIcons from "./assisted-combat-spec-icons.json";
 import * as render from "./assisted-combat-render.js";
 // The browser gets the exact same template code the server just ran, rather
@@ -440,7 +441,7 @@ function buildHtml(): string {
 
   return (
     `<div id="ac-root">` +
-      `<style>${css}</style>` +
+      `<style${nonceAttr(NONCE_PLACEHOLDER)}>${css}</style>` +
       `<section class="ac-hero">` +
         `<p class="ac-eyebrow">Blizzard Assisted Combat research</p>` +
         `<h2 class="ac-title">The core buttons are usually present. The optimized decisions are not.</h2>` +
@@ -490,16 +491,21 @@ function buildHtml(): string {
       `</div>` +
       `<p class="ac-provenance">Blizzard data verified ${esc(data.verifiedAt)} on live build ${esc(data.currentBuild)}. Comparison research snapshot: ${esc(data.researchedAt)} · SimulationCraft ${esc(data.simcBranch)} commit <span class="ac-mono">${esc(data.simcCommit.slice(0, 12))}</span>. DB2 rows are exact; readable rule labels follow SimulationCraft's reverse-engineered condition decoder.</p>` +
       `<script type="application/json" id="ac-data">${safeJson}<\/script>` +
-      `<script>${clientJs}<\/script>` +
+      `<script${nonceAttr(NONCE_PLACEHOLDER)}>${clientJs}<\/script>` +
     `</div>`
   );
 }
 
 // The output is a pure function of a static JSON import, so build it once per
-// isolate instead of re-serialising ~300 KB of JSON on every request.
+// isolate instead of re-serialising ~300 KB of JSON on every request. The
+// per-request CSP nonce can't be baked into that cache, so a placeholder
+// stands in for it and gets swapped for the real value on every call.
+const NONCE_PLACEHOLDER = "__CSP_NONCE_PLACEHOLDER__";
 let cachedHtml: string | null = null;
 
-export function generateAssistedCombatAnalysis(): string {
+export function generateAssistedCombatAnalysis(_attrs: Record<string, string>, nonce?: string): string {
   if (cachedHtml === null) cachedHtml = buildHtml();
-  return cachedHtml;
+  return nonce
+    ? cachedHtml.replaceAll(NONCE_PLACEHOLDER, nonce)
+    : cachedHtml.replaceAll(` nonce="${NONCE_PLACEHOLDER}"`, "");
 }

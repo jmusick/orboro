@@ -1,5 +1,6 @@
 import researchData from "./midnight-s2-interrupt-data.json";
 import communityData from "./midnight-s2-community-tips.json";
+import { nonceAttr } from "./csp";
 
 type Row = (typeof researchData.rows)[number];
 type CommunityTip = (typeof communityData.tips)[number];
@@ -232,7 +233,7 @@ function buildHtml(): string {
 })();`;
 
   return (
-    `<div id="m2iu-root"><style>${css}</style>` +
+    `<div id="m2iu-root"><style${nonceAttr(NONCE_PLACEHOLDER)}>${css}</style>` +
     `<section class="m2iu-hero">` +
     `<p class="m2iu-eyebrow">Midnight Season 2 · Mythic+</p>` +
     `<h2 class="m2iu-title">Interrupt and utility explorer</h2>` +
@@ -258,13 +259,18 @@ function buildHtml(): string {
     `<p class="m2iu-status" id="m2iu-status" role="status" aria-live="polite">${rows.length} of ${rows.length} entries shown</p>` +
     sections +
     `<p class="m2iu-status">Research verified ${esc(researchData.verifiedAt)}. Dungeon mechanics can change with hotfixes; use each row's guide link for encounter context.</p>` +
-    `<script>${clientJs}<\/script></div>`
+    `<script${nonceAttr(NONCE_PLACEHOLDER)}>${clientJs}<\/script></div>`
   );
 }
 
+// See assisted-combat-analysis.ts for why this is memoized with a nonce
+// placeholder instead of the real per-request value.
+const NONCE_PLACEHOLDER = "__CSP_NONCE_PLACEHOLDER__";
 let cachedHtml: string | null = null;
 
-export function generateMidnightS2Interrupts(): string {
+export function generateMidnightS2Interrupts(_attrs: Record<string, string>, nonce?: string): string {
   if (cachedHtml === null) cachedHtml = buildHtml();
-  return cachedHtml;
+  return nonce
+    ? cachedHtml.replaceAll(NONCE_PLACEHOLDER, nonce)
+    : cachedHtml.replaceAll(` nonce="${NONCE_PLACEHOLDER}"`, "");
 }

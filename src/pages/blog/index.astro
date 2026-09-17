@@ -86,7 +86,7 @@ const postCards = posts.map((post) => {
   )}
 </BaseLayout>
 
-<script is:inline>
+<script is:inline nonce={Astro.locals.nonce}>
   (function () {
     function init() {
       var root = document.getElementById('blog-root');

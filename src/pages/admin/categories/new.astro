@@ -31,7 +31,7 @@ ensureRole(Astro, ["admin", "editor"]);
     </form>
   </section>
 
-  <script is:inline>
+  <script is:inline nonce={Astro.locals.nonce}>
     (function () {
       var nameEl = document.querySelector('#name');
       var slugEl = document.querySelector('#slug');

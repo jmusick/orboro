@@ -1,3 +1,5 @@
+import { nonceAttr } from "./csp";
+
 const TAGSTASH_USER = "JD";
 const CACHE_TTL_SECONDS = 600;
 
@@ -51,7 +53,7 @@ async function fetchBookmarks(tag: string): Promise<TagstashBookmark[]> {
   return data.bookmarks ?? [];
 }
 
-export async function generateBookmarksList(attrs: Record<string, string>): Promise<string> {
+export async function generateBookmarksList(attrs: Record<string, string>, nonce?: string): Promise<string> {
   const tag = attrs.tag;
   if (!tag) {
     return `<p><em>Bookmark list error: missing "tag" attribute.</em></p>`;
@@ -197,7 +199,7 @@ export async function generateBookmarksList(attrs: Record<string, string>): Prom
     `.trim()
     : "";
 
-  const script = js ? `<script>${js}<\/script>` : "";
+  const script = js ? `<script${nonceAttr(nonce)}>${js}<\/script>` : "";
 
-  return `<div id="bml-root"><style>${css}</style>${categoryChips}<div class="bml-list">${itemsHtml}</div><hr class="bml-divider" />${credit}${script}</div>`;
+  return `<div id="bml-root"><style${nonceAttr(nonce)}>${css}</style>${categoryChips}<div class="bml-list">${itemsHtml}</div><hr class="bml-divider" />${credit}${script}</div>`;
 }

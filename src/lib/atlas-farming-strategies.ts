@@ -1,3 +1,5 @@
+import { nonceAttr } from "./csp";
+
 type Tier = "S" | "A" | "B" | "C" | "F";
 
 interface StrategyLink {
@@ -710,7 +712,7 @@ function renderTierRow(tier: Tier): string {
   );
 }
 
-export function generateAtlasFarmingStrategies(): string {
+export function generateAtlasFarmingStrategies(_attrs: Record<string, string>, nonce?: string): string {
   const tierRows = TIER_ORDER.map(renderTierRow).join("");
   const accordionItems = STRATEGIES.map(renderAccordionItem).join("");
 
@@ -865,7 +867,7 @@ export function generateAtlasFarmingStrategies(): string {
 
   return (
     `<div id="afs-root">` +
-    `<style>${css}</style>` +
+    `<style${nonceAttr(nonce)}>${css}</style>` +
     `<h2>Path of Exile 2 0.5 Currency Making Tier List</h2>` +
     `<p>A tier list of the best currency farming strategies for Path of Exile 2's 0.5 update, ranked S to F. Click a strategy below to see its waystone setup, tablets, Atlas Tree, and notes.</p>` +
     `<div class="afs-tierlist">${tierRows}</div>` +
@@ -878,7 +880,7 @@ export function generateAtlasFarmingStrategies(): string {
     `<button type="button" class="afs-toolbtn" id="afs-collapse-all">Collapse all</button>` +
     `</div>` +
     `<div class="afs-list">${accordionItems}</div>` +
-    `<script>${js}<\/script>` +
+    `<script${nonceAttr(nonce)}>${js}<\/script>` +
     `<div class="afs-meta">` +
     `<span class="afs-credit">Tier list &amp; strategies by <a href="https://maxroll.gg/@bawloch" target="_blank" rel="noopener">BawLoch</a> · <a href="http://discord.gg/xq6FtCVRse" target="_blank" rel="noopener">Discord</a> · <a href="https://www.youtube.com/@BawLoch" target="_blank" rel="noopener">YouTube</a> · <a href="https://www.twitch.tv/bawlochs" target="_blank" rel="noopener">Twitch</a></span>` +
     `</div>` +

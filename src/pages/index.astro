@@ -151,7 +151,7 @@ const profiles = [
 	</div>
 </BaseLayout>
 
-<script is:inline>
+<script is:inline nonce={Astro.locals.nonce}>
 	(function () {
 		var POLL_MS = 60000;
 

@@ -1,3 +1,5 @@
+import { nonceAttr } from "./csp";
+
 function esc(s: string): string {
   return String(s)
     .replace(/&/g, "&amp;")
@@ -13,7 +15,7 @@ const INTRO_PARAGRAPHS = [
     "links I've gathered while playing, plus a look at The Hidden Lodge, the raiding guild I run with.",
 ];
 
-export function generateWowIntro(): string {
+export function generateWowIntro(_attrs: Record<string, string>, nonce?: string): string {
   const css = `
 #wi-root{font-family:inherit;margin:0;}
 #wi-root *{box-sizing:border-box;}
@@ -38,7 +40,7 @@ export function generateWowIntro(): string {
 `;
 
   return (
-    `<div id="wi-root"><style>${css}</style>` +
+    `<div id="wi-root"><style${nonceAttr(nonce)}>${css}</style>` +
     `<div class="wi-row">` +
     `<div class="wi-text">${INTRO_PARAGRAPHS.map((p) => `<p>${esc(p)}</p>`).join("")}</div>` +
     `<div class="wi-links">` +
@@ -91,7 +93,7 @@ const FEATURED_ITEMS: FeaturedItem[] = [
   },
 ];
 
-export function generateWowFeatured(): string {
+export function generateWowFeatured(_attrs: Record<string, string>, nonce?: string): string {
   const itemsHtml = FEATURED_ITEMS.map((item) => (
     `<a class="wf-card" href="${esc(item.href)}">` +
     `<svg class="wf-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${item.iconSvg}</svg>` +
@@ -121,7 +123,7 @@ export function generateWowFeatured(): string {
 #wf-root .wf-desc{color:var(--muted,#97a8c4);font-size:.85rem;line-height:1.5;}
 `;
 
-  return `<div id="wf-root"><style>${css}</style><p class="wf-label">On This Site</p><div class="wf-grid">${itemsHtml}</div></div>`;
+  return `<div id="wf-root"><style${nonceAttr(nonce)}>${css}</style><p class="wf-label">On This Site</p><div class="wf-grid">${itemsHtml}</div></div>`;
 }
 
 const HIDDEN_LODGE_FACTS: { label: string; value: string }[] = [
@@ -130,7 +132,7 @@ const HIDDEN_LODGE_FACTS: { label: string; value: string }[] = [
   { label: "Focus", value: "Ahead of the Curve → Mythic progression" },
 ];
 
-export function generateHiddenLodgeFeature(): string {
+export function generateHiddenLodgeFeature(_attrs: Record<string, string>, nonce?: string): string {
   const css = `
 #hl-root{font-family:inherit;margin:0;}
 #hl-root *{box-sizing:border-box;}
@@ -166,7 +168,7 @@ export function generateHiddenLodgeFeature(): string {
     .join("");
 
   return (
-    `<div id="hl-root"><style>${css}</style>` +
+    `<div id="hl-root"><style${nonceAttr(nonce)}>${css}</style>` +
     `<div class="hl-card">` +
     `<div class="hl-media">` +
     `<img class="hl-img" src="/images/hidden-lodge-header.webp" alt="The Hidden Lodge banner: For Azeroth. For The Hidden Lodge." loading="lazy" />` +

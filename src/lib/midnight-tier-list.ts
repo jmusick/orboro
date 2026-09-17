@@ -1,4 +1,5 @@
 import specIcons from "./assisted-combat-spec-icons.json";
+import { nonceAttr } from "./csp";
 
 type Tier = "S" | "A" | "B" | "C" | "D";
 
@@ -113,7 +114,7 @@ function renderSpec(spec: SpecScore): string {
   );
 }
 
-export function generateMidnightSheetLink(): string {
+export function generateMidnightSheetLink(_attrs: Record<string, string>, nonce?: string): string {
   const css = `
 #mts-root{margin:1.25rem 0 1.75rem;font-family:inherit;}
 #mts-root *{box-sizing:border-box;}
@@ -134,7 +135,7 @@ export function generateMidnightSheetLink(): string {
 `;
 
   return (
-    `<div id="mts-root"><style>${css}</style>` +
+    `<div id="mts-root"><style${nonceAttr(nonce)}>${css}</style>` +
     `<a class="mts-link" href="${RESEARCH_SHEET_URL}" target="_blank" rel="noopener noreferrer" aria-label="Open the complete tier-list research workbook in Google Sheets in a new tab">` +
     `<span class="mts-icon" aria-hidden="true">` +
     `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3h7v7"/><path d="M10 14 21 3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg>` +
@@ -149,7 +150,7 @@ export function generateMidnightSheetLink(): string {
   );
 }
 
-export function generateMidnightTierList(attrs: Record<string, string>): string {
+export function generateMidnightTierList(attrs: Record<string, string>, nonce?: string): string {
   const roleKey = (attrs.role ?? "").trim().toLowerCase();
   const board = BOARDS[roleKey];
   if (!board) return `<p><em>Unknown tier-list role.</em></p>`;
@@ -197,6 +198,6 @@ export function generateMidnightTierList(attrs: Record<string, string>): string 
 
   return (
     `<div id="mtl-${scopeId}" class="mtl-board" role="table" aria-label="${esc(board.label)} weighted aggregate tier list">` +
-    `<style>${css}</style>${rows}</div>`
+    `<style${nonceAttr(nonce)}>${css}</style>${rows}</div>`
   );
 }

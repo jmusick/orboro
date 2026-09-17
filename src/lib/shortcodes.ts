@@ -8,7 +8,7 @@ import { generateMidnightSheetLink, generateMidnightTierList } from "./midnight-
 import { generateMidnightS2Interrupts } from "./midnight-s2-interrupts";
 import { generateSpellQueueLab } from "./spell-queue-lab";
 
-type ShortcodeFn = (attrs: Record<string, string>) => string | Promise<string>;
+type ShortcodeFn = (attrs: Record<string, string>, nonce?: string) => string | Promise<string>;
 
 const SHORTCODES: Record<string, ShortcodeFn> = {
   rumour_cheat_sheet: generateExpeditionRumourSheet,
@@ -47,7 +47,9 @@ function parseAttrs(raw: string): Record<string, string> {
 }
 
 // Replaces shortcode tokens in rendered HTML with their generated content.
-export async function processShortcodes(html: string): Promise<string> {
+// `nonce` is threaded through to each shortcode so its inline <style>/<script>
+// tags can carry the per-request CSP nonce set in middleware.ts.
+export async function processShortcodes(html: string, nonce?: string): Promise<string> {
   const matches = [...html.matchAll(SHORTCODE_RE)];
   if (matches.length === 0) return html;
 
@@ -55,7 +57,7 @@ export async function processShortcodes(html: string): Promise<string> {
     const token = match[1] ?? match[3];
     const attrsRaw = match[2] ?? match[4] ?? "";
     const fn = SHORTCODES[token];
-    return fn ? await fn(parseAttrs(attrsRaw)) : match[0];
+    return fn ? await fn(parseAttrs(attrsRaw), nonce) : match[0];
   }));
 
   let i = 0;

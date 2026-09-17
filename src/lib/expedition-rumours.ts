@@ -1,3 +1,5 @@
+import { nonceAttr } from "./csp";
+
 interface Rumour {
   id: string;
   type: "Unique Map" | "Rumour" | "Powerful Boss" | "Boss Encounter";
@@ -42,7 +44,7 @@ function esc(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
-export function generateExpeditionRumourSheet(): string {
+export function generateExpeditionRumourSheet(_attrs: Record<string, string>, nonce?: string): string {
   const sorted = [...RUMOURS].sort((a, b) => a.name.localeCompare(b.name));
 
   const cardsHtml = sorted.map(r => {
@@ -204,7 +206,7 @@ export function generateExpeditionRumourSheet(): string {
 
   return (
     `<div id="ers-root">` +
-    `<style>${css}</style>` +
+    `<style${nonceAttr(nonce)}>${css}</style>` +
     `<div class="ers-filter-row">` +
     `<input type="text" id="ers-filter" placeholder="Filter by rumour name…" autocomplete="off" spellcheck="false">` +
     `<button type="button" id="ers-filter-clear" aria-label="Clear filter">✕</button>` +
@@ -222,7 +224,7 @@ export function generateExpeditionRumourSheet(): string {
     `</div>` +
     `<div class="ers-verdict__count" id="ers-count"></div>` +
     `</div>` +
-    `<script>${js}<\/script>` +
+    `<script${nonceAttr(nonce)}>${js}<\/script>` +
     `<div class="ers-meta">` +
     `<span class="ers-credit">Data from <a href="https://docs.google.com/spreadsheets/d/1d5FFDUSgoL2WNbEwv1gkBra3ALnI4UsdokksSADxx_0/edit?gid=1976406181#gid=1976406181" target="_blank" rel="noopener">Dracorath's Expedition Explained</a></span>` +
     `<a class="ers-report-link" href="https://github.com/jmusick/orboro/issues" target="_blank" rel="noopener">Report errors or issues</a>` +

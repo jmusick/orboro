@@ -1,3 +1,5 @@
+import { nonceAttr } from "./csp";
+
 interface FeaturedItem {
   title: string;
   description: string;
@@ -34,7 +36,7 @@ function esc(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
-export function generatePoe2Featured(): string {
+export function generatePoe2Featured(_attrs: Record<string, string>, nonce?: string): string {
   const itemsHtml = ITEMS.map((item) => (
     `<a class="pf-card" href="${esc(item.href)}">` +
     `<svg class="pf-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${item.iconSvg}</svg>` +
@@ -63,7 +65,7 @@ export function generatePoe2Featured(): string {
 .pf-desc{color:var(--muted,#97a8c4);font-size:.85rem;line-height:1.5;}
 `;
 
-  return `<div id="pf-root"><style>${css}</style><p class="pf-label">On This Site</p><div class="pf-grid">${itemsHtml}</div></div>`;
+  return `<div id="pf-root"><style${nonceAttr(nonce)}>${css}</style><p class="pf-label">On This Site</p><div class="pf-grid">${itemsHtml}</div></div>`;
 }
 
 const INTRO_PARAGRAPHS = [
@@ -75,7 +77,7 @@ const INTRO_PARAGRAPHS = [
     "sheets, and useful links) that I figured might be handy for other exiles too.",
 ];
 
-export function generatePoe2Intro(): string {
+export function generatePoe2Intro(_attrs: Record<string, string>, nonce?: string): string {
   const css = `
 #pi-root{font-family:inherit;margin:0;}
 #pi-root *{box-sizing:border-box;}
@@ -100,7 +102,7 @@ export function generatePoe2Intro(): string {
 `;
 
   return (
-    `<div id="pi-root"><style>${css}</style>` +
+    `<div id="pi-root"><style${nonceAttr(nonce)}>${css}</style>` +
     `<div class="pi-row">` +
     `<div class="pi-text">${INTRO_PARAGRAPHS.map((p) => `<p>${esc(p)}</p>`).join("")}</div>` +
     `<div class="pi-links">` +

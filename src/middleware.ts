@@ -4,22 +4,30 @@ import { getSessionAndUserByToken } from "./lib/auth";
 
 const SESSION_COOKIE = "orboro_session";
 
-const CSP_REPORT_ONLY = [
-  "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://js.hcaptcha.com",
-  "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
-  "img-src 'self' data: https://www.google.com https://www.google-analytics.com",
-  "font-src 'self'",
-  "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com",
-  "frame-src https://newassets.hcaptcha.com https://hcaptcha.com",
-  "object-src 'none'",
-  "base-uri 'self'",
-  "frame-ancestors 'none'",
-].join("; ");
+function buildCspReportOnly(nonce: string): string {
+  return [
+    "default-src 'self'",
+    `script-src 'self' 'nonce-${nonce}' https://www.googletagmanager.com https://js.hcaptcha.com`,
+    `style-src 'self' 'nonce-${nonce}' https://cdn.jsdelivr.net`,
+    "img-src 'self' data: https://www.google.com https://www.google-analytics.com",
+    "font-src 'self'",
+    "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com",
+    "frame-src https://newassets.hcaptcha.com https://hcaptcha.com",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "frame-ancestors 'none'",
+  ].join("; ");
+}
+
+function generateNonce(): string {
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  return btoa(String.fromCharCode(...bytes));
+}
 
 export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.user = null;
   context.locals.session = null;
+  context.locals.nonce = generateNonce();
 
   const token = context.cookies.get(SESSION_COOKIE)?.value;
   if (token && ((workerEnv as unknown) as { DB?: unknown }).DB) {
@@ -45,7 +53,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
     "Permissions-Policy",
     "camera=(), microphone=(), geolocation=(), interest-cohort=()",
   );
-  response.headers.set("Content-Security-Policy-Report-Only", CSP_REPORT_ONLY);
+  response.headers.set(
+    "Content-Security-Policy-Report-Only",
+    buildCspReportOnly(context.locals.nonce),
+  );
 
   return response;
 });

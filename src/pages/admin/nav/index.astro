@@ -65,7 +65,7 @@ const initContent = publishedContent.map((c) => ({
     </form>
   </section>
 
-  <script is:inline>
+  <script is:inline nonce={Astro.locals.nonce}>
     (function () {
       var initEl = document.getElementById('nav-init');
       if (!initEl) return;

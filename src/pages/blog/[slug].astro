@@ -49,7 +49,7 @@ const currentIndex = allPosts.findIndex((p) => p.slug === post.slug);
 const newerPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
 const olderPost = currentIndex >= 0 && currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null;
 
-const html = await processShortcodes(String(await marked.parse(post.markdown)));
+const html = await processShortcodes(String(await marked.parse(post.markdown)), Astro.locals.nonce);
 
 const updated = new Date(post.updatedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 

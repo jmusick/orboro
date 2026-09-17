@@ -17,6 +17,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? 'https://orboro.n
 const ogImage = ogImageProp || `${(Astro.site ?? new URL('https://orboro.net')).origin}/images/logo.png`;
 const navItems = await listNavItems(Astro.locals);
 const pathname = new URL(Astro.request.url).pathname;
+const nonce = Astro.locals.nonce;
 
 // Build nav tree (unlimited depth)
 type NavNode = (typeof navItems)[0] & { children: NavNode[] };
@@ -67,7 +68,7 @@ function nodeIcon(node: NavNode): string {
     <meta charset="utf-8" />
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-BLR72SL0L6"></script>
-    <script is:inline>
+    <script is:inline nonce={nonce}>
       window.dataLayer = window.dataLayer || [];
       function gtag() { dataLayer.push(arguments); }
       gtag("js", new Date());
@@ -870,7 +871,7 @@ function nodeIcon(node: NavNode): string {
       </main>
       <Footer />
     </div>
-    <script is:inline>
+    <script is:inline nonce={nonce}>
       function styleNodeTables() {
         document.querySelectorAll('.prose table').forEach(function(table) {
           var isNodeTable = false;
