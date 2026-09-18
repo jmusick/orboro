@@ -113,7 +113,7 @@ For the complete written record, use the [shared prediction review workbook](htt
   CAST(strftime('%s', 'now') AS INTEGER) * 1000,
   CAST(strftime('%s', 'now') AS INTEGER) * 1000,
   CAST(strftime('%s', 'now') AS INTEGER) * 1000,
-  '/images/which-wow-creators-predicted-midnight-season-2-mythic-plus-meta-best-header.webp'
+  '/images/which-wow-creators-predicted-midnight-season-2-mythic-plus-meta-best-header.webp?v=1.32.1'
 )
 ON CONFLICT(slug) DO UPDATE SET
   title = excluded.title,
