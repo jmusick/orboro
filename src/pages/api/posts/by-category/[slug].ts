@@ -18,7 +18,9 @@ export const GET: APIRoute = async ({ params, site, request, locals }) => {
   const cache = (caches as CacheStorage & { readonly default: Cache }).default;
   const cacheKey = new Request(request.url);
   const cached = await cache.match(cacheKey);
-  if (cached) return cached;
+  // Cache API responses have immutable headers, but middleware mutates response
+  // headers (HSTS, CSP, etc.) on every request — rewrap so that still works.
+  if (cached) return new Response(cached.body, cached);
 
   const category = await getCategoryBySlug(locals, slug);
   if (!category) {
