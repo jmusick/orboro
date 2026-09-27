@@ -3,6 +3,17 @@ main = "@astrojs/cloudflare/entrypoints/server"
 compatibility_date = "2026-04-05"
 compatibility_flags = ["nodejs_compat"]
 
+[observability]
+enabled = true
+
+[observability.logs]
+enabled = true
+head_sampling_rate = 1
+
+[observability.traces]
+enabled = true
+head_sampling_rate = 0.1
+
 [assets]
 binding = "ASSETS"
 
