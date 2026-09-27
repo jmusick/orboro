@@ -54,7 +54,7 @@ npm run d1:migrate:local
 npm run dev:astro
 ```
 
-or build and run through the full Cloudflare runtime (Wrangler Pages, D1 bindings, Cache API — closer to production, but won't hot-reload; re-run after each change):
+or build and run through the full Cloudflare runtime (`wrangler dev`, D1 bindings, Cache API — closer to production, but won't hot-reload; re-run after each change):
 
 ```bash
 npm run dev
@@ -64,19 +64,20 @@ npm run dev
 
 ## Scripts
 
-- `npm run dev` - Build, then serve via `wrangler pages dev` (full Cloudflare runtime: D1 bindings, Cache API, secrets)
+- `npm run dev` - Build, then serve via `wrangler dev` (full Cloudflare runtime: D1 bindings, Cache API, secrets)
 - `npm run dev:astro` - Run Astro dev server directly (fast, hot-reloading, but doesn't fully mirror the Cloudflare runtime)
 - `npm run check` - Type-check `.astro` and TypeScript files
 - `npm run build` - Production build
 - `npm run preview` - Preview build
+- `npm run deploy` - Build and `wrangler deploy` (manual deploy; normally a push to `master` does it)
 - `npm run astro` - Astro CLI passthrough
 - `npm run cf:types` - Regenerate Cloudflare worker types
 - `npm run d1:migrate:local` - Apply local migrations
 - `npm run d1:migrate:remote` - Apply remote migrations
 
-Build note:
+Deploy note:
 
-- `npm run build` runs `astro build` and then `fix-wrangler.js` to patch the generated worker entry for Cloudflare Pages.
+- Hosted as the Cloudflare Worker `orboro-net` (Workers Builds, git-integrated with GitHub `jmusick/orboro`): pushing to `master` runs `npm run build` then `npx wrangler deploy`. `astro build` writes the real deploy config to `dist/server/wrangler.json`, which `wrangler deploy`/`wrangler dev` pick up.
 
 ## Database Schema
 
@@ -106,9 +107,9 @@ Tables:
 
 ## Secrets
 
-- `HCAPTCHA_SECRET` — hCaptcha server-side verification secret for `/admin` login. If unset (e.g. local dev), captcha verification is skipped rather than failing closed. Production: `wrangler pages secret put HCAPTCHA_SECRET`. Local dev: add to `.dev.vars`.
+- `HCAPTCHA_SECRET` — hCaptcha server-side verification secret for `/admin` login. If unset (e.g. local dev), captcha verification is skipped rather than failing closed. Production: `wrangler secret put HCAPTCHA_SECRET`. Local dev: add to `.dev.vars`.
 - The hCaptcha site key is not a secret and is hardcoded client-side in `src/pages/admin/index.astro`.
-- `LASTFM_API_KEY` — Last.fm API key for the homepage recently-played widget (`src/lib/lastfm.ts`). If unset, the widget degrades to empty rather than erroring. Production: `wrangler pages secret put LASTFM_API_KEY`. Local dev: add to `.dev.vars`.
+- `LASTFM_API_KEY` — Last.fm API key for the homepage recently-played widget (`src/lib/lastfm.ts`). If unset, the widget degrades to empty rather than erroring. Production: `wrangler secret put LASTFM_API_KEY`. Local dev: add to `.dev.vars`.
 
 ## Notes
 

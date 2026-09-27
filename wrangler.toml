@@ -1,6 +1,10 @@
 name = "orboro-net"
+main = "@astrojs/cloudflare/entrypoints/server"
 compatibility_date = "2026-04-05"
-pages_build_output_dir = "dist"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+binding = "ASSETS"
 
 [[d1_databases]]
 binding = "DB"

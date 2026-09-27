@@ -4,7 +4,8 @@ Conventions and gotchas for anyone (human or agent) working on this codebase. Se
 
 ## Architecture
 
-- Astro v7, `output: "server"`, deployed to Cloudflare Pages via `@astrojs/cloudflare`.
+- Astro v7, `output: "server"`, deployed as the Cloudflare **Worker** `orboro-net` via `@astrojs/cloudflare` (Workers Builds, git-integrated with GitHub `jmusick/orboro` — pushing to `master` runs `npm run build` + `npx wrangler deploy`). Migrated from a Pages project in v1.33.0.
+- `wrangler.toml` is the source of truth for bindings and runtime config (D1 `DB`, compatibility date/flags). `main` is `@astrojs/cloudflare/entrypoints/server`; `astro build` writes the real deploy config to `dist/server/wrangler.json` and points `.wrangler/deploy/config.json` at it. Dashboard-only: secrets and the `orboro.net` custom domain.
 - All content (pages, posts, categories, nav) lives in Cloudflare D1, not markdown files in the repo. `src/lib/content.ts` is the data-access layer.
 - Auth is custom (PBKDF2 password hashing, session cookie), not a third-party library. See `src/lib/auth.ts`, `src/middleware.ts`.
 - Styling is hand-written scoped CSS per component using the CSS variables defined in `BaseLayout.astro` (`--bg`, `--surface`, `--text`, `--muted`, `--accent`, `--accent-2`, `--accent-3`, `--line`). No Tailwind, no component library.
@@ -85,7 +86,7 @@ The symptom is misleading: unexplained gaps, stray borders, or indentation that 
 ## Security response headers
 
 Because this is `output: "server"`, every page and API route is rendered by the Worker — **not**
-served from Cloudflare Pages' static-asset layer. `public/_headers` only affects responses served
+served from the Worker's static-assets layer. `public/_headers` only affects responses served
 directly from that static layer (images, `robots.txt`, `admin-editor.js`, `_astro/*`); it does
 nothing for SSR'd HTML. Don't try to fix a missing-security-header issue by only editing
 `public/_headers` — you'll get a clean `dist/_headers` and no actual change on `curl -I` for any
@@ -148,9 +149,9 @@ There's no headless browser available (see below), so the practical loop for con
 
 ```bash
 npm run build
-npx wrangler pages dev dist --ip 127.0.0.1 --port 8787 &
+npx wrangler dev --ip 127.0.0.1 --port 8787 &
 curl -s http://127.0.0.1:8787/pages/some-slug | grep -o 'expected-class-or-text'
-# ... then kill the wrangler pages dev process
+# ... then kill the wrangler dev process
 ```
 
 This confirms the HTML/CSS/JS came out as expected (and that shortcodes didn't leave a literal `{{token}}` in the output because a fetch or shortcode registration failed). It does **not** confirm visual layout, spacing, or hover states — for those, a human needs to look at it in an actual browser. Say so explicitly rather than claiming a visual change "looks right" from curl output alone.
@@ -165,8 +166,8 @@ This confirms the HTML/CSS/JS came out as expected (and that shortcodes didn't l
 ## Local dev
 
 - Prefer `127.0.0.1` over `localhost` — some integrations (OAuth redirect URIs, etc.) require an exact literal match, and `localhost` vs `127.0.0.1` are different origins to a browser even though they resolve to the same place. `dev:astro` runs `astro dev --host 127.0.0.1`, and `.vscode/launch.json` points at `http://127.0.0.1:4321`.
-- `npm run dev:astro` (Astro dev server, fast, hot-reloading) vs `npm run dev` (builds, then `wrangler pages dev dist` — full Cloudflare runtime: D1 bindings, secrets, Cache API, but no hot reload, re-run after each change). Use the latter when testing anything that touches D1, `caches.default`, or `cloudflare:workers` env/secrets, since `astro dev` may not mirror that runtime exactly. (`npm run dev` used to shell out to plain `wrangler dev`, which fails on a Pages project — if you see that error from an old muscle-memory command, this is why.)
-- Secrets for local dev go in `.dev.vars` (gitignored, never commit). Production secrets: `wrangler pages secret put <NAME>`.
+- `npm run dev:astro` (Astro dev server, fast, hot-reloading) vs `npm run dev` (builds, then `wrangler dev` — full Cloudflare runtime: D1 bindings, secrets, Cache API, but no hot reload, re-run after each change). Use the latter when testing anything that touches D1, `caches.default`, or `cloudflare:workers` env/secrets, since `astro dev` may not mirror that runtime exactly.
+- Secrets for local dev go in `.dev.vars` (gitignored, never commit). Production secrets: `wrangler secret put <NAME>` (or dashboard → Worker → Settings → Variables and Secrets).
 - `/admin` login is gated by hCaptcha (`src/pages/api/auth/login.ts`), verified server-side against `HCAPTCHA_SECRET`. **Gotcha:** if that secret isn't set, verification is skipped entirely (fails open) rather than rejecting the login — this is deliberate so local dev doesn't require an hCaptcha account, but it means captcha protection is silently absent unless the secret is actually configured in that environment. The site key itself isn't a secret; it's hardcoded in `src/pages/admin/index.astro`.
 - No headless browser tooling is set up in this repo (Playwright was deliberately removed — see git history). There's no automated way to screenshot or click-test the app in this environment; visual changes need a human to check in an actual browser.
 

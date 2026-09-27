@@ -8,8 +8,6 @@ export default defineConfig({
 	site: 'https://orboro.net',
 	output: 'server',
 	build: {
-		client: './',
-		server: './_worker.js',
 		// Nonce-based CSP needs every inline <style>/<script> to be one we
 		// authored (and can attach a nonce to) — never let Astro's own
 		// component styles get auto-inlined depending on their size.
