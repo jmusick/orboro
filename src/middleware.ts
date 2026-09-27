@@ -7,12 +7,11 @@ const SESSION_COOKIE = "orboro_session";
 function buildCspReportOnly(nonce: string): string {
   return [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' https://www.googletagmanager.com https://js.hcaptcha.com`,
+    `script-src 'self' 'nonce-${nonce}' https://www.googletagmanager.com`,
     `style-src 'self' 'nonce-${nonce}' https://cdn.jsdelivr.net`,
     "img-src 'self' data: https://www.google.com https://www.google-analytics.com",
     "font-src 'self'",
     "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com",
-    "frame-src https://newassets.hcaptcha.com https://hcaptcha.com",
     "object-src 'none'",
     "base-uri 'self'",
     "frame-ancestors 'none'",

@@ -13,11 +13,10 @@ Astro + Cloudflare starter for a markdown-first CMS/blog with role-based auth an
 - Astro SSR configured for Cloudflare (`@astrojs/cloudflare`)
 - D1 schema + migrations for users, sessions, content, media, categories, and nav items
 - Initial admin setup flow (`/admin/setup`)
-- Email/password auth with role-based permissions (`admin`, `editor`, `author`), protected by hCaptcha on login
+- Email/password auth with role-based permissions (`admin`, `editor`, `author`)
 - CMS content editor for markdown posts/pages with live preview
 - Shortcode system for rich, self-contained widgets embedded in markdown (e.g. an external bookmarks list, featured-links cards) — see `src/lib/shortcodes.ts` and [AGENTS.md](AGENTS.md)
 - Blog routes (`/blog`, `/blog/[slug]`, `/blog/category/[slug]`), plus a homepage feed of recent posts — both the homepage feed and `/blog` cards show each post's featured image (`content.featured_image_url`) as a thumbnail, and posts are attributed to JD in the visible byline and JSON-LD author field
-- Homepage Last.fm widget showing now-playing / recently-played tracks, server-rendered and refreshed client-side via `/api/lastfm/recent-tracks`
 - Generic page route (`/pages/[slug]`), plus a static `/privacy-policy` page
 - Category management with content tagging (`/category/[slug]`)
 - Dynamic navigation builder with unlimited nesting
@@ -107,9 +106,7 @@ Tables:
 
 ## Secrets
 
-- `HCAPTCHA_SECRET` — hCaptcha server-side verification secret for `/admin` login. If unset (e.g. local dev), captcha verification is skipped rather than failing closed. Production: `wrangler secret put HCAPTCHA_SECRET`. Local dev: add to `.dev.vars`.
-- The hCaptcha site key is not a secret and is hardcoded client-side in `src/pages/admin/index.astro`.
-- `LASTFM_API_KEY` — Last.fm API key for the homepage recently-played widget (`src/lib/lastfm.ts`). If unset, the widget degrades to empty rather than erroring. Production: `wrangler secret put LASTFM_API_KEY`. Local dev: add to `.dev.vars`.
+None — the app currently needs no runtime secrets. If you add one, put it in `.dev.vars` for local dev (gitignored) and set it in production with `wrangler secret put <NAME>`.
 
 ## Notes
 

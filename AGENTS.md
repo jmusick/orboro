@@ -101,7 +101,7 @@ paths the Worker never touches.
 The CSP is Report-Only, with a per-request nonce (generated in `middleware.ts`, exposed as
 `Astro.locals.nonce`) on `script-src`/`style-src` instead of `'unsafe-inline'`. `'unsafe-inline'` is
 dropped entirely, so **every** inline `<script>`/`<style>` — `BaseLayout.astro`'s `gtag`/nav/accordion
-scripts, `index.astro`'s last.fm poller, the handful of admin-page inline scripts, and each
+scripts, the handful of admin-page inline scripts, and each
 shortcode's own `<style>`/`<script>` — must carry `nonce={Astro.locals.nonce}` (Astro components) or
 `nonceAttr(nonce)` from `src/lib/csp.ts` (shortcode HTML strings, threaded through
 `processShortcodes(html, nonce)` → each `ShortcodeFn(attrs, nonce)`). A `<script type="application/json">`
@@ -168,12 +168,12 @@ This confirms the HTML/CSS/JS came out as expected (and that shortcodes didn't l
 - Prefer `127.0.0.1` over `localhost` — some integrations (OAuth redirect URIs, etc.) require an exact literal match, and `localhost` vs `127.0.0.1` are different origins to a browser even though they resolve to the same place. `dev:astro` runs `astro dev --host 127.0.0.1`, and `.vscode/launch.json` points at `http://127.0.0.1:4321`.
 - `npm run dev:astro` (Astro dev server, fast, hot-reloading) vs `npm run dev` (builds, then `wrangler dev` — full Cloudflare runtime: D1 bindings, secrets, Cache API, but no hot reload, re-run after each change). Use the latter when testing anything that touches D1, `caches.default`, or `cloudflare:workers` env/secrets, since `astro dev` may not mirror that runtime exactly.
 - Secrets for local dev go in `.dev.vars` (gitignored, never commit). Production secrets: `wrangler secret put <NAME>` (or dashboard → Worker → Settings → Variables and Secrets).
-- `/admin` login is gated by hCaptcha (`src/pages/api/auth/login.ts`), verified server-side against `HCAPTCHA_SECRET`. **Gotcha:** if that secret isn't set, verification is skipped entirely (fails open) rather than rejecting the login — this is deliberate so local dev doesn't require an hCaptcha account, but it means captcha protection is silently absent unless the secret is actually configured in that environment. The site key itself isn't a secret; it's hardcoded in `src/pages/admin/index.astro`.
+- `/admin` login (`src/pages/api/auth/login.ts`) is email + password only — hCaptcha was removed in v1.34.0, and there is currently no captcha or rate limiting on it. The app needs no runtime secrets.
 - No headless browser tooling is set up in this repo (Playwright was deliberately removed — see git history). There's no automated way to screenshot or click-test the app in this environment; visual changes need a human to check in an actual browser.
 
 ## External API calls from shortcodes/pages
 
-When a shortcode or page fetches an external API server-side (see `bookmarks.ts` for tagsta.sh, or `lastfm.ts` for the homepage recently-played widget), cache the response with the Cloudflare Workers Cache API:
+When a shortcode or page fetches an external API server-side (see `bookmarks.ts` for tagsta.sh), cache the response with the Cloudflare Workers Cache API:
 
 ```js
 const cache = (caches as CacheStorage & { readonly default: Cache }).default;
