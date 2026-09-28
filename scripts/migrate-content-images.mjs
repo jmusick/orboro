@@ -86,6 +86,15 @@ function imagePathFromUrl(value) {
   return null;
 }
 
+function needsUpload(value) {
+  if (isLocal) return true;
+  try {
+    return new URL(value, "https://orboro.net").hostname !== "media.orboro.net";
+  } catch {
+    return false;
+  }
+}
+
 function localFileForImage(imagePath) {
   const relative = imagePath.slice("/images/".length);
   const filePath = path.resolve(PUBLIC_IMAGES, ...relative.split("/"));
@@ -137,7 +146,7 @@ for (const row of contentRows) {
       unhandled.add(candidate);
     }
     const imagePath = imagePathFromUrl(candidate);
-    if (imagePath) {
+    if (imagePath && needsUpload(candidate)) {
       const filePath = localFileForImage(imagePath);
       if (!filePath) throw new Error(`Unsafe image path: ${imagePath}`);
       assets.set(imagePath.slice(1), filePath);
@@ -150,7 +159,7 @@ for (const row of contentRows) {
 
 for (const row of mediaRows) {
   const imagePath = imagePathFromUrl(row.url);
-  if (imagePath) {
+  if (imagePath && needsUpload(row.url)) {
     const filePath = localFileForImage(imagePath);
     if (!filePath) throw new Error(`Unsafe image path: ${imagePath}`);
     assets.set(imagePath.slice(1), filePath);
