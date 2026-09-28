@@ -3,7 +3,8 @@ import { saveCategory } from "../../../lib/content";
 import { ensureRole, sanitizeSlug } from "../../../lib/http";
 
 export const POST: APIRoute = async (context) => {
-  ensureRole(context, ["admin", "editor"]);
+  const access = ensureRole(context, ["admin", "editor"]);
+  if (access instanceof Response) return access;
   const form = await context.request.formData();
   const id = String(form.get("id") ?? "").trim() || undefined;
   const name = String(form.get("name") ?? "").trim();

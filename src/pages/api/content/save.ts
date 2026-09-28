@@ -6,6 +6,7 @@ import { pingWebSub } from "../../../lib/websub";
 
 export const POST: APIRoute = async (context) => {
   const user = ensureRole(context, ["admin", "editor", "author"]);
+  if (user instanceof Response) return user;
 
   const form = await context.request.formData();
   const id = String(form.get("id") ?? "").trim() || undefined;

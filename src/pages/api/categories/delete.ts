@@ -3,7 +3,8 @@ import { deleteCategoryById } from "../../../lib/content";
 import { ensureRole } from "../../../lib/http";
 
 export const POST: APIRoute = async (context) => {
-  ensureRole(context, ["admin"]);
+  const access = ensureRole(context, ["admin"]);
+  if (access instanceof Response) return access;
   const form = await context.request.formData();
   const id = String(form.get("id") ?? "").trim();
   if (!id) return context.redirect("/admin/categories");

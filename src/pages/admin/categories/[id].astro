@@ -4,7 +4,8 @@ import Button from "../../../components/Button.astro";
 import { getCategoryById } from "../../../lib/content";
 import { ensureRole } from "../../../lib/http";
 
-ensureRole(Astro, ["admin", "editor"]);
+const access = ensureRole(Astro, ["admin", "editor"]);
+if (access instanceof Response) return access;
 
 const { id } = Astro.params;
 if (!id) {

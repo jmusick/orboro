@@ -4,7 +4,8 @@ import Button from "../../../components/Button.astro";
 import { ensureRole } from "../../../lib/http";
 import { listCategories } from "../../../lib/content";
 
-ensureRole(Astro, ["admin", "editor", "author"]);
+const access = ensureRole(Astro, ["admin", "editor", "author"]);
+if (access instanceof Response) return access;
 const categories = await listCategories(Astro.locals);
 ---
 

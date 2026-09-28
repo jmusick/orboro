@@ -4,6 +4,7 @@ import { ensureRole } from "../../../lib/http";
 
 export const POST: APIRoute = async (context) => {
   const user = ensureRole(context, ["admin", "editor"]);
+  if (user instanceof Response) return user;
 
   const form = await context.request.formData();
   const url = String(form.get("url") ?? "").trim();
