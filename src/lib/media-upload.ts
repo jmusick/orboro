@@ -1,6 +1,13 @@
 export const MAX_MEDIA_BYTES = 10 * 1024 * 1024;
 export const MEDIA_ORIGIN = "https://media.orboro.net";
 
+export function mediaUrlForRequest(requestUrl: URL, key: string): string {
+  const isLocal = ["localhost", "127.0.0.1", "::1"].includes(requestUrl.hostname);
+  return isLocal
+    ? `${requestUrl.origin}/media/${key}`
+    : `${MEDIA_ORIGIN}/${key}`;
+}
+
 type SupportedImage = { contentType: string; extension: string };
 
 export function identifyImage(bytes: Uint8Array): SupportedImage | null {

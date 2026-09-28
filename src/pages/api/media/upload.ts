@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { env } from "cloudflare:workers";
 import { saveMedia } from "../../../lib/content";
-import { identifyImage, MAX_MEDIA_BYTES, MEDIA_ORIGIN } from "../../../lib/media-upload";
+import { identifyImage, MAX_MEDIA_BYTES, mediaUrlForRequest } from "../../../lib/media-upload";
 
 export const POST: APIRoute = async (context) => {
   const user = context.locals.user;
@@ -37,7 +37,7 @@ export const POST: APIRoute = async (context) => {
 
   const now = new Date();
   const key = `uploads/${now.getUTCFullYear()}/${String(now.getUTCMonth() + 1).padStart(2, "0")}/${crypto.randomUUID()}.${image.extension}`;
-  const url = `${MEDIA_ORIGIN}/${key}`;
+  const url = mediaUrlForRequest(context.url, key);
 
   try {
     await env.MEDIA.put(key, bytes, {
