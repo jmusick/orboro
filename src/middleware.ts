@@ -9,7 +9,7 @@ function buildCspReportOnly(nonce: string): string {
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' https://www.googletagmanager.com`,
     `style-src 'self' 'nonce-${nonce}' https://cdn.jsdelivr.net`,
-    "img-src 'self' data: https://www.google.com https://www.google-analytics.com",
+    "img-src 'self' data: https://media.orboro.net https://www.google.com https://www.google-analytics.com",
     "font-src 'self'",
     "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com",
     "object-src 'none'",

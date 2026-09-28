@@ -22,3 +22,7 @@ binding = "DB"
 database_name = "orboro-db"
 database_id = "7fe68e1c-ce42-40a6-ae78-3bb674d6ad0f"
 migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "orboro-net-media"
