@@ -111,8 +111,8 @@ None — the app currently needs no runtime secrets. If you add one, put it in `
 ## Notes
 
 - Content markdown is stored in D1 (`content.markdown`). Reusable, re-runnable seed scripts for individual pages/posts (content row + categories + nav) live in `scripts/content/*.sql` — see [AGENTS.md](AGENTS.md) for the pattern.
-- Media management currently stores metadata and source URLs.
-- To support uploads later, pair this with Cloudflare R2 and add upload endpoints.
+- The media library accepts direct image uploads (PNG, JPEG, GIF, WebP, or AVIF, up to 10 MB) into the `orboro-net-media` R2 bucket through the `MEDIA` binding. New uploads are saved in D1 with `https://media.orboro.net/...` URLs. That custom domain is connected to the bucket; the `r2.dev` development URL remains disabled.
+- Existing image URLs can still be added to the media library. Deleting a media record removes its D1 metadata only; it does not delete the R2 object or update pages that reference the URL.
 - To support additional content types later, add new values in `content.page_type` and build matching routes.
 - `/privacy-policy` (`src/pages/privacy-policy.astro`) describes what tracking is active. Update it whenever you add, remove, or change a tracking/analytics script.
 

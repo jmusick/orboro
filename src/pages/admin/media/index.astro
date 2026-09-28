@@ -7,11 +7,40 @@ import { listMedia } from "../../../lib/content";
 
 ensureRole(Astro, ["admin", "editor"]);
 const media = await listMedia(Astro.locals);
+const error = Astro.url.searchParams.get("error");
+const errorMessages: Record<string, string> = {
+  invalid: "Choose an image and provide alt text.",
+  "too-large": "The image must be no larger than 10 MB.",
+  unsupported: "Use a PNG, JPEG, GIF, WebP, or AVIF image.",
+  "upload-failed": "The upload failed. Please try again.",
+};
 ---
 
 <AdminLayout title="Media">
+  {error && errorMessages[error] && <p class="form-message form-message--error" role="alert">{errorMessages[error]}</p>}
+  {Astro.url.searchParams.has("uploaded") && <p class="form-message" role="status">Image uploaded to the media library.</p>}
   <section class="form-section">
-    <h2>Add Media</h2>
+    <h2>Upload Image</h2>
+    <form action="/api/media/upload" method="post" enctype="multipart/form-data" class="media-form">
+      <div class="form-group">
+        <label for="file">Image file</label>
+        <input id="file" name="file" type="file" accept="image/png,image/jpeg,image/gif,image/webp,image/avif" required />
+        <small>PNG, JPEG, GIF, WebP, or AVIF. Maximum 10 MB.</small>
+      </div>
+      <div class="form-group">
+        <label for="uploadAltText">Alt text</label>
+        <input id="uploadAltText" name="altText" type="text" maxlength="500" required placeholder="Describe the image" />
+      </div>
+      <div class="form-group">
+        <label for="uploadCaption">Caption</label>
+        <textarea id="uploadCaption" name="caption" rows="2" maxlength="1000" placeholder="Optional caption"></textarea>
+      </div>
+      <Button type="submit" variant="primary" icon="upload">Upload Image</Button>
+    </form>
+  </section>
+
+  <section class="form-section">
+    <h2>Add Existing Image URL</h2>
     <form action="/api/media/save" method="post" class="media-form">
       <div class="form-group">
         <label for="url">Image URL</label>
@@ -37,12 +66,13 @@ const media = await listMedia(Astro.locals);
       <div class="empty-library">
         <Icon name="image" size={48} />
         <p>No media records yet.</p>
-        <p class="muted-text">Upload your first media record using the form above</p>
+        <p class="muted-text">Upload an image or add an existing image URL above.</p>
       </div>
     ) : (
       <div class="media-grid">
         {media.map((item) => (
           <div class="media-card">
+            <img class="media-preview" src={item.url} alt={item.altText} loading="lazy" />
             <div class="media-header">
               <strong title={item.altText} class="media-title">{item.altText}</strong>
             </div>
@@ -53,6 +83,7 @@ const media = await listMedia(Astro.locals);
               <a href={item.url} target="_blank" rel="noreferrer" class="media-url">
                 View Image
               </a>
+              <p class="media-source">{item.url}</p>
             </div>
             <div class="media-footer">
               <form method="post" action="/api/media/delete" class="delete-form" onsubmit="return confirm('Delete this media record?');">
@@ -74,10 +105,21 @@ const media = await listMedia(Astro.locals);
     margin-bottom: 3rem;
   }
 
-  .media-form {
-    background: linear-gradient(160deg, rgb(12 19 36 / 50%) 0%, rgb(17 26 48 / 50%) 100%);
+  .form-message {
+    padding: 0.75rem 1rem;
     border: 1px solid var(--line);
-    border-radius: 12px;
+    border-radius: var(--r-md, 10px);
+    color: var(--text);
+  }
+
+  .form-message--error {
+    border-color: rgb(255 61 77 / 25%);
+  }
+
+  .media-form {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md, 10px);
     padding: 1.5rem;
   }
 
@@ -98,12 +140,12 @@ const media = await listMedia(Astro.locals);
   .form-group textarea {
     padding: 0.75rem 1rem;
     border: 1px solid var(--line);
-    border-radius: 8px;
+    border-radius: var(--r-md, 10px);
     background: var(--surface);
     color: var(--text);
     font-family: inherit;
     font-size: 1rem;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
   .form-group input::placeholder,
@@ -156,11 +198,11 @@ const media = await listMedia(Astro.locals);
   .media-card {
     display: flex;
     flex-direction: column;
-    background: linear-gradient(160deg, rgb(12 19 36 / 60%) 0%, rgb(17 26 48 / 60%) 100%);
+    background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: 12px;
+    border-radius: var(--r-md, 10px);
     overflow: hidden;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
   .media-card:hover {
@@ -168,10 +210,17 @@ const media = await listMedia(Astro.locals);
     box-shadow: 0 0 1.2rem rgb(0 229 255 / 15%);
   }
 
+  .media-preview {
+    display: block;
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    background: var(--surface);
+  }
+
   .media-header {
     padding: 1rem;
     border-bottom: 1px solid var(--line);
-    background: linear-gradient(90deg, rgb(0 229 255 / 5%) 0%, transparent 100%);
   }
 
   .media-title {
@@ -204,7 +253,12 @@ const media = await listMedia(Astro.locals);
     color: var(--accent);
     text-decoration: none;
     font-size: 0.9rem;
-    transition: all 0.2s ease;
+  }
+
+  .media-source {
+    color: var(--muted);
+    font-size: 0.75rem;
+    overflow-wrap: anywhere;
   }
 
   .media-url:hover {
@@ -214,7 +268,6 @@ const media = await listMedia(Astro.locals);
   .media-footer {
     padding: 1rem;
     border-top: 1px solid var(--line);
-    background: linear-gradient(90deg, transparent 0%, rgb(255 61 77 / 3%) 100%);
   }
 
   .delete-form {
