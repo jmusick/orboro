@@ -128,22 +128,24 @@ export async function saveContent(
 ): Promise<string> {
   const db = ensureDB(locals);
   const now = Date.now();
-  const publishedAt = input.status === "published" ? now : null;
   const featuredImageUrl = input.featuredImageUrl || null;
 
   if (input.id) {
     await db
       .prepare(
         `UPDATE content
-         SET slug = ?, title = ?, markdown = ?, page_type = ?, status = ?, published_at = ?, updated_at = ?, featured_image_url = ?
+         SET slug = ?, title = ?, markdown = ?, page_type = ?, status = ?,
+             published_at = CASE WHEN status = 'draft' AND ? = 'published' THEN ? ELSE published_at END,
+             updated_at = ?, featured_image_url = ?
          WHERE id = ?`
       )
-      .bind(input.slug, input.title, input.markdown, input.pageType, input.status, publishedAt, now, featuredImageUrl, input.id)
+      .bind(input.slug, input.title, input.markdown, input.pageType, input.status, input.status, now, now, featuredImageUrl, input.id)
       .run();
     return input.id;
   }
 
   const id = crypto.randomUUID();
+  const publishedAt = input.status === "published" ? now : null;
   await db
     .prepare(
       `INSERT INTO content
