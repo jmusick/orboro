@@ -40,7 +40,7 @@ function renderDropdownItems(nodes: NavNode[]): string {
       const flyoutId = `nav-flyout-${node.id}`;
       return `<div class="nav-flyout-item">` +
         `<a href="${esc(node.url)}" class="nav-dropdown-link${active}">${esc(node.label)} <span class="nav-flyout-arrow" aria-hidden="true"></span></a>` +
-        `<button type="button" class="nav-caret" aria-label="Toggle ${esc(node.label)} submenu" aria-haspopup="true" aria-expanded="false" aria-controls="${flyoutId}"></button>` +
+        `<button type="button" class="nav-caret" aria-label="Toggle ${esc(node.label)} submenu" aria-expanded="false" aria-controls="${flyoutId}"></button>` +
         `<div class="nav-flyout" id="${flyoutId}">${renderDropdownItems(node.children)}</div>` +
         `</div>`;
     }
@@ -258,17 +258,7 @@ function nodeIcon(node: NavNode): string {
         align-items: stretch;
       }
       .nav-dropdown-wrapper > a::after {
-        content: "";
-        display: inline-block;
-        width: 0;
-        height: 0;
-        border-left: 4px solid transparent;
-        border-right: 4px solid transparent;
-        border-top: 4px solid currentColor;
-        margin-left: 0.45rem;
-        opacity: 0.55;
-        vertical-align: middle;
-        transition: transform 0.18s ease, opacity 0.18s ease;
+        content: none;
       }
       .nav-dropdown {
         display: none;
@@ -285,7 +275,7 @@ function nodeIcon(node: NavNode): string {
         box-shadow: 0 8px 24px rgb(0 0 0 / 45%);
       }
       .nav-caret {
-        display: none;
+        display: flex;
         background: rgb(255 255 255 / 5%);
         border: 1px solid var(--line);
         border-radius: var(--r-sm,6px);
@@ -318,24 +308,6 @@ function nodeIcon(node: NavNode): string {
       .nav-caret[aria-expanded="true"]::after {
         transform: rotate(180deg);
       }
-      /* Hover-driven dropdowns only make sense on mouse-driven devices;
-         touch/mobile relies on .nav-caret + JS accordion toggling instead. */
-      @media (hover: hover) {
-        .nav-dropdown-wrapper:hover > a::after {
-          transform: rotate(180deg);
-          opacity: 1;
-        }
-        .nav-dropdown-wrapper:hover .nav-dropdown {
-          display: flex;
-        }
-        .nav-flyout-item:hover > .nav-flyout {
-          display: flex;
-        }
-        .nav-flyout-item:hover > .nav-dropdown-link .nav-flyout-arrow {
-          transform: rotate(180deg);
-          opacity: 1;
-        }
-      }
       .nav-dropdown-wrapper.open > .nav-dropdown,
       .nav-flyout-item.open > .nav-flyout {
         display: flex;
@@ -361,28 +333,22 @@ function nodeIcon(node: NavNode): string {
       }
       .nav-flyout-item {
         position: relative;
+        display: flex;
+        align-items: stretch;
       }
       .nav-flyout-item > .nav-dropdown-link {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        flex: 1;
         gap: 0.5rem;
       }
-      .nav-flyout-arrow {
-        display: inline-block;
-        width: 0;
-        height: 0;
-        border-top: 4px solid transparent;
-        border-bottom: 4px solid transparent;
-        border-left: 4px solid currentColor;
-        margin-left: 0.45rem;
-        opacity: 0.55;
-        transform: rotate(0deg);
-        transition: transform 0.18s ease, opacity 0.18s ease;
+      .nav-flyout-item > .nav-caret {
+        min-width: 2rem;
+        margin: 0.2rem 0.2rem 0.2rem 0;
+        padding: 0.3rem;
       }
-      .nav-flyout-item.open > .nav-dropdown-link .nav-flyout-arrow {
-        transform: rotate(180deg);
-        opacity: 1;
+      .nav-flyout-arrow {
+        display: none;
       }
       .nav-flyout {
         display: none;
@@ -398,24 +364,6 @@ function nodeIcon(node: NavNode): string {
         min-width: 180px;
         z-index: 51;
         box-shadow: 0 8px 24px rgb(0 0 0 / 45%);
-      }
-      /* Any device whose primary input can't hover (phones, tablets,
-         touchscreens) needs the tap-driven .nav-caret regardless of
-         viewport width — a tablet-width touch device gets neither the
-         hover dropdown above nor the narrow-viewport hamburger nav below.
-         This must come after the base .nav-caret/.nav-flyout-arrow rules
-         above so its overrides win the cascade regardless of source order. */
-      @media (hover: none), (pointer: coarse) {
-        .nav-caret {
-          display: flex;
-          margin-left: 0.25rem;
-        }
-        .nav-dropdown-wrapper > a::after {
-          content: none;
-        }
-        .nav-flyout-arrow {
-          display: none;
-        }
       }
       .header-banner {
         margin-bottom: 1.2rem;
@@ -848,7 +796,7 @@ function nodeIcon(node: NavNode): string {
               return (
                 <div class="nav-dropdown-wrapper">
                   <a href={node.url} class={isActive(node.url) ? "active" : ""}><Icon name={nodeIcon(node)} size={15} />{node.label}</a>
-                  <button type="button" class="nav-caret" aria-label={`Toggle ${node.label} submenu`} aria-haspopup="true" aria-expanded="false" aria-controls={dropdownId} />
+                  <button type="button" class="nav-caret" aria-label={`Toggle ${node.label} submenu`} aria-expanded="false" aria-controls={dropdownId} />
                   <div class="nav-dropdown" id={dropdownId} set:html={renderDropdownItems(node.children)} />
                 </div>
               );
@@ -932,6 +880,19 @@ function nodeIcon(node: NavNode): string {
         });
       }
 
+      function setSubmenuOpen(item, open) {
+        item.classList.toggle('open', open);
+        var caret = item.querySelector(':scope > .nav-caret');
+        if (caret) caret.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (!open) {
+          item.querySelectorAll('.nav-dropdown-wrapper.open, .nav-flyout-item.open').forEach(function(child) {
+            child.classList.remove('open');
+            var childCaret = child.querySelector(':scope > .nav-caret');
+            if (childCaret) childCaret.setAttribute('aria-expanded', 'false');
+          });
+        }
+      }
+
       function initMobileNav() {
         var toggle = document.getElementById('nav-toggle');
         var nav = document.getElementById('site-nav');
@@ -940,6 +901,83 @@ function nodeIcon(node: NavNode): string {
           toggle.addEventListener('click', function() {
             var isOpen = nav.classList.toggle('nav-open');
             toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            if (!isOpen) closeMobileNav();
+          });
+          nav.addEventListener('focusin', function(e) {
+            var target = e.target;
+            if (!(target instanceof Element)) return;
+            var item = target.closest('.nav-dropdown-wrapper, .nav-flyout-item');
+            // Focusing a toggle should not pre-open it before Enter or click.
+            if (target.classList.contains('nav-caret')) {
+              item = item && item.parentElement.closest('.nav-dropdown-wrapper, .nav-flyout-item');
+            }
+            while (item && nav.contains(item)) {
+              setSubmenuOpen(item, true);
+              item = item.parentElement.closest('.nav-dropdown-wrapper, .nav-flyout-item');
+            }
+          });
+          nav.addEventListener('focusout', function(e) {
+            var next = e.relatedTarget;
+            nav.querySelectorAll('.nav-dropdown-wrapper.open, .nav-flyout-item.open').forEach(function(item) {
+              if ((!next || !item.contains(next)) && !item.matches(':hover')) setSubmenuOpen(item, false);
+            });
+          });
+          nav.addEventListener('keydown', function(e) {
+            var target = e.target;
+            if (!(target instanceof Element) || !target.matches('a, .nav-caret')) return;
+            var item = target.closest('.nav-dropdown-wrapper, .nav-flyout-item');
+            if (e.key === 'Escape') {
+              if (!item) return;
+              e.preventDefault();
+              var caret = item.querySelector(':scope > .nav-caret');
+              if (caret) caret.focus();
+              setSubmenuOpen(item, false);
+              return;
+            }
+            if (e.key === 'ArrowRight' && item && item.classList.contains('nav-flyout-item') && target.parentElement === item) {
+              e.preventDefault();
+              setSubmenuOpen(item, true);
+              var firstChild = item.querySelector(':scope > .nav-flyout > a, :scope > .nav-flyout > .nav-flyout-item > a');
+              if (firstChild) firstChild.focus();
+              return;
+            }
+            if (e.key === 'ArrowLeft') {
+              var panel = target.closest('.nav-flyout');
+              if (!panel) return;
+              e.preventDefault();
+              var owner = panel.parentElement;
+              var parentLink = owner.querySelector(':scope > a');
+              if (parentLink) parentLink.focus();
+              setSubmenuOpen(owner, false);
+              return;
+            }
+            if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+            var panel = target.closest('.nav-dropdown, .nav-flyout');
+            if (!panel && item) {
+              e.preventDefault();
+              setSubmenuOpen(item, true);
+              panel = item.querySelector(':scope > .nav-dropdown, :scope > .nav-flyout');
+              var first = panel && panel.querySelector(':scope > a, :scope > .nav-flyout-item > a');
+              if (first) first.focus();
+              return;
+            }
+            if (!panel) return;
+            var links = Array.from(panel.children).map(function(child) {
+              return child.matches('a') ? child : child.querySelector(':scope > a');
+            }).filter(Boolean);
+            var current = target.classList.contains('nav-caret') ? target.parentElement.querySelector(':scope > a') : target;
+            var index = links.indexOf(current);
+            if (index < 0) return;
+            e.preventDefault();
+            links[(index + (e.key === 'ArrowDown' ? 1 : links.length - 1)) % links.length].focus();
+          });
+          nav.querySelectorAll('.nav-dropdown-wrapper, .nav-flyout-item').forEach(function(item) {
+            item.addEventListener('pointerenter', function() {
+              if (matchMedia('(hover: hover) and (pointer: fine) and (min-width: 769px)').matches) setSubmenuOpen(item, true);
+            });
+            item.addEventListener('pointerleave', function() {
+              if (!item.contains(document.activeElement)) setSubmenuOpen(item, false);
+            });
           });
         }
         document.querySelectorAll('.nav-caret').forEach(function(btn) {
@@ -950,8 +988,7 @@ function nodeIcon(node: NavNode): string {
             e.stopPropagation();
             var parent = btn.closest('.nav-dropdown-wrapper, .nav-flyout-item');
             if (!parent) return;
-            var isOpen = parent.classList.toggle('open');
-            btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            setSubmenuOpen(parent, !parent.classList.contains('open'));
           });
         });
       }
@@ -961,11 +998,8 @@ function nodeIcon(node: NavNode): string {
         var nav = document.getElementById('site-nav');
         if (nav) nav.classList.remove('nav-open');
         if (toggle) toggle.setAttribute('aria-expanded', 'false');
-        document.querySelectorAll('.nav-dropdown-wrapper.open, .nav-flyout-item.open').forEach(function(el) {
-          el.classList.remove('open');
-        });
-        document.querySelectorAll('.nav-caret[aria-expanded="true"]').forEach(function(btn) {
-          btn.setAttribute('aria-expanded', 'false');
+        document.querySelectorAll('.nav-dropdown-wrapper.open, .nav-flyout-item.open').forEach(function(item) {
+          setSubmenuOpen(item, false);
         });
       }
 
