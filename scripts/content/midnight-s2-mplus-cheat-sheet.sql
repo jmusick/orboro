@@ -27,7 +27,7 @@ VALUES (
   CAST(strftime('%s', 'now') AS INTEGER) * 1000,
   CAST(strftime('%s', 'now') AS INTEGER) * 1000,
   CAST(strftime('%s', 'now') AS INTEGER) * 1000,
-  '/images/midnight-season-2-mythic-plus-interrupt-utility-cheat-sheet-header.png'
+  'https://media.orboro.net/images/midnight-season-2-mythic-plus-interrupt-utility-cheat-sheet-header.webp'
 )
 ON CONFLICT(slug) DO UPDATE SET
   title = excluded.title,

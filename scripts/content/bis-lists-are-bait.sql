@@ -326,7 +326,7 @@ And the answer changes every time your character changes.',
   CAST(strftime('%s', '2026-05-06 12:00:00') AS INTEGER) * 1000,
   CAST(strftime('%s', '2026-05-06 12:00:00') AS INTEGER) * 1000,
   CAST(strftime('%s', '2026-05-06 12:00:00') AS INTEGER) * 1000,
-  '/images/bis-lists-are-bait-header.webp'
+  'https://media.orboro.net/images/bis-lists-are-bait-header.webp'
 )
 ON CONFLICT(slug) DO UPDATE SET
   title = excluded.title,
