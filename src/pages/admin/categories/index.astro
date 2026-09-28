@@ -6,7 +6,8 @@ import Icon from "../../../components/Icon.astro";
 import { ensureRole } from "../../../lib/http";
 import { listCategories } from "../../../lib/content";
 
-ensureRole(Astro, ["admin", "editor"]);
+const access = ensureRole(Astro, ["admin", "editor"]);
+if (access instanceof Response) return access;
 const categories = await listCategories(Astro.locals);
 
 const url = new URL(Astro.request.url);

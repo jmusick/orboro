@@ -3,7 +3,8 @@ import AdminLayout from "../../../layouts/AdminLayout.astro";
 import Button from "../../../components/Button.astro";
 import { ensureRole } from "../../../lib/http";
 
-ensureRole(Astro, ["admin", "editor"]);
+const access = ensureRole(Astro, ["admin", "editor"]);
+if (access instanceof Response) return access;
 ---
 
 <AdminLayout title="New Category">

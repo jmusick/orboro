@@ -4,7 +4,8 @@ import Button from "../../../components/Button.astro";
 import { ensureRole } from "../../../lib/http";
 import { listNavItems, listAdminContent } from "../../../lib/content";
 
-ensureRole(Astro, ["admin"]);
+const access = ensureRole(Astro, ["admin"]);
+if (access instanceof Response) return access;
 
 const navItems = await listNavItems(Astro.locals);
 const allContent = await listAdminContent(Astro.locals);

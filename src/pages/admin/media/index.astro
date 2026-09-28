@@ -5,7 +5,8 @@ import Icon from "../../../components/Icon.astro";
 import { ensureRole } from "../../../lib/http";
 import { listMedia } from "../../../lib/content";
 
-ensureRole(Astro, ["admin", "editor"]);
+const access = ensureRole(Astro, ["admin", "editor"]);
+if (access instanceof Response) return access;
 const media = await listMedia(Astro.locals);
 const error = Astro.url.searchParams.get("error");
 const errorMessages: Record<string, string> = {

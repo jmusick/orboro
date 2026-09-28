@@ -6,7 +6,8 @@ import Icon from "../../../components/Icon.astro";
 import { ensureRole } from "../../../lib/http";
 import { listAdminContent, listContentCategoryNames } from "../../../lib/content";
 
-ensureRole(Astro, ["admin", "editor", "author"]);
+const access = ensureRole(Astro, ["admin", "editor", "author"]);
+if (access instanceof Response) return access;
 const content = await listAdminContent(Astro.locals);
 const categoryNames = await listContentCategoryNames(Astro.locals);
 
