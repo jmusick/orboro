@@ -4,7 +4,7 @@ export const MEDIA_ORIGIN = "https://media.orboro.net";
 export function mediaUrlForRequest(requestUrl: URL, key: string): string {
   const isLocal = ["localhost", "127.0.0.1", "::1"].includes(requestUrl.hostname);
   return isLocal
-    ? `${requestUrl.origin}/media/${key}`
+    ? `/media/${key}`
     : `${MEDIA_ORIGIN}/${key}`;
 }
 

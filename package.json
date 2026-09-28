@@ -16,6 +16,7 @@
     "data:assisted-combat": "node scripts/generate-assisted-combat-data.mjs",
     "data:midnight-s2-interrupts": "node scripts/generate-midnight-s2-interrupt-data.mjs",
     "data:spec-icons": "node scripts/fetch-spec-icons.mjs",
+    "media:migrate": "node scripts/migrate-content-images.mjs",
     "cf:types": "wrangler types",
     "d1:migrate:local": "wrangler d1 migrations apply DB --local",
     "d1:migrate:remote": "wrangler d1 migrations apply DB --remote"
