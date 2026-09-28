@@ -87,9 +87,11 @@ function imagePathFromUrl(value) {
 }
 
 function needsUpload(value) {
-  if (isLocal) return true;
   try {
-    return new URL(value, "https://orboro.net").hostname !== "media.orboro.net";
+    const parsed = new URL(value, "https://orboro.net");
+    if (parsed.hostname === "media.orboro.net") return false;
+    if (isLocal && parsed.pathname.startsWith("/media/images/")) return false;
+    return true;
   } catch {
     return false;
   }
@@ -122,6 +124,7 @@ function collectRowChanges(row, kind) {
     }
     const imagePath = imagePathFromUrl(original);
     if (!imagePath) continue;
+    if (isLocal && parsed.hostname === "media.orboro.net") continue;
     const next = publicUrl(imagePath, parsed.search, parsed.hash);
     if (next !== original) replacements.set(original, next);
   }

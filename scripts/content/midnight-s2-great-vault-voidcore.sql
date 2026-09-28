@@ -127,7 +127,7 @@ Claim the core, build a target plan, and let the knockout list do the work. Just
   CAST(strftime('%s', 'now') AS INTEGER) * 1000,
   CAST(strftime('%s', 'now') AS INTEGER) * 1000,
   CAST(strftime('%s', 'now') AS INTEGER) * 1000,
-  '/images/why-the-best-great-vault-reward-in-midnight-season-2-isnt-an-item-header.png'
+  'https://media.orboro.net/images/why-the-best-great-vault-reward-in-midnight-season-2-isnt-an-item-header.webp'
 )
 ON CONFLICT(slug) DO UPDATE SET
   title = excluded.title,
