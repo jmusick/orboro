@@ -79,18 +79,13 @@ const elementProps = href ? { href } : { type };
 
   /* Primary Button */
   .btn--primary {
-    background: linear-gradient(135deg, var(--accent) 0%, #00b8d4 100%);
-    color: #000;
-    box-shadow: 0 0 1rem rgb(0 229 255 / 30%);
+    background: var(--accent);
+    color: var(--bg);
+    font-weight: 650;
   }
 
   .btn--primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0.5rem 1.5rem rgb(0 229 255 / 40%);
-  }
-
-  .btn--primary:active {
-    transform: translateY(0);
+    background: #a3e1ff;
   }
 
   /* Secondary Button */
@@ -101,8 +96,7 @@ const elementProps = href ? { href } : { type };
   }
 
   .btn--secondary:hover {
-    background: rgb(0 229 255 / 10%);
-    box-shadow: 0 0 0.8rem rgb(0 229 255 / 25%);
+    background: rgb(112 208 255 / 10%);
   }
 
   /* Tertiary Button */

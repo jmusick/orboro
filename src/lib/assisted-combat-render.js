@@ -28,7 +28,7 @@ export var CLASS_COLORS = {
   Warrior: "#c69b6d",
 };
 
-export var FALLBACK_CLASS_COLOR = "#00e5ff";
+export var FALLBACK_CLASS_COLOR = "#70d0ff";
 
 export var DETAIL_TABS = [
   ["missing", "Versus SimC"],

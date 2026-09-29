@@ -731,7 +731,7 @@ export function generateAtlasFarmingStrategies(_attrs: Record<string, string>, n
 .afs-legend{display:flex;flex-wrap:wrap;gap:.6rem 1.5rem;margin-bottom:.6rem;padding:.65rem .9rem;background:rgba(255,255,255,.03);border:1px solid var(--line,#1f2b46);border-radius:var(--r-md,10px);}
 .afs-legend__item{display:flex;align-items:center;gap:.6rem;font-size:.85rem;color:var(--muted,#97a8c4);}
 .afs-legend__icon{font-size:1.1rem;letter-spacing:.1rem;flex-shrink:0;}
-.afs-legend__item:nth-child(1) .afs-legend__icon{color:var(--accent,#00e5ff);}
+.afs-legend__item:nth-child(1) .afs-legend__icon{color:var(--accent,#70d0ff);}
 .afs-legend__item:nth-child(2) .afs-legend__icon{color:var(--accent-2,#ff3fb8);}
 .afs-legend__text strong{color:var(--text,#e8f3ff);}
 
@@ -741,14 +741,14 @@ export function generateAtlasFarmingStrategies(_attrs: Record<string, string>, n
 
 .afs-list{display:flex;flex-direction:column;gap:.5rem;}
 .afs-item{border:1px solid var(--line,#1f2b46);border-radius:var(--r-md,10px);background:var(--surface,#0c1324);overflow:hidden;scroll-margin-top:1rem;}
-.afs-item:has(.afs-item__summary[aria-expanded="true"]){border-color:var(--accent,#00e5ff);}
+.afs-item:has(.afs-item__summary[aria-expanded="true"]){border-color:var(--accent,#70d0ff);}
 .afs-item__summary{width:100%;background:none;border:none;margin:0;font:inherit;color:inherit;text-align:left;list-style:none;cursor:pointer;display:flex;align-items:center;gap:.6rem;padding:.65rem .8rem;flex-wrap:wrap;}
 .afs-item__tier{flex:0 0 auto;width:1.9rem;height:1.9rem;display:flex;align-items:center;justify-content:center;border:1px solid;border-radius:var(--r-sm,6px);font-weight:800;font-size:.85rem;}
 .afs-item__titles{display:flex;flex-direction:column;flex:1;min-width:8rem;}
 .afs-item__name{font-weight:600;font-size:.92rem;color:var(--text,#e8f3ff);}
 .afs-item__subtitle{font-size:.72rem;color:var(--muted,#97a8c4);}
 .afs-item__by{font-size:.72rem;color:var(--muted,#97a8c4);border:1px solid var(--line,#1f2b46);border-radius:var(--r-sm,6px);padding:.1rem .4rem;white-space:nowrap;}
-.afs-item__mini{display:inline-flex;align-items:center;gap:.4rem;font-size:1.05rem;line-height:1;color:var(--accent,#00e5ff);white-space:nowrap;letter-spacing:.1rem;background:rgba(255,255,255,.04);border:1px solid var(--line,#1f2b46);border-radius:var(--r-sm,6px);padding:.3rem .6rem;}
+.afs-item__mini{display:inline-flex;align-items:center;gap:.4rem;font-size:1.05rem;line-height:1;color:var(--accent,#70d0ff);white-space:nowrap;letter-spacing:.1rem;background:rgba(255,255,255,.04);border:1px solid var(--line,#1f2b46);border-radius:var(--r-sm,6px);padding:.3rem .6rem;}
 .afs-item__mini--investment{color:var(--accent-2,#ff3fb8);}
 .afs-item__mini-label{font-size:.72rem;color:var(--muted,#97a8c4);text-transform:uppercase;letter-spacing:.04rem;font-weight:700;}
 .afs-item__soon{font-size:.72rem;color:var(--muted,#97a8c4);font-style:italic;}
@@ -760,11 +760,11 @@ export function generateAtlasFarmingStrategies(_attrs: Record<string, string>, n
 
 .afs-top-row{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem .9rem;}
 .afs-linkrow{display:flex;flex-wrap:wrap;gap:.4rem;}
-.afs-linkchip{font-size:.75rem;color:var(--accent,#00e5ff);border:1px solid rgba(0,229,255,.35);border-radius:var(--r-sm,6px);padding:.25rem .55rem;text-decoration:none;transition:background .12s;}
+.afs-linkchip{font-size:.75rem;color:var(--accent,#70d0ff);border:1px solid rgba(0,229,255,.35);border-radius:var(--r-sm,6px);padding:.25rem .55rem;text-decoration:none;transition:background .12s;}
 .afs-linkchip:hover{background:rgba(0,229,255,.08);}
 .afs-ratings{display:flex;gap:.9rem;flex-wrap:wrap;}
 .afs-rating{display:flex;align-items:center;gap:.45rem;font-size:.8rem;color:var(--muted,#97a8c4);}
-.afs-rating__stars{font-size:1.1rem;line-height:1;letter-spacing:.1rem;color:var(--accent,#00e5ff);}
+.afs-rating__stars{font-size:1.1rem;line-height:1;letter-spacing:.1rem;color:var(--accent,#70d0ff);}
 .afs-rating--investment .afs-rating__stars{color:var(--accent-2,#ff3fb8);}
 
 .afs-detail-grid{display:grid;grid-template-columns:1fr 26rem;gap:1.5rem;align-items:start;}
@@ -783,7 +783,7 @@ export function generateAtlasFarmingStrategies(_attrs: Record<string, string>, n
 
 .afs-callouts{display:flex;flex-direction:column;gap:.5rem;}
 .afs-callout{background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.25);border-radius:var(--r-sm,6px);padding:.55rem .7rem;font-size:.82rem;line-height:1.45;color:var(--text,#e8f3ff);}
-.afs-callout__label{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.06rem;color:var(--accent,#00e5ff);margin-bottom:.15rem;}
+.afs-callout__label{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.06rem;color:var(--accent,#70d0ff);margin-bottom:.15rem;}
 .afs-callout--rarity{background:rgba(168,255,96,.06);border-color:rgba(168,255,96,.3);}
 .afs-callout--rarity .afs-callout__label{color:#a8ff60;}
 
@@ -792,7 +792,7 @@ export function generateAtlasFarmingStrategies(_attrs: Record<string, string>, n
 
 .afs-tablets{display:grid;grid-template-columns:repeat(auto-fill,minmax(11rem,1fr));gap:.4rem;}
 .afs-tablet{position:relative;background:rgba(255,255,255,.03);border:1px solid var(--line,#1f2b46);border-radius:var(--r-sm,6px);padding:.5rem .6rem;font-size:.78rem;line-height:1.4;color:var(--text,#e8f3ff);}
-.afs-tablet__count{position:absolute;top:.35rem;right:.5rem;font-size:.7rem;font-weight:700;color:var(--accent,#00e5ff);}
+.afs-tablet__count{position:absolute;top:.35rem;right:.5rem;font-size:.7rem;font-weight:700;color:var(--accent,#70d0ff);}
 
 .afs-steps{display:flex;flex-direction:column;gap:.5rem;}
 .afs-step{background:rgba(255,255,255,.03);border:1px solid var(--line,#1f2b46);border-radius:var(--r-sm,6px);padding:.55rem .7rem;}
@@ -802,15 +802,15 @@ export function generateAtlasFarmingStrategies(_attrs: Record<string, string>, n
 
 .afs-notes{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.4rem;}
 .afs-note{font-size:.83rem;line-height:1.5;color:var(--text,#e8f3ff);padding-left:1rem;position:relative;}
-.afs-note::before{content:"•";position:absolute;left:0;color:var(--accent,#00e5ff);}
-.afs-note a{color:var(--accent,#00e5ff);}
+.afs-note::before{content:"•";position:absolute;left:0;color:var(--accent,#70d0ff);}
+.afs-note a{color:var(--accent,#70d0ff);}
 
 .afs-empty{font-size:.85rem;color:var(--muted,#97a8c4);font-style:italic;padding:.4rem 0;}
 
 .afs-meta{display:flex;justify-content:space-between;align-items:center;margin:1rem 0 0;font-size:.75rem;gap:1rem;flex-wrap:wrap;}
 .afs-credit{color:var(--muted,#97a8c4);}
 .afs-credit a{color:var(--muted,#97a8c4);text-decoration:none;}
-.afs-credit a:hover{color:var(--accent,#00e5ff);}
+.afs-credit a:hover{color:var(--accent,#70d0ff);}
 
 @media(max-width:640px){
   .afs-tierrow{flex-direction:column;}

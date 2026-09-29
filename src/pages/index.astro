@@ -7,15 +7,17 @@ import { getPublishedContentByType, excerptFromMarkdown } from "../lib/content";
 const rawPosts = await getPublishedContentByType(Astro.locals, "post", 8);
 const posts = rawPosts.map((post) => {
 	const date = post.publishedAt ?? post.createdAt;
-	const excerpt = excerptFromMarkdown(post.markdown, 300);
-	const truncated = excerpt.endsWith("…");
 	return {
 		...post,
-		excerpt,
-		truncated,
+		excerpt: excerptFromMarkdown(post.markdown, 300),
+		dateIso: new Date(date).toISOString(),
 		dateLabel: new Date(date).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
 	};
 });
+// The newest post leads the page; the rest form the feed below it.
+const lead = posts[0];
+const leadExcerpt = lead ? excerptFromMarkdown(lead.markdown, 200) : "";
+const feedPosts = posts.slice(1);
 
 const profiles = [
 	{
@@ -63,17 +65,34 @@ const profiles = [
 
 
 <BaseLayout title="Orboro.net" description="Latest posts and gamer profiles from Orboro.net.">
+	{lead && (
+		<article slot="headerFeature" class="lead" aria-labelledby="lead-title">
+			<div class="lead__body">
+				<p class="lead__date"><time datetime={lead.dateIso}>{lead.dateLabel}</time></p>
+				<h1 id="lead-title" class="lead__title"><a href={`/blog/${lead.slug}`}>{lead.title}</a></h1>
+				{leadExcerpt && <p class="lead__excerpt">{leadExcerpt}</p>}
+				<a class="lead__cta" href={`/blog/${lead.slug}`}>Read the post</a>
+			</div>
+			{lead.featuredImageUrl && (
+				<a class="lead__art" href={`/blog/${lead.slug}`} tabindex="-1" aria-hidden="true">
+					<img src={lead.featuredImageUrl} alt="" fetchpriority="high" />
+				</a>
+			)}
+		</article>
+	)}
 	<div class="home-layout">
-		<section class="feed-section">
+		<section class="feed-section" aria-labelledby="feed-title">
 			<div class="feed-header">
-				<h2>Latest Posts</h2>
-				<Button href="/blog" variant="tertiary" icon="chevron-right" iconPosition="right">View all posts</Button>
+				<h2 id="feed-title">More posts</h2>
+				<Button href="/blog" variant="tertiary" size="sm">All posts</Button>
 			</div>
 			{posts.length === 0 ? (
 				<p class="empty-note">No posts published yet.</p>
+			) : feedPosts.length === 0 ? (
+				<p class="empty-note">More posts coming soon.</p>
 			) : (
 				<div class="feed-list" id="home-feed">
-					{posts.map((post) => (
+					{feedPosts.map((post) => (
 						<article class="feed-item">
 							{post.featuredImageUrl && (
 								<a class="feed-item__thumb" href={`/blog/${post.slug}`} tabindex="-1" aria-hidden="true">
@@ -81,12 +100,9 @@ const profiles = [
 								</a>
 							)}
 							<div class="feed-item__body">
-								<p class="feed-item__date">{post.dateLabel}</p>
 								<h3 class="feed-item__title"><a href={`/blog/${post.slug}`}>{post.title}</a></h3>
+								<p class="feed-item__date"><time datetime={post.dateIso}>{post.dateLabel}</time></p>
 								{post.excerpt && <p class="feed-item__excerpt">{post.excerpt}</p>}
-								{post.truncated && (
-									<a class="feed-item__more" href={`/blog/${post.slug}`}>Read full post</a>
-								)}
 							</div>
 						</article>
 					))}
@@ -94,61 +110,148 @@ const profiles = [
 			)}
 		</section>
 
-		<div class="side-column">
-			<aside class="profiles-column">
-				<h2>Find Me Elsewhere</h2>
-				<div class="profiles-list">
-					{profiles.map((profile) => {
-						const Tag = profile.url ? "a" : "div";
-						const linkProps = profile.url ? { href: profile.url, target: "_blank", rel: "noopener noreferrer" } : {};
-						return (
+		<aside class="profiles" aria-labelledby="profiles-title">
+			<h2 id="profiles-title">Find me elsewhere</h2>
+			<ul class="profiles-list">
+				{profiles.map((profile) => {
+					const Tag = profile.url ? "a" : "div";
+					const linkProps = profile.url ? { href: profile.url, target: "_blank", rel: "noopener noreferrer" } : {};
+					return (
+						<li>
 							<Tag class="profile-row" {...linkProps}>
-								<Icon name={profile.icon} size={20} filled={true} />
-								<span class="profile-row__text">
-									<strong>{profile.platform}</strong>
-									<span>{profile.handle}</span>
-								</span>
-								{profile.url && <Icon name="external-link" size={14} class="profile-row__external" />}
+								<Icon name={profile.icon} size={18} filled={true} />
+								<span class="profile-row__platform">{profile.platform}</span>
+								<span class="profile-row__handle">{profile.handle}</span>
+								{profile.url && <Icon name="external-link" size={13} class="profile-row__external" />}
 							</Tag>
-						);
-					})}
-				</div>
-			</aside>
-
-		</div>
+						</li>
+					);
+				})}
+			</ul>
+		</aside>
 	</div>
 </BaseLayout>
 
 <style>
-	.home-layout {
+	/* ── Lead post ─────────────────────────────
+	   The one loud element on the page: the newest post's headline, set
+	   large beside its header art. Everything below stays quiet. */
+	.lead {
 		display: grid;
-		grid-template-columns: 2fr 1fr;
-		gap: 2.5rem;
-		align-items: start;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+		margin-bottom: 1.2rem;
+		background: var(--surface);
+		border: 1px solid var(--line);
+		border-radius: var(--r-lg,16px);
+		overflow: hidden;
 	}
 
-	.side-column {
+	.lead__body {
 		display: flex;
 		flex-direction: column;
-		gap: 2.5rem;
+		justify-content: center;
+		align-items: flex-start;
+		padding: clamp(1.75rem, 3.5vw, 3.25rem);
+	}
+
+	.lead__date {
+		margin: 0 0 1rem;
+		color: var(--muted);
+		font-size: 0.95rem;
+		font-weight: 500;
+	}
+
+	.lead__title {
+		margin: 0;
+		font-size: clamp(1.85rem, 1.1rem + 2.4vw, 3.3rem);
+		font-weight: 850;
+		line-height: 1.04;
+		letter-spacing: -0.03em;
+	}
+
+	.lead__title a {
+		color: var(--text);
+		text-decoration: none;
+		transition: color 0.2s ease;
+	}
+
+	.lead__title a:hover {
+		color: var(--accent);
+	}
+
+	.lead__excerpt {
+		max-width: 34rem;
+		margin: 1.25rem 0 0;
+		color: var(--muted);
+		font-family: var(--font-read);
+		font-size: 1.125rem;
+		line-height: 1.6;
+	}
+
+	.lead__cta {
+		margin-top: 1.75rem;
+		padding: 0.65rem 1.2rem;
+		border-radius: var(--r-md,10px);
+		background: var(--accent);
+		color: var(--bg);
+		font-weight: 650;
+		text-decoration: none;
+		transition: background 0.2s ease;
+	}
+
+	.lead__cta:hover {
+		background: #a3e1ff;
+	}
+
+	.lead__art {
+		display: block;
+		min-height: 22rem;
+		border-left: 1px solid var(--line);
+	}
+
+	.lead__art img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	@media (max-width: 900px) {
+		.lead {
+			grid-template-columns: 1fr;
+		}
+
+		/* Art first on narrow screens so the headline isn't pushed below a
+		   screen-height image; order keeps the DOM reading order intact. */
+		.lead__art {
+			order: -1;
+			min-height: 0;
+			aspect-ratio: 16 / 9;
+			border-left: 0;
+			border-bottom: 1px solid var(--line);
+		}
+	}
+
+	/* ── Feed + profiles ─────────────────────── */
+	.home-layout {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 17rem;
+		gap: 3.5rem;
+		align-items: start;
 	}
 
 	.feed-header {
 		display: flex;
 		justify-content: space-between;
-		align-items: center;
+		align-items: baseline;
 		gap: 1rem;
-		margin-bottom: 1.25rem;
+		margin-bottom: 0.5rem;
 	}
 
 	.feed-header h2,
-	.profiles-column h2 {
+	.profiles h2 {
 		margin: 0;
-		font-size: 1.3rem;
-	}
-
-	.profiles-column h2 {
-		margin-bottom: 1.25rem;
+		font-size: 1.25rem;
 	}
 
 	.empty-note {
@@ -162,29 +265,28 @@ const profiles = [
 
 	.feed-item {
 		display: flex;
-		gap: 1rem;
-		padding: 1.1rem 0;
+		gap: 1.25rem;
+		padding: 1.4rem 0;
 		border-bottom: 1px solid var(--line);
-	}
-
-	.feed-item:first-child {
-		padding-top: 0;
 	}
 
 	.feed-item:last-child {
 		border-bottom: none;
+		padding-bottom: 0;
 	}
 
 	.feed-item__thumb {
 		flex-shrink: 0;
+		align-self: flex-start;
 		display: block;
-		width: 120px;
-		height: 90px;
+		width: 10rem;
+		aspect-ratio: 16 / 10;
 		border-radius: var(--r-md,10px);
 		overflow: hidden;
 	}
 
 	.feed-item__thumb img {
+		display: block;
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
@@ -193,25 +295,14 @@ const profiles = [
 	.feed-item__body {
 		min-width: 0;
 		flex: 1;
-	}
-
-	@media (max-width: 480px) {
-		.feed-item__thumb {
-			width: 84px;
-			height: 84px;
-		}
-	}
-
-	.feed-item__date {
-		margin: 0 0 0.3rem;
-		font-size: 0.8rem;
-		color: var(--muted);
+		max-width: var(--measure);
 	}
 
 	.feed-item__title {
-		margin: 0 0 0.4rem;
-		font-size: 1.1rem;
-		font-weight: 600;
+		margin: 0 0 0.3rem;
+		font-size: 1.25rem;
+		font-weight: 700;
+		line-height: 1.25;
 	}
 
 	.feed-item__title a {
@@ -224,115 +315,113 @@ const profiles = [
 		color: var(--accent);
 	}
 
-	.feed-item__excerpt {
-		margin: 0;
-		font-size: 0.92rem;
+	.feed-item__date {
+		margin: 0 0 0.6rem;
+		font-size: 0.875rem;
 		color: var(--muted);
-		line-height: 1.5;
 	}
 
-	.feed-item__more {
-		display: inline-block;
-		margin-top: 0.75rem;
-		padding: 0.4rem 0.9rem;
-		border: 1px solid var(--line);
-		border-radius: var(--r-md,10px);
-		background: var(--surface);
-		color: var(--accent);
-		font-family: inherit;
-		font-size: 0.85rem;
-		font-weight: 500;
-		text-decoration: none;
-		transition: border-color 0.2s ease, background 0.2s ease;
+	.feed-item__excerpt {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 3;
+		line-clamp: 3;
+		overflow: hidden;
+		margin: 0;
+		color: var(--muted);
+		font-family: var(--font-read);
+		font-size: 1rem;
+		line-height: 1.6;
 	}
 
-	.feed-item__more:hover {
-		border-color: var(--accent);
-		background: rgb(0 229 255 / 8%);
+	.profiles h2 {
+		margin-bottom: 0.75rem;
 	}
 
 	.profiles-list {
-		display: flex;
-		flex-direction: column;
-		gap: 0.6rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.profiles-list li {
+		margin: 0;
+		border-bottom: 1px solid var(--line);
+	}
+
+	.profiles-list li:last-child {
+		border-bottom: none;
 	}
 
 	.profile-row {
 		display: flex;
 		align-items: center;
-		gap: 0.75rem;
-		padding: 0.6rem 0.75rem;
-		background: linear-gradient(160deg, rgb(12 19 36 / 60%) 0%, rgb(17 26 48 / 60%) 100%);
-		border: 1px solid var(--line);
-		border-radius: var(--r-md,10px);
-		color: inherit;
+		gap: 0.7rem;
+		padding: 0.7rem 0.25rem;
+		color: var(--text);
+		font-size: 0.95rem;
 		text-decoration: none;
-		transition: border-color 0.2s ease, box-shadow 0.2s ease;
-	}
-
-	a.profile-row:hover {
-		border-color: var(--accent);
-		box-shadow: 0 0 0.8rem rgb(0 229 255 / 15%);
+		transition: color 0.2s ease;
 	}
 
 	.profile-row :global(svg) {
 		flex-shrink: 0;
-		color: var(--accent);
-	}
-
-	.profile-row :global(.profile-row__external) {
-		margin-left: auto;
 		color: var(--muted);
 		transition: color 0.2s ease;
 	}
 
-	a.profile-row:hover :global(.profile-row__external) {
+	a.profile-row:hover,
+	a.profile-row:hover :global(svg) {
 		color: var(--accent);
 	}
 
-	.profile-row__text {
-		display: flex;
-		flex-direction: column;
-		gap: 0.1rem;
+	.profile-row__platform {
+		font-weight: 600;
+	}
+
+	.profile-row__handle {
 		min-width: 0;
-		font-size: 0.85rem;
-	}
-
-	.profile-row__text strong {
-		font-size: 0.9rem;
-		color: var(--text);
-	}
-
-	.profile-row__text span {
-		color: var(--muted);
-		font-family: "JetBrains Mono", Consolas, monospace;
-		font-size: 0.8rem;
+		margin-left: auto;
 		overflow: hidden;
+		color: var(--muted);
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
 
-	@media (max-width: 1150px) {
+	.profile-row :global(.profile-row__external) {
+		margin-left: -0.3rem;
+	}
+
+	@media (max-width: 1100px) {
 		.home-layout {
 			grid-template-columns: 1fr;
+			gap: 2.5rem;
 		}
-	}
 
-	@media (max-width: 700px) {
 		.profiles-list {
-			flex-direction: row;
-			flex-wrap: wrap;
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+			column-gap: 2rem;
 		}
 
-		.profile-row {
-			flex: 1 1 calc(50% - 0.3rem);
-			min-width: 200px;
+		.profiles-list li:last-child {
+			border-bottom: 1px solid var(--line);
 		}
 	}
 
-	@media (max-width: 480px) {
-		.profile-row {
-			flex: 1 1 100%;
+	@media (max-width: 560px) {
+		.feed-item {
+			gap: 1rem;
+		}
+
+		.feed-item__thumb {
+			width: 5.5rem;
+			aspect-ratio: 1;
+		}
+
+		.feed-item__excerpt {
+			-webkit-line-clamp: 2;
+			line-clamp: 2;
 		}
 	}
 </style>

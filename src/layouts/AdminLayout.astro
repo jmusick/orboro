@@ -41,9 +41,9 @@ const navActive = currentPath.startsWith('/admin/nav');
         border-radius: 6px !important;
       }
       .editor-toolbar button:hover, .editor-toolbar button.active {
-        background: rgb(0 229 255 / 10%) !important;
-        border-color: #00e5ff !important;
-        color: #00e5ff !important;
+        background: rgb(112 208 255 / 10%) !important;
+        border-color: #70d0ff !important;
+        color: #70d0ff !important;
       }
       .editor-toolbar i.separator { border-right-color: #1f2b46 !important; }
       .editor-preview, .editor-preview-side {
@@ -77,11 +77,11 @@ const navActive = currentPath.startsWith('/admin/nav');
         color: #4a5e80;
       }
       .cm-s-orboro .CodeMirror-cursor,
-      .EasyMDEContainer .CodeMirror-cursor { border-left: 2px solid #00e5ff !important; }
+      .EasyMDEContainer .CodeMirror-cursor { border-left: 2px solid #70d0ff !important; }
       .cm-s-orboro .CodeMirror-selected,
       .EasyMDEContainer .CodeMirror-selected { background: rgba(0,229,255,0.12) !important; }
       .cm-s-orboro .cm-header,
-      .EasyMDEContainer .cm-header { color: #00e5ff !important; font-weight: 700; }
+      .EasyMDEContainer .cm-header { color: #70d0ff !important; font-weight: 700; }
       .cm-s-orboro .cm-strong,
       .EasyMDEContainer .cm-strong { color: #e8f3ff !important; font-weight: 700; }
       .cm-s-orboro .cm-em,
@@ -89,7 +89,7 @@ const navActive = currentPath.startsWith('/admin/nav');
       .cm-s-orboro .cm-strikethrough,
       .EasyMDEContainer .cm-strikethrough { color: #97a8c4 !important; }
       .cm-s-orboro .cm-link,
-      .EasyMDEContainer .cm-link { color: #00e5ff !important; }
+      .EasyMDEContainer .cm-link { color: #70d0ff !important; }
       .cm-s-orboro .cm-url,
       .EasyMDEContainer .cm-url { color: #a8ff60 !important; }
       .cm-s-orboro .cm-quote,
@@ -102,7 +102,7 @@ const navActive = currentPath.startsWith('/admin/nav');
         --surface-2: #111a30;
         --text: #e8f3ff;
         --muted: #97a8c4;
-        --accent: #00e5ff;
+        --accent: #70d0ff;
         --accent-2: #ff3fb8;
         --accent-3: #a8ff60;
         --line: #1f2b46;
@@ -113,7 +113,7 @@ const navActive = currentPath.startsWith('/admin/nav');
         font-family: "Space Grotesk", "Segoe UI", sans-serif;
         color: var(--text);
         background:
-          radial-gradient(circle at 15% 10%, rgb(0 229 255 / 14%) 0%, transparent 32%),
+          radial-gradient(circle at 15% 10%, rgb(112 208 255 / 14%) 0%, transparent 32%),
           radial-gradient(circle at 85% 15%, rgb(255 63 184 / 12%) 0%, transparent 28%),
           radial-gradient(circle at 50% 95%, rgb(168 255 96 / 10%) 0%, transparent 38%),
           var(--bg);
@@ -170,8 +170,8 @@ const navActive = currentPath.startsWith('/admin/nav');
         justify-content: center;
         width: 40px;
         height: 40px;
-        background: linear-gradient(135deg, rgb(0 229 255 / 25%) 0%, rgb(255 63 184 / 15%) 100%);
-        border: 1px solid rgb(0 229 255 / 30%);
+        background: linear-gradient(135deg, rgb(112 208 255 / 25%) 0%, rgb(255 63 184 / 15%) 100%);
+        border: 1px solid rgb(112 208 255 / 30%);
         border-radius: 50%;
         color: var(--accent);
       }
@@ -191,12 +191,12 @@ const navActive = currentPath.startsWith('/admin/nav');
         font-weight: 500;
         transition: all 0.2s ease;
       }
-      .nav-link:hover { color: var(--accent); border-color: var(--accent); background: rgb(0 229 255 / 5%); }
+      .nav-link:hover { color: var(--accent); border-color: var(--accent); background: rgb(112 208 255 / 5%); }
       .nav-link.active {
         color: var(--accent);
-        background: linear-gradient(90deg, rgb(0 229 255 / 15%) 0%, rgb(0 229 255 / 5%) 100%);
+        background: linear-gradient(90deg, rgb(112 208 255 / 15%) 0%, rgb(112 208 255 / 5%) 100%);
         border-color: var(--accent);
-        box-shadow: 0 0 0.8rem rgb(0 229 255 / 15%);
+        box-shadow: 0 0 0.8rem rgb(112 208 255 / 15%);
       }
       .sidebar-footer { padding-top: 1rem; border-top: 1px solid var(--line); }
       .logout-form { width: 100%; }

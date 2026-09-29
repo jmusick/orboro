@@ -151,7 +151,7 @@ export function generateHiddenLodgeFeature(_attrs: Record<string, string>, nonce
 
 #hl-root h2.hl-title{margin:0 0 .3rem;padding:0;border:0;font-size:1.3rem;font-weight:700;color:var(--text,#e8f3ff);}
 
-#hl-root p.hl-tagline{margin:0 0 1rem;font-size:.85rem;font-style:italic;color:var(--accent,#00e5ff);}
+#hl-root p.hl-tagline{margin:0 0 1rem;font-size:.85rem;font-style:italic;color:var(--accent,#70d0ff);}
 
 #hl-root p.hl-desc{margin:0 0 1.1rem;line-height:1.7;color:var(--text,#e8f3ff);}
 
@@ -159,8 +159,8 @@ export function generateHiddenLodgeFeature(_attrs: Record<string, string>, nonce
 #hl-root li.hl-fact{display:flex;align-items:baseline;gap:.4rem;margin:0;padding:.4rem .8rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-pill,999px);font-size:.8rem;color:var(--muted,#97a8c4);}
 .hl-fact strong{color:var(--text,#e8f3ff);font-weight:600;}
 
-#hl-root a.hl-cta{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.2rem;border:1px solid var(--accent,#00e5ff);border-radius:var(--r-md,10px);color:var(--accent,#00e5ff);text-decoration:none;font-weight:600;font-size:.9rem;transition:background .18s ease,box-shadow .18s ease;}
-#hl-root a.hl-cta:hover{background:rgb(0 229 255 / 10%);box-shadow:0 0 .8rem rgb(0 229 255 / 15%);text-decoration:none;}
+#hl-root a.hl-cta{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.2rem;border:1px solid var(--accent,#70d0ff);border-radius:var(--r-md,10px);color:var(--accent,#70d0ff);text-decoration:none;font-weight:600;font-size:.9rem;transition:background .18s ease,box-shadow .18s ease;}
+#hl-root a.hl-cta:hover{background:rgb(112 208 255 / 10%);box-shadow:0 0 .8rem rgb(112 208 255 / 15%);text-decoration:none;}
 `;
 
   const factsHtml = HIDDEN_LODGE_FACTS

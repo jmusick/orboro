@@ -1,7 +1,8 @@
 ---
 import { marked } from "marked";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getPublishedBySlugAndType } from "../../lib/content";
+import BlogSidebar from "../../components/BlogSidebar.astro";
+import { getPublishedBySlugAndType, getPublishedContentByType, listCategoriesWithPostCounts } from "../../lib/content";
 import { processShortcodes } from "../../lib/shortcodes";
 
 const { slug } = Astro.params;
@@ -36,22 +37,61 @@ function descriptionFromMarkdown(md: string, maxLen = 155): string {
 
 const description = descriptionFromMarkdown(page.markdown) || `${page.title} on Orboro.net.`;
 
+// Shortcode widgets (cheat sheets, explorers) need the whole panel. A page
+// that is only prose would leave most of the panel empty beside its capped
+// text column, so it gets the blog sidebar instead, like a post.
+const hasWidgets = /\{\{\w+/.test(page.markdown);
+const [categories, recentPosts] = hasWidgets
+  ? [[], []]
+  : await Promise.all([
+      listCategoriesWithPostCounts(Astro.locals),
+      getPublishedContentByType(Astro.locals, "post", 5).then((posts) =>
+        posts.map((p) => ({
+          slug: p.slug,
+          title: p.title,
+          dateLabel: new Date(p.publishedAt ?? p.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
+        })),
+      ),
+    ]);
+
 const BASE = (Astro.site ?? new URL("https://orboro.net")).origin;
 const absoluteImageUrl = page.featuredImageUrl ? new URL(page.featuredImageUrl, BASE).href : undefined;
 ---
 
 <BaseLayout title={`${page.title} | Orboro.net`} description={description} ogType="article" ogImage={absoluteImageUrl}>
-  <article class="page-content">
-    <h1>{page.title}</h1>
-    <p class="meta">Updated {updated}</p>
-    {page.featuredImageUrl && (
-      <img class="hero" src={page.featuredImageUrl} alt="" />
-    )}
-    <div class="prose" set:html={html} />
-  </article>
+  <div class:list={["page-layout", !hasWidgets && "page-layout--sidebar"]}>
+    <article class="page-content">
+      <h1>{page.title}</h1>
+      <p class="meta">Updated {updated}</p>
+      {page.featuredImageUrl && (
+        <img class="hero" src={page.featuredImageUrl} alt="" />
+      )}
+      <div class="prose" set:html={html} />
+    </article>
+    {!hasWidgets && <BlogSidebar categories={categories} recentPosts={recentPosts} />}
+  </div>
 </BaseLayout>
 
 <style>
+  /* Same columns as a blog post, so text pages and posts line up. */
+  .page-layout--sidebar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .page-layout--sidebar :global(aside.blog-sidebar) {
+    position: sticky;
+    top: 1.5rem;
+  }
+
+  @media (max-width: 900px) {
+    .page-layout--sidebar {
+      grid-template-columns: 1fr;
+    }
+  }
+
   .meta {
     color: var(--muted);
     font-size: 0.9rem;

@@ -67,7 +67,7 @@ export function generateExpeditionRumourSheet(_attrs: Record<string, string>, no
 .ers-filter-row{display:flex;gap:.4rem;margin-bottom:.6rem;}
 #ers-filter{flex:1;background:var(--surface,#0c1324);border:1px solid var(--line,#1f2b46);border-radius:var(--r-sm,6px);padding:.45rem .75rem;color:var(--text,#e8f3ff);font:inherit;font-size:.85rem;outline:none;transition:border-color .12s;}
 #ers-filter::placeholder{color:var(--muted,#97a8c4);}
-#ers-filter:focus{border-color:var(--accent,#00e5ff);}
+#ers-filter:focus{border-color:var(--accent,#70d0ff);}
 #ers-filter-clear{background:transparent;border:1px solid var(--line,#1f2b46);color:var(--muted,#97a8c4);padding:.45rem .65rem;border-radius:var(--r-sm,6px);cursor:pointer;font:inherit;font-size:.85rem;line-height:1;transition:color .12s,border-color .12s;display:none;}
 #ers-filter-clear.visible{display:block;}
 #ers-filter-clear:hover{color:var(--text,#e8f3ff);border-color:var(--muted,#97a8c4);}
@@ -76,8 +76,8 @@ export function generateExpeditionRumourSheet(_attrs: Record<string, string>, no
 .ers-card.ers-hidden{display:none;}
 
 .ers-card{display:flex;flex-direction:column;gap:.15rem;padding:.5rem .65rem;background:var(--surface,#0c1324);border:1px solid var(--line,#1f2b46);border-radius:var(--r-sm,6px);cursor:pointer;text-align:left;transition:border-color .12s,background .12s,box-shadow .12s;font:inherit;color:inherit;width:100%;}
-.ers-card:hover{border-color:var(--accent,#00e5ff);background:rgba(0,229,255,.05);}
-.ers-card[aria-pressed="true"]{border-color:var(--accent,#00e5ff);background:rgba(0,229,255,.1);box-shadow:0 0 0 1px var(--accent,#00e5ff);}
+.ers-card:hover{border-color:var(--accent,#70d0ff);background:rgba(0,229,255,.05);}
+.ers-card[aria-pressed="true"]{border-color:var(--accent,#70d0ff);background:rgba(0,229,255,.1);box-shadow:0 0 0 1px var(--accent,#70d0ff);}
 .ers-card--warn{border-color:rgba(255,96,128,.25);}
 .ers-card--warn:hover{border-color:#ff6080;background:rgba(255,60,128,.05);}
 .ers-card--warn[aria-pressed="true"]{border-color:#ff6080;background:rgba(255,60,128,.1);box-shadow:0 0 0 1px #ff6080;}
@@ -105,7 +105,7 @@ export function generateExpeditionRumourSheet(_attrs: Record<string, string>, no
 .ers-meta{display:flex;justify-content:space-between;align-items:center;margin:.75rem 0 0;font-size:.75rem;gap:1rem;}
 .ers-credit{color:var(--muted,#97a8c4);}
 .ers-credit a,.ers-report-link{color:var(--muted,#97a8c4);text-decoration:none;}
-.ers-credit a:hover,.ers-report-link:hover{color:var(--accent,#00e5ff);}
+.ers-credit a:hover,.ers-report-link:hover{color:var(--accent,#70d0ff);}
 
 @media(max-width:600px){.ers-grid{grid-template-columns:repeat(2,1fr);}}
   `.trim();

@@ -92,11 +92,14 @@ const structuredData = {
   <div class="post-layout">
     <article>
       <h1>{post.title}</h1>
-      <p class="meta">By JD · Updated {updated} · {readingMinutes} min read</p>
+      <p class="meta">
+        <span>By JD</span>
+        <span>Updated <time datetime={updatedIso}>{updated}</time></span>
+        <span>{readingMinutes} min read</span>
+      </p>
       {post.featuredImageUrl && (
         <img class="hero" src={post.featuredImageUrl} alt="" />
       )}
-      <hr />
       <div class="prose" set:html={html} />
 
       {postCategories.length > 0 && (
@@ -141,19 +144,28 @@ const structuredData = {
     top: 1.5rem;
   }
 
+  article > h1 {
+    max-width: 22ch;
+    font-size: clamp(2rem, 1.3rem + 2vw, 3rem);
+    letter-spacing: -0.025em;
+  }
+
   .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.5rem;
     color: var(--muted);
-    font-size: 0.9rem;
-    margin: -0.5rem 0 1.5rem;
+    font-size: 0.95rem;
+    margin: 0 0 1.75rem;
   }
 
   .hero {
     display: block;
     width: 100%;
-    max-height: 360px;
+    max-height: 380px;
     object-fit: cover;
     border-radius: var(--r-md,10px);
-    margin-bottom: 1.5rem;
+    margin-bottom: 2.25rem;
   }
 
   .tags {
@@ -169,7 +181,7 @@ const structuredData = {
     padding: 0.35rem 0.85rem;
     border: 1px solid var(--line);
     border-radius: var(--r-pill,999px);
-    background: rgb(0 229 255 / 8%);
+    background: rgb(112 208 255 / 8%);
     color: var(--accent);
     text-decoration: none;
     font-size: 0.82rem;
@@ -179,7 +191,7 @@ const structuredData = {
 
   .tag:hover {
     border-color: var(--accent);
-    background: rgb(0 229 255 / 15%);
+    background: rgb(112 208 255 / 15%);
   }
 
   .post-nav {
@@ -196,16 +208,15 @@ const structuredData = {
     padding: 1rem 1.1rem;
     border: 1px solid var(--line);
     border-radius: var(--r-md,10px);
-    background: linear-gradient(160deg, rgb(12 19 36 / 60%) 0%, rgb(17 26 48 / 60%) 100%);
+    background: var(--surface-2);
     text-decoration: none;
     color: var(--text);
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color 0.2s ease;
     min-width: 0;
   }
 
   .post-nav__link:hover {
     border-color: var(--accent);
-    box-shadow: 0 0 0.8rem rgb(0 229 255 / 15%);
   }
 
   .post-nav__link--newer {

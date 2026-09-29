@@ -3,6 +3,10 @@ import Footer from "../components/Footer.astro";
 import Icon from "../components/Icon.astro";
 import { listNavItems } from "../lib/content";
 import { ClientRouter } from "astro:transitions";
+// Self-hosted so the CSP's `font-src 'self'` holds — no Google Fonts request.
+import "@fontsource-variable/schibsted-grotesk";
+import "@fontsource-variable/source-serif-4/opsz.css";
+import "@fontsource-variable/source-serif-4/opsz-italic.css";
 
 interface Props {
   title: string;
@@ -110,15 +114,22 @@ function nodeIcon(node: NavNode): string {
     <ClientRouter />
     <style is:global>
       :root {
-        --bg: #05070f;
-        --surface: #0c1324;
-        --surface-2: #111a30;
-        --text: #e8f3ff;
-        --muted: #97a8c4;
-        --accent: #00e5ff;
+        /* Palette is lifted from the brand, not picked fresh: --accent is the
+           logo's orb blue, --bg/--surface the indigo of the header artwork.
+           --accent-2/-3 survive only for status pills; keep them out of chrome. */
+        --bg: #080b18;
+        --surface: #0e1428;
+        --surface-2: #131a33;
+        --text: #e9eef9;
+        --muted: #98a3bf;
+        --accent: #70d0ff;
         --accent-2: #ff3fb8;
         --accent-3: #a8ff60;
-        --line: #1f2b46;
+        --line: #222c4a;
+
+        --font-ui: "Schibsted Grotesk Variable", "Segoe UI", system-ui, sans-serif;
+        --font-read: "Source Serif 4 Variable", Georgia, serif;
+        --measure: 42rem;
 
         /* Radius scale. Three tiers plus a pill; see AGENTS.md. Small = inline
            controls (chips, code, favicons, buttons), medium = cards, panels and
@@ -133,16 +144,20 @@ function nodeIcon(node: NavNode): string {
       }
       body {
         margin: 0;
-        font-family: "Space Grotesk", "Segoe UI", sans-serif;
+        font-family: var(--font-ui);
+        font-size: 1.0625rem;
         color: var(--text);
+        /* One faint nebula behind the header, echoing the header art. */
         background:
-          radial-gradient(circle at 15% 10%, rgb(0 229 255 / 14%) 0%, transparent 32%),
-          radial-gradient(circle at 85% 15%, rgb(255 63 184 / 12%) 0%, transparent 28%),
-          radial-gradient(circle at 50% 95%, rgb(168 255 96 / 10%) 0%, transparent 38%),
+          radial-gradient(ellipse 70% 45% at 30% 0%, rgb(76 70 170 / 22%) 0%, transparent 100%),
           var(--bg);
         background-repeat: no-repeat;
-        background-size: 140vw 140vh, 130vw 130vh, 150vw 150vh, auto;
         background-attachment: fixed;
+        -webkit-font-smoothing: antialiased;
+      }
+      :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
       }
       a {
         color: var(--accent);
@@ -249,13 +264,29 @@ function nodeIcon(node: NavNode): string {
       }
       #site-nav a.active {
         color: var(--accent);
-        background: rgb(0 229 255 / 10%);
-        box-shadow: inset 0 0 0 1px rgb(0 229 255 / 20%);
+        background: rgb(112 208 255 / 10%);
       }
       .nav-dropdown-wrapper {
         position: relative;
         display: flex;
         align-items: stretch;
+      }
+      /* A parent link and its caret read as one item: the link gives up its
+         right padding and radius, the caret picks them up, and both share
+         the hover and active fill. */
+      #site-nav .nav-dropdown-wrapper > a {
+        padding-right: 0.2rem;
+        border-radius: var(--r-sm,6px) 0 0 var(--r-sm,6px);
+      }
+      #site-nav .nav-dropdown-wrapper:hover > a,
+      .nav-dropdown-wrapper:hover > .nav-caret {
+        color: var(--text);
+        background: rgb(255 255 255 / 5%);
+      }
+      #site-nav .nav-dropdown-wrapper > a.active,
+      .nav-dropdown-wrapper > a.active + .nav-caret {
+        color: var(--accent);
+        background: rgb(112 208 255 / 10%);
       }
       .nav-dropdown-wrapper > a::after {
         content: none;
@@ -276,37 +307,34 @@ function nodeIcon(node: NavNode): string {
       }
       .nav-caret {
         display: flex;
-        background: rgb(255 255 255 / 5%);
-        border: 1px solid var(--line);
-        border-radius: var(--r-sm,6px);
-        color: var(--accent);
-        cursor: pointer;
         align-items: center;
         justify-content: center;
-        min-width: 2.4rem;
-        padding: 0.4rem 0.6rem;
         flex-shrink: 0;
-        transition: background 0.15s ease, border-color 0.15s ease;
-      }
-      .nav-caret:active {
-        background: rgb(0 229 255 / 12%);
+        min-width: 1.9rem;
+        padding: 0 0.85rem 0 0.35rem;
+        background: transparent;
+        border: 0;
+        border-radius: 0 var(--r-sm,6px) var(--r-sm,6px) 0;
+        color: var(--muted);
+        cursor: pointer;
+        transition: background 0.18s ease, color 0.18s ease;
       }
       .nav-caret[aria-expanded="true"] {
-        background: rgb(0 229 255 / 10%);
-        border-color: rgb(0 229 255 / 35%);
+        color: var(--accent);
       }
+      /* A thin chevron (two borders of a rotated square), pointing down;
+         it flips up while its menu is open. */
       .nav-caret::after {
         content: "";
-        display: inline-block;
-        width: 0;
-        height: 0;
-        border-left: 5px solid transparent;
-        border-right: 5px solid transparent;
-        border-top: 6px solid currentColor;
+        width: 0.4rem;
+        height: 0.4rem;
+        border-right: 1.5px solid currentColor;
+        border-bottom: 1.5px solid currentColor;
+        transform: translateY(-0.12rem) rotate(45deg);
         transition: transform 0.18s ease;
       }
       .nav-caret[aria-expanded="true"]::after {
-        transform: rotate(180deg);
+        transform: translateY(0.12rem) rotate(-135deg);
       }
       .nav-dropdown-wrapper.open > .nav-dropdown,
       .nav-flyout-item.open > .nav-flyout {
@@ -324,12 +352,12 @@ function nodeIcon(node: NavNode): string {
         transition: background 0.15s ease, color 0.15s ease;
       }
       .nav-dropdown a:hover, .nav-dropdown-link:hover {
-        background: rgb(0 229 255 / 10%);
+        background: rgb(112 208 255 / 10%);
         color: var(--accent);
       }
       .nav-dropdown a.active, .nav-dropdown-link.active {
         color: var(--accent);
-        background: rgb(0 229 255 / 10%);
+        background: rgb(112 208 255 / 10%);
       }
       .nav-flyout-item {
         position: relative;
@@ -342,10 +370,26 @@ function nodeIcon(node: NavNode): string {
         flex: 1;
         gap: 0.5rem;
       }
+      .nav-flyout-item > .nav-dropdown-link {
+        padding-right: 0.25rem;
+        border-radius: var(--r-sm,6px) 0 0 var(--r-sm,6px);
+      }
       .nav-flyout-item > .nav-caret {
-        min-width: 2rem;
-        margin: 0.2rem 0.2rem 0.2rem 0;
-        padding: 0.3rem;
+        padding: 0 0.75rem 0 0.4rem;
+      }
+      .nav-flyout-item:hover > .nav-dropdown-link,
+      .nav-flyout-item:hover > .nav-caret {
+        color: var(--accent);
+        background: rgb(112 208 255 / 10%);
+      }
+      /* Flyouts open to the left on desktop, so their chevron points left
+         and flips to point right while open, mirroring the top tier's
+         down/up flip. */
+      .nav-flyout-item > .nav-caret::after {
+        transform: translateX(0.12rem) rotate(135deg);
+      }
+      .nav-flyout-item > .nav-caret[aria-expanded="true"]::after {
+        transform: translateX(-0.12rem) rotate(-45deg);
       }
       .nav-flyout-arrow {
         display: none;
@@ -365,44 +409,17 @@ function nodeIcon(node: NavNode): string {
         z-index: 51;
         box-shadow: 0 8px 24px rgb(0 0 0 / 45%);
       }
-      .header-banner {
-        margin-bottom: 1.2rem;
-        border-radius: var(--r-lg,16px);
-        overflow: hidden;
-        line-height: 0;
-      }
-      .header-banner img {
-        display: block;
-        width: 100%;
-        height: auto;
-        max-height: none;
-        object-fit: contain;
-        border-radius: inherit;
-      }
       main {
-        background: linear-gradient(160deg, rgb(12 19 36 / 94%) 0%, rgb(17 26 48 / 94%) 100%);
+        background: var(--surface);
         border: 1px solid var(--line);
         border-radius: var(--r-lg,16px);
-        box-shadow:
-          0 0 1.2rem rgb(0 229 255 / 14%),
-          0 1.5rem 3rem rgb(0 0 0 / 45%);
         padding: 2rem;
+      }
+      main:focus {
+        outline: none;
       }
       section + section {
         margin-top: 2.5rem;
-      }
-      section {
-        animation: fadeIn 0.4s ease-out;
-      }
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
       }
       footer {
         /* styles moved to Footer.astro */
@@ -422,23 +439,30 @@ function nodeIcon(node: NavNode): string {
       .mono {
         font-family: "JetBrains Mono", Consolas, monospace;
       }
+      /* Type scale: major third (1.25) from the 17px body. */
       h1 {
-        font-size: 2.2rem;
+        font-size: 2.6rem;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        margin: 0 0 1rem;
+        font-weight: 800;
+      }
+      h2 {
+        font-size: 1.66rem;
+        line-height: 1.2;
+        letter-spacing: -0.01em;
         margin: 0 0 1rem;
         font-weight: 700;
       }
-      h2 {
-        font-size: 1.6rem;
-        margin: 0 0 1rem;
-        font-weight: 600;
-      }
       h3 {
-        font-size: 1.2rem;
+        font-size: 1.33rem;
+        line-height: 1.3;
         margin: 0 0 0.75rem;
-        font-weight: 600;
+        font-weight: 650;
       }
       h1, h2, h3 {
-        color: #f4f8ff;
+        color: var(--text);
+        text-wrap: balance;
       }
       p {
         line-height: 1.6;
@@ -492,10 +516,17 @@ function nodeIcon(node: NavNode): string {
           width: auto;
           flex: 1 1 auto;
         }
-        .nav-caret {
-          width: auto;
-          align-self: center;
-          margin: 0.3rem 0.3rem 0.3rem 0;
+        .nav-caret,
+        .nav-flyout-item > .nav-caret {
+          min-width: 2.75rem;
+          padding: 0;
+        }
+        /* Submenus stack below here, so every chevron points down again. */
+        .nav-flyout-item > .nav-caret::after {
+          transform: translateY(-0.12rem) rotate(45deg);
+        }
+        .nav-flyout-item > .nav-caret[aria-expanded="true"]::after {
+          transform: translateY(0.12rem) rotate(-135deg);
         }
         .nav-dropdown,
         .nav-flyout {
@@ -508,17 +539,11 @@ function nodeIcon(node: NavNode): string {
           border: none;
           padding-left: 0.75rem;
         }
-        .header-banner {
-          margin-bottom: 1rem;
-        }
-        .header-banner img {
-          border-radius: inherit;
-        }
         h1 {
-          font-size: 1.8rem;
+          font-size: 2rem;
         }
         h2 {
-          font-size: 1.3rem;
+          font-size: 1.4rem;
         }
       }
 
@@ -526,20 +551,36 @@ function nodeIcon(node: NavNode): string {
       .prose { line-height: 1.7; }
       .prose p { margin: 0 0 1rem; }
 
+      /* Running text gets the serif and a readable measure. Only direct
+         children, so shortcode widgets keep the UI face and full width. */
+      .prose > p,
+      .prose > ul,
+      .prose > ol,
+      .prose > blockquote {
+        font-family: var(--font-read);
+        font-size: 1.125rem;
+        line-height: 1.75;
+        max-width: var(--measure);
+      }
+      .prose > h2,
+      .prose > h3,
+      .prose > h4 {
+        max-width: var(--measure);
+      }
+
       .prose h2 {
-        font-size: 1.3rem;
-        font-weight: 700;
-        color: var(--accent);
-        margin: 2.5rem 0 0.9rem;
-        padding-bottom: 0.4rem;
-        border-bottom: 1px solid var(--line);
+        font-size: 1.5rem;
+        font-weight: 750;
+        letter-spacing: -0.01em;
+        color: var(--text);
+        margin: 2.75rem 0 0.8rem;
         clear: both;
       }
       .prose h3 {
-        font-size: 1.05rem;
+        font-size: 1.2rem;
         font-weight: 700;
         color: var(--text);
-        margin: 1.75rem 0 0.5rem;
+        margin: 2rem 0 0.5rem;
         clear: both;
       }
       .prose h4 {
@@ -562,7 +603,7 @@ function nodeIcon(node: NavNode): string {
         overflow: hidden;
       }
       .prose thead {
-        background: linear-gradient(90deg, rgb(0 229 255 / 8%) 0%, transparent 100%);
+        background: linear-gradient(90deg, rgb(112 208 255 / 8%) 0%, transparent 100%);
       }
       .prose th {
         padding: 0.7rem 1rem;
@@ -578,14 +619,14 @@ function nodeIcon(node: NavNode): string {
         vertical-align: top;
       }
       .prose tr:last-child td { border-bottom: 0; }
-      .prose tbody tr:hover { background: rgb(0 229 255 / 4%); }
+      .prose tbody tr:hover { background: rgb(112 208 255 / 4%); }
 
       .prose blockquote {
         margin: 1.25rem 0;
         padding: 1rem 1.25rem;
-        background: rgb(0 229 255 / 6%);
+        background: rgb(112 208 255 / 6%);
         border-radius: var(--r-md,10px);
-        border: 1px solid rgb(0 229 255 / 18%);
+        border: 1px solid rgb(112 208 255 / 18%);
       }
       .prose blockquote p { margin: 0; line-height: 1.9; }
 
@@ -593,23 +634,39 @@ function nodeIcon(node: NavNode): string {
       .prose li { margin-bottom: 0.35rem; }
       .prose li::marker { color: var(--accent); }
 
-      .prose a { color: #00e5ff; text-decoration: none; }
+      .prose a { color: var(--accent); text-decoration: none; }
       .prose a:hover { text-decoration: underline; }
+      /* In running text a link must not rely on color alone. */
+      .prose > p a,
+      .prose > ul a,
+      .prose > ol a,
+      .prose > blockquote a {
+        text-decoration: underline;
+        text-decoration-color: rgb(112 208 255 / 45%);
+        text-decoration-thickness: 1px;
+        text-underline-offset: 3px;
+      }
+      .prose > p a:hover,
+      .prose > ul a:hover,
+      .prose > ol a:hover,
+      .prose > blockquote a:hover {
+        text-decoration-color: currentColor;
+      }
 
       .prose strong { color: var(--text); font-weight: 600; }
-      .prose em { color: var(--muted); font-style: italic; }
+      .prose em { font-style: italic; }
 
       .prose code {
-        background: #111a30;
-        border: 1px solid #1f2b46;
+        background: var(--surface-2);
+        border: 1px solid var(--line);
         border-radius: var(--r-sm,6px);
         padding: 0.1rem 0.4rem;
         font-size: 0.875em;
         font-family: "JetBrains Mono", Consolas, monospace;
       }
       .prose pre {
-        background: #0c1324;
-        border: 1px solid #1f2b46;
+        background: var(--bg);
+        border: 1px solid var(--line);
         border-radius: var(--r-md,10px);
         padding: 1.25rem 1.5rem;
         overflow-x: auto;
@@ -644,15 +701,14 @@ function nodeIcon(node: NavNode): string {
         flex-direction: column;
         gap: 0.3rem;
         padding: 0.85rem 1rem;
-        background: var(--surface);
+        background: var(--surface-2);
         border: 1px solid var(--line);
         border-top: 2px solid var(--accent);
         border-radius: var(--r-md,10px);
-        transition: box-shadow 0.2s ease, border-color 0.2s ease;
+        transition: border-color 0.2s ease;
       }
       .prose .overview-card:hover {
-        box-shadow: 0 0 1rem rgb(0 229 255 / 10%);
-        border-color: rgb(0 229 255 / 40%);
+        border-color: rgb(112 208 255 / 40%);
         border-top-color: var(--accent);
       }
       .prose .overview-label {
@@ -711,12 +767,12 @@ function nodeIcon(node: NavNode): string {
         border: 1px solid var(--line);
         border-radius: var(--r-md,10px);
         margin: 0.75rem 0;
-        background: var(--surface);
+        background: var(--surface-2);
         overflow: hidden;
-        transition: box-shadow 0.2s ease;
+        transition: border-color 0.2s ease;
       }
       .prose details[open] {
-        box-shadow: 0 0 1rem rgb(0 229 255 / 10%);
+        border-color: rgb(112 208 255 / 30%);
       }
       .prose summary {
         cursor: pointer;
@@ -742,7 +798,7 @@ function nodeIcon(node: NavNode): string {
         display: inline-block;
       }
       .prose details.is-open > summary::before { transform: rotate(90deg); }
-      .prose summary:hover { background: rgb(0 229 255 / 4%); color: var(--accent); }
+      .prose summary:hover { background: rgb(112 208 255 / 4%); color: var(--accent); }
       .prose details > *:not(summary) {
         padding-left: 1.25rem;
         padding-right: 1.25rem;
@@ -758,9 +814,9 @@ function nodeIcon(node: NavNode): string {
         text-align: center;
         font-size: 1.15rem;
         color: var(--accent);
-        background: linear-gradient(135deg, rgb(0 229 255 / 18%) 0%, rgb(0 229 255 / 8%) 100%);
-        box-shadow: inset 0 0 0 1px rgb(0 229 255 / 35%);
-        text-shadow: 0 0 8px rgb(0 229 255 / 70%);
+        background: linear-gradient(135deg, rgb(112 208 255 / 18%) 0%, rgb(112 208 255 / 8%) 100%);
+        box-shadow: inset 0 0 0 1px rgb(112 208 255 / 35%);
+        text-shadow: 0 0 8px rgb(112 208 255 / 70%);
       }
       .prose td[data-node="off"] {
         text-align: center;
@@ -806,14 +862,7 @@ function nodeIcon(node: NavNode): string {
           <a href="https://www.patreon.com/cw/Orboro" target="_blank" rel="noopener noreferrer"><Icon name="patreon" size={15} filled />Support Me</a>
         </nav>
       </header>
-      {pathname === "/" && (
-        <div class="header-banner">
-          <picture>
-            <source srcset="/images/home-header.webp" type="image/webp" />
-            <img src="/images/home-header.png" alt="Orboro.net cosmic header artwork featuring the Orboro character" />
-          </picture>
-        </div>
-      )}
+      <slot name="headerFeature" />
       <main id="main-content" tabindex="-1">
         <slot />
       </main>

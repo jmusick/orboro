@@ -1,8 +1,22 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import BlogSidebar from "../components/BlogSidebar.astro";
+import { getPublishedContentByType, listCategoriesWithPostCounts } from "../lib/content";
+
+// Text-only page: share the blog sidebar so the panel isn't mostly empty.
+const [categories, posts] = await Promise.all([
+  listCategoriesWithPostCounts(Astro.locals),
+  getPublishedContentByType(Astro.locals, "post", 5),
+]);
+const recentPosts = posts.map((p) => ({
+  slug: p.slug,
+  title: p.title,
+  dateLabel: new Date(p.publishedAt ?? p.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
+}));
 ---
 
 <BaseLayout title="Privacy Policy | Orboro.net" description="Privacy policy for Orboro.net">
+  <div class="page-layout">
   <section>
     <h1>Privacy Policy</h1>
     <p class="updated">Last updated: August 2026</p>
@@ -84,9 +98,30 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     <hr />
   </section>
+  <BlogSidebar categories={categories} recentPosts={recentPosts} />
+  </div>
 </BaseLayout>
 
 <style>
+  /* Same columns as a blog post. */
+  .page-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .page-layout :global(aside.blog-sidebar) {
+    position: sticky;
+    top: 1.5rem;
+  }
+
+  @media (max-width: 900px) {
+    .page-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
   section {
     max-width: 720px;
   }
