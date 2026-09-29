@@ -1,5 +1,7 @@
 ---
 import Icon from "../components/Icon.astro";
+// Same self-hosted UI face as the public site (see BaseLayout.astro).
+import "@fontsource-variable/schibsted-grotesk";
 
 interface Props {
   title: string;
@@ -110,7 +112,7 @@ const navActive = currentPath.startsWith('/admin/nav');
       *, *::before, *::after { box-sizing: border-box; }
       body {
         margin: 0;
-        font-family: "Space Grotesk", "Segoe UI", sans-serif;
+        font-family: "Schibsted Grotesk Variable", "Segoe UI", system-ui, sans-serif;
         color: var(--text);
         background:
           radial-gradient(circle at 15% 10%, rgb(112 208 255 / 14%) 0%, transparent 32%),

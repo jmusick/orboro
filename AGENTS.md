@@ -8,7 +8,7 @@ Conventions and gotchas for anyone (human or agent) working on this codebase. Se
 - `wrangler.toml` is the source of truth for bindings and runtime config (D1 `DB`, compatibility date/flags). `main` is `@astrojs/cloudflare/entrypoints/server`; `astro build` writes the real deploy config to `dist/server/wrangler.json` and points `.wrangler/deploy/config.json` at it. Dashboard-only: secrets and the `orboro.net` custom domain.
 - All content (pages, posts, categories, nav) lives in Cloudflare D1, not markdown files in the repo. `src/lib/content.ts` is the data-access layer.
 - Auth is custom (PBKDF2 password hashing, session cookie), not a third-party library. See `src/lib/auth.ts`, `src/middleware.ts`.
-- Styling is hand-written scoped CSS per component using the CSS variables defined in `BaseLayout.astro` (`--bg`, `--surface`, `--text`, `--muted`, `--accent`, `--accent-2`, `--accent-3`, `--line`). No Tailwind, no component library.
+- Styling is hand-written scoped CSS per component using the CSS variables defined in `BaseLayout.astro` (`--bg`, `--surface`, `--surface-2`, `--text`, `--muted`, `--accent`, `--accent-2`, `--accent-3`, `--line`, plus the type and layout tokens described under "Design system"). No Tailwind, no component library.
 
 ## Card accents
 
@@ -29,6 +29,31 @@ border-radius: var(--r-md, 10px);
 Shortcode `<style>` blocks are injected into the page, so they inherit these from `:root` — the fallback is belt-and-braces, matching the `var(--line,#1f2b46)` convention. Before this was consolidated the site used 13 distinct radii for the same handful of jobs (`.ac-stat` 10px, `.m2iu-stat` 9px, `.bml-item` 6px, `.pi-link` 8px), because each widget was styled in isolation. **Don't add a fourth tier** — pick the nearest existing one. Bare values are still correct for `0` resets, `50%` circles, and hairlines.
 
 **Never use `transition: all`.** Enumerate exactly the properties the `:hover` / `:focus` rule changes, so the transition can't pick up layout properties by accident. Note that children animate independently: `Card.astro` transitions `transform` on `.card__image img` and `opacity` on `.card__bg-icon` in their own rules, not via the parent.
+
+## Design system
+
+The v1.37.0 refresh replaced a generic neon look with one taken from the brand's own assets. Keep new work inside it.
+
+**Color.** The palette in `BaseLayout.astro`'s `:root` is lifted from the logo and header artwork, not picked fresh: `--accent: #70d0ff` is the orb blue sampled from `public/images/logo.png`, and `--bg: #080b18` / `--surface: #0e1428` / `--surface-2: #131a33` are the indigo of the header art. `--accent-2` (pink) and `--accent-3` (lime) survive only for `Pill.astro` status colors — keep them out of chrome, backgrounds, and gradients. The page background is a single faint indigo nebula at the top; don't bring back the three cyan/pink/lime radial blobs.
+
+**Gotcha — the accent is hardcoded far beyond the token.** Roughly 160 tints across shortcodes, components, and admin pages are written as `rgb(112 208 255 / <alpha>)` or `#70d0ff` rather than `var(--accent)`, because shortcode CSS was authored in isolation. Changing the accent hue means a repo-wide replace of **both** the RGB triplet and the hex (that's how the old `0 229 255` / `#00e5ff` cyan was retired), or widgets will visibly disagree with the chrome. New code should use `var(--accent)` or `rgb(from var(--accent) r g b / <alpha>)` where it can.
+
+**Type.** Two self-hosted variable fonts, imported at the top of `BaseLayout.astro` from `@fontsource-variable/schibsted-grotesk` and `@fontsource-variable/source-serif-4` (opsz files):
+
+- `--font-ui` — Schibsted Grotesk: headings, navigation, UI, and everything inside shortcode widgets.
+- `--font-read` — Source Serif 4: running article text only.
+
+They're bundled into `/_astro/` so the CSP's `font-src 'self'` holds. **Don't switch to Google Fonts** (or any font CDN) without adding its origins to `font-src`/`style-src` in `src/middleware.ts`. Before v1.37.0 the CSS named "Space Grotesk" but nothing loaded it, so every visitor saw Segoe UI — if you name a face, make sure it's actually imported. `AdminLayout.astro` has its own `:root` but imports the same Schibsted Grotesk package, so `/admin` uses the UI face too (it has no need for the serif). Headings follow a major-third scale from the 17px body (`h1` 2.6rem/800, `h2` 1.66rem/700, `h3` 1.33rem) with `text-wrap: balance`.
+
+**Reading measure.** `--measure: 42rem` caps line length. The serif, the measure, and underlined links apply only to **direct children** of `.prose` (`.prose > p`, `> ul`, `> ol`, `> blockquote`, `> h2`–`h4`), so shortcode widgets injected into `.prose` keep the UI font and the full width. Don't loosen those to descendant selectors — every widget's paragraphs would turn serif and shrink to 42rem. In-prose `h2`s are plain `--text` with no accent color or bottom border.
+
+**Panel width is constant.** `main` is the same width on every page — a variant that narrowed the panel on text-only pages was tried and rejected because the jump between pages was jarring. The empty space beside a capped text column is filled with a sidebar instead: `src/pages/pages/[slug].astro` treats a page whose markdown has no `{{token}}` as text-only and renders it in the blog post's two-column layout with `BlogSidebar`; pages with shortcodes keep the full panel. `privacy-policy.astro` uses the same two columns.
+
+**Home page.** The newest post renders into `BaseLayout`'s `headerFeature` slot as a split hero (headline left, header art right; art stacks on top under 900px) — that headline is deliberately the one loud element on the site. The old `home-header` banner image was removed; don't reintroduce a static banner above it.
+
+**Nav chevrons.** `.nav-caret` is a transparent button whose `::after` draws a thin chevron (two borders of a rotated square). The parent link and its caret share one hover/active fill, so they read as a single item. Direction encodes where the menu opens: top-level points down and flips up when `aria-expanded="true"`; desktop flyout carets point left (flyouts open to the left) and flip right; in the stacked mobile nav all point down. Every state needs its **own** transform — giving open and closed the same value silently kills the animation.
+
+**Removed on purpose — don't reintroduce:** neon glow `box-shadow`s on hover or around `main`, `translateY` hover lift on cards and buttons, the fade-and-slide `@keyframes` on every `section`, the uppercase tracked "Featured · Latest post" eyebrow on the home hero (the date alone says it's the newest), middle-dot (` · `) meta strings (post pages and blog cards separate date, categories, and reading time with flex `gap` spacing instead), and monospace text for the home page's profile handles. Hover feedback is a color or border-color change only.
 
 ## The shortcode system
 
@@ -169,6 +194,7 @@ This confirms the HTML/CSS/JS came out as expected (and that shortcodes didn't l
 - `npm run dev:astro` (Astro dev server, fast, hot-reloading) vs `npm run dev` (builds, then `wrangler dev` — full Cloudflare runtime: D1 bindings, secrets, Cache API, but no hot reload, re-run after each change). Use the latter when testing anything that touches D1, `caches.default`, or `cloudflare:workers` env/secrets, since `astro dev` may not mirror that runtime exactly.
 - Secrets for local dev go in `.dev.vars` (gitignored, never commit). Production secrets: `wrangler secret put <NAME>` (or dashboard → Worker → Settings → Variables and Secrets).
 - `/admin` login (`src/pages/api/auth/login.ts`) is email + password only — hCaptcha was removed in v1.34.0, and there is currently no captcha or rate limiting on it. The app needs no runtime secrets.
+- **Gotcha — `astro dev` hot reload doesn't reliably pick up edits to `BaseLayout.astro`'s `<style is:global>` block.** The dev server keeps serving the old CSS even across hard reloads, so a style fix looks like it "didn't work". Restart the dev server after changing global styles before concluding anything. If port 4321 is already taken (e.g. another session's server), run `npx astro dev --host 127.0.0.1 --port <other>` rather than killing it.
 - No headless browser tooling is set up in this repo (Playwright was deliberately removed — see git history). There's no automated way to screenshot or click-test the app in this environment; visual changes need a human to check in an actual browser.
 
 ## External API calls from shortcodes/pages

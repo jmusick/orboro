@@ -71,8 +71,8 @@ const postCards = posts.map((post) => {
               data-search={post.search}
             >
               <p class="post-card__meta">
-                {post.dateLabel}
-                {post.categories.length > 0 ? ` · ${post.categories.join(", ")}` : ""}
+                <time datetime={new Date(post.date).toISOString()}>{post.dateLabel}</time>
+                {post.categories.length > 0 && <span class="post-card__categories">{post.categories.join(", ")}</span>}
               </p>
               {post.excerpt && <p class="post-card__excerpt">{post.excerpt}</p>}
             </Card>
@@ -244,10 +244,18 @@ const postCards = posts.map((post) => {
     gap: 1.5rem;
   }
 
+  /* Date and categories sit apart by spacing, not a separator character. */
   .post-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15rem 1rem;
     font-size: 0.82rem;
-    color: var(--accent);
+    color: var(--muted);
     margin: 0 0 0.5rem;
+  }
+
+  .post-card__categories {
+    color: var(--accent);
   }
 
   .post-card__excerpt {
