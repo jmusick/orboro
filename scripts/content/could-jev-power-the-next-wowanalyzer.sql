@@ -11,17 +11,15 @@ VALUES (
   'Could Jev Power the Next WoWAnalyzer?',
   'After a bad raid pull, the useful question is rarely just “How much damage did we do?” It is “What should we change before the next attempt?”
 
-[WoWAnalyzer](https://github.com/WoWAnalyzer/WoWAnalyzer) helps players improve through performance metrics and gameplay suggestions. [Wipefest](https://www.wipefest.gg/) turns Warcraft Logs reports into raid-mechanic insights and timelines. Both demonstrate the value of translating combat events into something players can act on.
+[WoWAnalyzer](https://github.com/WoWAnalyzer/WoWAnalyzer) helps players improve through performance metrics and gameplay suggestions. [Wipefest](https://www.wipefest.gg/) turns Warcraft Logs reports into raid-mechanic insights and timelines. That helps a player or raid leader decide what to change before the next pull.
 
-Jev raises an interesting development question: could a specialized AI decision model help build an alternative to these tools?
-
-Potentially, yes. But the promising design still needs a combat-log engine, maintained game knowledge, and evidence behind every recommendation.
+Could Jev, a specialized AI decision model, help build an alternative to these tools? It could provide an interpretation layer, provided a combat-log engine supplies the facts and maintained game rules support each recommendation.
 
 ## What Jev brings to the problem
 
 Jev is TypeSafe AI''s model for bounded decisions. Give it relevant context and a question with a defined answer space, and it returns a structured result your application can consume. TypeSafe calls this a System One model. [Introduction](https://docs.typesafe.ai/introduction)
 
-There are three question types: **Choice** selects from named alternatives, **Score** rates something across descriptive levels, and **Noul** returns the probability that a yes/no statement is true. Choice and Score also include probability distributions and a confidence statistic.
+Jev has three question types. Choice selects from named alternatives. Score rates something across descriptive levels. Noul returns the probability that a yes/no statement is true. Choice and Score also include probability distributions and a confidence statistic.
 
 For a WoW tool, these might become:
 
@@ -29,7 +27,7 @@ For a WoW tool, these might become:
 - Score: how actionable is this finding under a defined review rubric?
 - Noul: does the supplied evidence support checking an interrupt assignment?
 
-The recent attention has some substance: Vercel reported that Jev reached nearly 13% of AI Gateway''s paid teams within its first day. That is an adoption signal, not evidence that it can analyze WoW correctly. [Vercel''s launch report](https://vercel.com/blog/ai-gateway-jev-model-launch)
+Vercel reported that Jev reached nearly 13% of AI Gateway''s paid teams within its first day. That is an adoption signal, not evidence that it can analyze WoW correctly. [Vercel''s launch report](https://vercel.com/blog/ai-gateway-jev-model-launch)
 
 ## Build the fight model first
 
@@ -41,7 +39,7 @@ A raid analyzer needs encounter phases, mechanic definitions, assignments where 
 
 The proposed pipeline is:
 
-**Combat events → deterministic reconstruction → candidate findings → Jev classification → evidence-linked feedback.**
+Combat events → deterministic reconstruction → candidate findings → Jev classification → evidence-linked feedback.
 
 Code should calculate durations, count casts, and enforce known rules. Jev receives compact findings with the relevant rule attached. This also follows TypeSafe''s guidance to filter state before evaluating it. [State design](https://docs.typesafe.ai/concepts/state)
 
@@ -87,7 +85,7 @@ const { answers } = await client.systemOne({
 console.log(answers.interpretation);
 ```
 
-The important work happened before the API call. Our engine determined whether another use was possible, supplied target availability, and attached a reviewed rule. Unknown information should be represented as unknown, rather than quietly converted to `false`.
+The API call depends on the analysis that precedes it. The fixture assumes the engine has determined whether another use was possible, supplied target availability, and attached a reviewed rule. Keep unknown information marked as unknown; converting it to `false` changes the evidence.
 
 Jev''s answer is an interpretation of that evidence. It is not a simulation of the damage another cast would have produced. Estimating a DPS loss requires additional modeling.
 
@@ -147,13 +145,13 @@ The UI could map labels to reviewed explanation templates. A generative model co
 
 A new product could compete with them, but Jev would supply only part of the system. It would still need report ingestion, correct event reconstruction, spec and encounter knowledge, useful timelines, and ongoing patch maintenance.
 
-The potential benefit is a reusable interpretation layer: the same interface could review cooldown findings, mechanic failures, and conflicting evidence. Whether that improves accuracy or reduces maintenance is something to measure against deterministic rules, rather than assume.
+The potential benefit is a reusable interpretation layer: the same interface could review cooldown findings, mechanic failures, and conflicting evidence. Test it against deterministic rules to see whether it improves accuracy or reduces maintenance.
 
 TypeSafe documents limitations involving arithmetic, indirect questions, irrelevant context, and adversarial input. Typed outputs do not remove those problems. [Known limitations](https://docs.typesafe.ai/model-jaggedness/jev-1.13)
 
 I would start with one spec, one encounter, and a labeled collection of findings reviewed by experienced players. Measure incorrect advice and unnecessary review alongside latency and cost. Show the source evidence for every suggestion.
 
-A useful WoW analyzer earns trust by making advice verifiable. Jev could help decide which interpretation to present, while a well-built analysis engine supplies the facts that make it worth reading.',
+Jev could help select an interpretation, but the analysis engine still has to establish the facts. I would judge the prototype by how often experienced players agree with its advice and can verify it from the linked events.',
   'post',
   'published',
   (SELECT id FROM users WHERE role = 'admin' ORDER BY created_at ASC LIMIT 1),

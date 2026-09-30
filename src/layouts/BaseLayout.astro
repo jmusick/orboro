@@ -5,8 +5,8 @@ import { listNavItems } from "../lib/content";
 import { ClientRouter } from "astro:transitions";
 // Self-hosted so the CSP's `font-src 'self'` holds — no Google Fonts request.
 import "@fontsource-variable/schibsted-grotesk";
-import "@fontsource-variable/source-serif-4/opsz.css";
-import "@fontsource-variable/source-serif-4/opsz-italic.css";
+import "@fontsource-variable/source-sans-3";
+import "@fontsource-variable/source-sans-3/wght-italic.css";
 import "highlight.js/styles/github-dark.css";
 
 interface Props {
@@ -129,7 +129,7 @@ function nodeIcon(node: NavNode): string {
         --line: #222c4a;
 
         --font-ui: "Schibsted Grotesk Variable", "Segoe UI", system-ui, sans-serif;
-        --font-read: "Source Serif 4 Variable", Georgia, serif;
+        --font-read: "Source Sans 3 Variable", "Segoe UI", system-ui, sans-serif;
         --measure: 42rem;
 
         /* Radius scale. Three tiers plus a pill; see AGENTS.md. Small = inline
@@ -552,7 +552,7 @@ function nodeIcon(node: NavNode): string {
       .prose { line-height: 1.7; }
       .prose p { margin: 0 0 1rem; }
 
-      /* Running text gets the serif and a readable measure. Only direct
+      /* Running text gets Source Sans 3 and a readable measure. Only direct
          children, so shortcode widgets keep the UI face and full width. */
       .prose > p,
       .prose > ul,

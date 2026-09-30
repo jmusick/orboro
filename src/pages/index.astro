@@ -135,10 +135,10 @@ const profiles = [
 <style>
 	/* ── Lead post ─────────────────────────────
 	   The one loud element on the page: the newest post's headline, set
-	   large beside its header art. Everything below stays quiet. */
+	   large below its full-width header art. Everything below stays quiet. */
 	.lead {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+		grid-template-columns: minmax(0, 1fr);
 		margin-bottom: 1.2rem;
 		background: var(--surface);
 		border: 1px solid var(--line);
@@ -205,31 +205,14 @@ const profiles = [
 
 	.lead__art {
 		display: block;
-		min-height: 22rem;
-		border-left: 1px solid var(--line);
+		order: -1;
+		border-bottom: 1px solid var(--line);
 	}
 
 	.lead__art img {
 		display: block;
 		width: 100%;
-		height: 100%;
-		object-fit: cover;
-	}
-
-	@media (max-width: 900px) {
-		.lead {
-			grid-template-columns: 1fr;
-		}
-
-		/* Art first on narrow screens so the headline isn't pushed below a
-		   screen-height image; order keeps the DOM reading order intact. */
-		.lead__art {
-			order: -1;
-			min-height: 0;
-			aspect-ratio: 16 / 9;
-			border-left: 0;
-			border-bottom: 1px solid var(--line);
-		}
+		height: auto;
 	}
 
 	/* ── Feed + profiles ─────────────────────── */

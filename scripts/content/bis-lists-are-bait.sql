@@ -18,25 +18,15 @@ VALUES (
   'e33f9f37-80f4-4fe6-8cca-c870946bdc59',
   'bis-lists-are-bait',
   'WoW "Best in Slot" Lists Are Bait — Stop Chasing Them Blindly',
-  'If you’ve played World of Warcraft for more than a few weeks, you’ve probably looked up a “Best in Slot” list for your class and started farming the items on it like your life depended on it.
+  'If you play World of Warcraft, you’ve probably used a “Best in Slot” list to decide what to farm.
 
-That’s understandable. BIS lists are simple. They give certainty. They give direction.
+A list gives you a clear target, which is useful when you’re deciding where to spend your time.
 
-But here’s the problem:
+A best-in-slot (BIS) list describes a particular gear setup. An item that sims best in that setup can be worse for your current character than an item left off the list. Your equipped gear changes the value of the next upgrade.
 
-**Most BIS lists are only actually “best” if you already own every other item on the list.**
+Following the list blindly can lead you to pass on upgrades and spend weeks chasing an item that does little for your current setup.
 
-And that’s where players get baited.
-
-The reality is that stat values in WoW are dynamic. Their value changes based on the gear you already have equipped. That means an item that sims as “BIS” in a full optimized setup may actually be *worse for your character right now* than another item you ignored because it wasn’t on the list.
-
-The result?
-
-Players pass on upgrades, grief their gearing path, and spend weeks chasing items that may not even increase their damage in their current setup.
-
----
-
-## Why BIS Lists Break Down
+## Why BIS lists break down
 
 A BIS list assumes:
 
@@ -47,38 +37,17 @@ A BIS list assumes:
 - Specific secondary stat distributions
 - Often specific encounter profiles
 
-But your character almost never matches that environment.
+Your character may not match that setup.
 
-You might:
+You might have a different mix of Haste, Crit, and Mastery, be missing a tier bonus, or use different trinkets and crafted gear. Those differences can change which item is an upgrade.
 
-- Have too much Haste already
-- Be starved for Crit
-- Lack enough Mastery for certain breakpoints
-- Be missing a key tier bonus
-- Be using a different trinket combo
-- Have different crafted gear
+## Stat weights change with your setup
 
-That changes everything.
+A stat weight such as “Versatility is worth 1.3 DPS per point” describes a particular simulated setup. It is not a permanent value for the stat.
 
----
+Stat weights estimate the value of a small stat change in the simulated setup. They can change when you swap gear, and a lower weight does not follow automatically from having more of that stat.
 
-## Stat Weights Are Not Static
-
-This is the core misunderstanding many players have.
-
-People often think:
-
-> “Versatility is worth 1.3 DPS per point and Crit is worth 1.1 DPS per point.”
-
-That’s not how WoW gearing actually works.
-
-Stat weights are *relative* and constantly shifting.
-
-As one stat becomes more saturated, its marginal value usually decreases while other stats rise in value.
-
-Here’s a simplified example.
-
-Suppose your character currently has:
+Suppose a character has these stats:
 
 | Stat | Amount |
 |---|---:|
@@ -87,7 +56,7 @@ Suppose your character currently has:
 | Mastery | 18% |
 | Vers | 12% |
 
-Your current sim might value stats like this:
+For this example, assume these weights:
 
 | Stat | Relative Value |
 |---|---:|
@@ -96,15 +65,11 @@ Your current sim might value stats like this:
 | Vers | 1.10 |
 | Haste | 0.84 |
 
-Why is Haste low?
+The assumed weights favor other stats over Haste.
 
-Because you already have a ton of it.
+The percentages alone do not establish those weights. These are invented values for the example, not a result for a real specialization.
 
-Additional Haste gives diminishing marginal benefit compared to stats you have less of.
-
----
-
-## The Fake “BIS” Trap
+## Comparing two rings
 
 Now imagine a BIS list says this ring is optimal:
 
@@ -112,15 +77,13 @@ Now imagine a BIS list says this ring is optimal:
 |---|---|
 | Ring A | +1200 Haste / +800 Vers |
 
-You farm it for weeks.
-
-But your current ring is:
+Your current ring is:
 
 | Item | Stats |
 |---|---|
 | Ring B | +1100 Crit / +850 Mastery |
 
-Let’s do some simplified weighted math.
+Multiplying each stat amount by its assumed weight gives these scores:
 
 ### Ring A
 
@@ -134,32 +97,15 @@ Let’s do some simplified weighted math.
 1100 × 1.25 + 850 × 1.18 = 2378
 ```
 
-Even though Ring A appears on the BIS list…
+Ring B has the higher score under these assumed weights. That arithmetic does not establish which ring would produce more damage in a direct simulation.
 
-**Ring B is massively stronger for your actual character.**
+Use a direct gear comparison to check whether the apparent upgrade holds up.
 
-Why?
+## Secondary stats interact
 
-Because your current stat distribution changes the value of the stats.
+Changing one stat can change the value of others, so “always stack X” is too broad to settle an item comparison.
 
-This happens constantly in real gearing situations.
-
----
-
-## Secondary Stats Compete With Each Other
-
-WoW gearing is essentially a balancing problem.
-
-The more you stack one stat, the more attractive other stats become.
-
-That’s why “always stack X stat” advice is usually incomplete or outright wrong.
-
-A good way to think about it is:
-
-- Stats gain value when you lack them
-- Stats lose value when you overload them
-
-This creates constantly shifting optimization curves.
+A stat priority is a starting point. It does not replace comparing the complete gear combinations available to you.
 
 A simplified conceptual example might look like this:
 
@@ -170,11 +116,9 @@ A simplified conceptual example might look like this:
 | 30% | 0.96 |
 | 40% | 0.79 |
 
-Not every specialization behaves identically, but the principle is universal.
+These values illustrate a possible curve, not a universal Haste rule or a measured result.
 
----
-
-## Trinkets Are the Biggest Source of Confusion
+## Trinket interactions
 
 Trinkets complicate this even further because many of them:
 
@@ -184,13 +128,7 @@ Trinkets complicate this even further because many of them:
 - Have proc overlap behavior
 - Gain or lose value based on encounter type
 
-This is why some trinkets remain universally dominant.
-
-For example, over-budget trinkets like Gaze of the Alnseer often remain BIS regardless of setup because the raw power level is simply absurd.
-
-Those are exceptions.
-
-Most trinkets are not like that.
+An unusually strong trinket may remain a good choice across many setups, but that still needs checking for your specialization and encounter.
 
 A trinket that sims #1 in a theoretical full BIS profile might be mediocre in your actual loadout because:
 
@@ -199,39 +137,17 @@ A trinket that sims #1 in a theoretical full BIS profile might be mediocre in yo
 - Your current trinket pairing changes proc alignment
 - Your specialization scaling differs at your current gear level
 
----
+## Compare gear for your character
 
-## The Real Goal Isn’t BIS — It’s Optimization
+Start with a SimulationCraft export of your current character. Use Raidbots Top Gear to compare items you own and Droptimizer to compare drops you could farm. Quick Sim gives you a result for a single setup; Gear Compare is another comparison tool.
 
-This is why top players rarely obsess over static BIS lists anymore.
+Raidbots recommends direct comparisons with Top Gear or Droptimizer over relying on stat weights. Its [explanation of stat-weight limitations](https://support.raidbots.com/article/66-beware-of-stat-weights) shows why weights can change after a gear swap.
 
-Instead, they use simulation tools.
+Use your current gear, trinkets, tier set, and embellishments in the comparison.
 
-The gold standard is using:
+Use those results to decide what to equip or farm next.
 
-- Raidbots Top Gear
-- Raidbots Droptimizer
-- Gear Compare
-- Quick Sim
-- SimulationCraft exports
-
-These tools evaluate your actual character state.
-
-Not a fantasy profile.
-
-Not a theoretical full mythic setup.
-
-Your real gear.  
-Your real stats.  
-Your real trinkets.  
-Your real tier set.  
-Your real embellishments.
-
-That’s the only context that matters.
-
----
-
-## A More Realistic Example
+## Comparing two cloaks
 
 Imagine two cloaks drop.
 
@@ -268,58 +184,22 @@ Then:
 1000 × 1.22 + 1200 × 1.19 = 2648
 ```
 
-That’s not even close.
+Cloak B scores higher under the assumed weights. As with the rings, this is illustrative arithmetic, not a simulation result. Check the complete items before deciding what to equip.
 
-And yet you’ll routinely see players pass on items like Cloak B because some streamer spreadsheet labeled Cloak A as “BIS.”
+## Why a checklist can limit your choices
 
----
+A BIS list gives you a checklist and a way to track progress. The risk is becoming so focused on a dungeon drop, raid boss, or Vault target that you overlook an upgrade you already have.
 
-## The Psychological Trap
+## What to do instead
 
-BIS lists are attractive because they:
+Use BIS lists to identify items worth investigating, especially weapons and trinkets. Then compare those items with your own setup:
 
-- Simplify decisions
-- Reduce uncertainty
-- Create a checklist
-- Give players a sense of progress
+1. Export your current character with SimulationCraft.
+2. Use Top Gear to compare the items you own, especially after a major upgrade.
+3. Use Droptimizer to choose which upgrade sources to farm.
+4. Recheck the comparison when your gear, tier set, or trinket pairing changes.
 
-But they also encourage tunnel vision.
-
-Players become obsessed with:
-
-- Specific dungeon drops
-- Specific raid bosses
-- Specific vault targets
-
-…while ignoring upgrades sitting right in front of them.
-
-That’s how people end up underperforming despite having “BIS” pieces.
-
----
-
-## What You Should Do Instead
-
-Use BIS lists as:
-
-- A general directional guideline
-- A source of potentially strong items
-- A way to identify unusually powerful trinkets or weapons
-
-But never treat them as absolute truth.
-
-Instead:
-
-1. Sim your character constantly
-2. Use Top Gear after major upgrades
-3. Use Droptimizer to prioritize actual upgrade sources
-4. Re-evaluate stat distributions regularly
-5. Understand that gear value is contextual
-
-Because in modern WoW, gearing isn’t about collecting predetermined items.
-
-It’s about solving an optimization puzzle.
-
-And the answer changes every time your character changes.',
+A listed item is a candidate to compare. Take the upgrade that works for your current setup, and check again when that setup changes.',
   'post',
   'published',
   (SELECT id FROM users WHERE role = 'admin' ORDER BY created_at ASC LIMIT 1),
