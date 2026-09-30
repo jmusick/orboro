@@ -1,5 +1,5 @@
 ---
-import { marked } from "marked";
+import { renderMarkdown } from "../../lib/markdown";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import BlogSidebar from "../../components/BlogSidebar.astro";
 import { getPublishedBySlugAndType, getPublishedContentByType, listCategoriesWithPostCounts } from "../../lib/content";
@@ -11,7 +11,7 @@ if (!slug) return Astro.rewrite("/404");
 const page = await getPublishedBySlugAndType(Astro.locals, slug, "page");
 if (!page) return Astro.rewrite("/404");
 
-const html = await processShortcodes(String(await marked.parse(page.markdown)), Astro.locals.nonce);
+const html = await processShortcodes(renderMarkdown(page.markdown), Astro.locals.nonce);
 const updated = new Date(page.updatedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
 function descriptionFromMarkdown(md: string, maxLen = 155): string {

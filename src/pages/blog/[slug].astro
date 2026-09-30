@@ -1,5 +1,5 @@
 ---
-import { marked } from "marked";
+import { renderMarkdown } from "../../lib/markdown";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import BlogSidebar from "../../components/BlogSidebar.astro";
 import {
@@ -49,7 +49,7 @@ const currentIndex = allPosts.findIndex((p) => p.slug === post.slug);
 const newerPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
 const olderPost = currentIndex >= 0 && currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null;
 
-const html = await processShortcodes(String(await marked.parse(post.markdown)), Astro.locals.nonce);
+const html = await processShortcodes(renderMarkdown(post.markdown), Astro.locals.nonce);
 
 const updated = new Date(post.updatedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 

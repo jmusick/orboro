@@ -66,6 +66,7 @@ npm run dev
 - `npm run dev` - Build, then serve via `wrangler dev` (full Cloudflare runtime: D1 bindings, Cache API, secrets)
 - `npm run dev:astro` - Run Astro dev server directly (fast, hot-reloading, but doesn't fully mirror the Cloudflare runtime)
 - `npm run check` - Type-check `.astro` and TypeScript files
+- `npm run test:markdown` - Verify code highlighting and plain-text escaping
 - `npm run build` - Production build
 - `npm run preview` - Preview build
 - `npm run deploy` - Build and `wrangler deploy` (manual deploy; normally a push to `master` does it)
@@ -111,6 +112,7 @@ None — the app currently needs no runtime secrets. If you add one, put it in `
 ## Notes
 
 - Content markdown is stored in D1 (`content.markdown`). Reusable, re-runnable seed scripts for individual pages/posts (content row + categories + nav) live in `scripts/content/*.sql` — see [AGENTS.md](AGENTS.md) for the pattern.
+- Pages and posts render fenced code through `src/lib/markdown.ts` using server-side Highlight.js and a bundled GitHub Dark theme. Add a language after the opening fence (e.g. `js`, `ts`, `bash`, `json`, `html`, `css`, `sql`, `python`, `lua`, `yaml`, or `markdown`). Unlabeled and unsupported languages stay escaped plain text; inline code is unchanged. RSS keeps its plain Markdown rendering for feed readers.
 - The media library accepts direct image uploads (PNG, JPEG, GIF, WebP, or AVIF, up to 10 MB) into the `orboro-net-media` R2 bucket through the `MEDIA` binding. New uploads are saved in D1 with `https://media.orboro.net/...` URLs. That custom domain is connected to the bucket; the `r2.dev` development URL remains disabled.
 - `wrangler dev` uses a separate local R2 store. Local uploads get `/media/...` URLs and are read back through the app's `/media/[...key]` route; they do not write to the production bucket. Use `npm run dev` for Cloudflare bindings.
 - `npm run media:migrate -- --local` previews migrating new content-referenced files from `public/images` into local R2. Add `--apply` to copy the files and rewrite local D1 URLs. Use `--remote` to target production only after reviewing its dry-run manifest; `--remote --apply` copies objects and updates production D1. Previously migrated images now live in R2 and are no longer bundled in `public/images`; the script skips their URLs on repeat runs.
