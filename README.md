@@ -14,7 +14,7 @@ Astro + Cloudflare starter for a markdown-first CMS/blog with role-based auth an
 - D1 schema + migrations for users, sessions, content, media, categories, and nav items
 - Initial admin setup flow (`/admin/setup`)
 - Email/password auth with role-based permissions (`admin`, `editor`, `author`)
-- CMS content editor for markdown posts/pages with live preview
+- CMS content editor for markdown posts/pages with live preview; EasyMDE and its toolbar fonts are pinned npm dependencies bundled locally
 - Shortcode system for rich, self-contained widgets embedded in markdown (e.g. an external bookmarks list, featured-links cards) — see `src/lib/shortcodes.ts` and [AGENTS.md](AGENTS.md)
 - Blog routes (`/blog`, `/blog/[slug]`, `/blog/category/[slug]`), plus a homepage feed of recent posts — both the homepage feed and `/blog` cards show each post's featured image (`content.featured_image_url`) as a thumbnail, and posts are attributed to JD in the visible byline and JSON-LD author field
 - Generic page route (`/pages/[slug]`), plus a static `/privacy-policy` page
@@ -67,6 +67,7 @@ npm run dev
 - `npm run dev:astro` - Run Astro dev server directly (fast, hot-reloading, but doesn't fully mirror the Cloudflare runtime)
 - `npm run check` - Type-check `.astro` and TypeScript files
 - `npm run test:markdown` - Verify code highlighting and plain-text escaping
+- `npm run test:dates` - Verify page update dates and rejection of implausible timestamps
 - `npm run build` - Production build
 - `npm run preview` - Preview build
 - `npm run deploy` - Build and `wrangler deploy` (manual deploy; normally a push to `master` does it)

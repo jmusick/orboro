@@ -1,5 +1,6 @@
 ---
 import AdminLayout from "../../../layouts/AdminLayout.astro";
+import easyMdeUrl from "easymde/dist/easymde.min.js?url";
 import Button from "../../../components/Button.astro";
 import { getContentById, listCategories, getContentCategoryIds } from "../../../lib/content";
 import { ensureRole } from "../../../lib/http";
@@ -97,7 +98,7 @@ const selectedCategoryIds = await getContentCategoryIds(Astro.locals, id);
     </section>
   </section>
 
-  <script is:inline src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+  <script is:inline src={easyMdeUrl}></script>
   <script is:inline type="module" src="/admin-editor.js"></script>
 
   <style>

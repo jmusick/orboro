@@ -2,6 +2,8 @@
 import Icon from "../components/Icon.astro";
 // Same self-hosted UI face as the public site (see BaseLayout.astro).
 import "@fontsource-variable/schibsted-grotesk";
+import "easymde/dist/easymde.min.css";
+import "font-awesome/css/font-awesome.min.css";
 
 interface Props {
   title: string;
@@ -28,7 +30,6 @@ const navActive = currentPath.startsWith('/admin/nav');
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width" />
     <title>Admin | {title}</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css" />
     <style>
       /* ── EasyMDE chrome ── */
       .editor-toolbar {

@@ -30,6 +30,7 @@ const markdownEl = document.querySelector("#markdown");
 if (markdownEl instanceof HTMLTextAreaElement && typeof EasyMDE !== "undefined") {
   const easyMde = new EasyMDE({
     element: markdownEl,
+    autoDownloadFontAwesome: false,
     theme: "orboro",
     spellChecker: false,
     autosave: { enabled: false },
