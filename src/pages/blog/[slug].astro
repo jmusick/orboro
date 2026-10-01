@@ -4,7 +4,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import BlogSidebar from "../../components/BlogSidebar.astro";
 import {
   getPublishedBySlugAndType,
-  getPublishedContentByType,
+  listPostSummaries,
   getContentCategories,
   excerptFromMarkdown,
   listCategoriesWithPostCounts,
@@ -33,7 +33,7 @@ if (!post) {
 const [categories, postCategories, allPosts] = await Promise.all([
   listCategoriesWithPostCounts(Astro.locals),
   getContentCategories(Astro.locals, post.id),
-  getPublishedContentByType(Astro.locals, "post", 500),
+  listPostSummaries(Astro.locals, 500),
 ]);
 
 const recentPosts = allPosts

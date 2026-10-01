@@ -83,6 +83,20 @@ export function excerptFromMarkdown(markdown: string, maxLen = 155): string {
   return plain.length > maxLen ? plain.slice(0, maxLen).trimEnd() + "…" : plain;
 }
 
+export type PostSummary = Pick<ContentRecord, 'slug' | 'title' | 'publishedAt' | 'createdAt'>;
+
+// Sidebars and adjacent-post links never need article bodies or image metadata.
+export async function listPostSummaries(locals: App.Locals, limit = 5): Promise<PostSummary[]> {
+  const db = getDB(locals);
+  if (!db) return [];
+  const result = await db.prepare(
+    `SELECT slug, title, published_at, created_at FROM content
+     WHERE page_type = 'post' AND status = 'published'
+     ORDER BY COALESCE(published_at, created_at) DESC LIMIT ?`,
+  ).bind(limit).all<{ slug: string; title: string; published_at: number | null; created_at: number }>();
+  return (result.results ?? []).map(row => ({ slug: row.slug, title: row.title, publishedAt: row.published_at, createdAt: row.created_at }));
+}
+
 export async function getPublishedBySlugAndType(
   locals: App.Locals,
   slug: string,

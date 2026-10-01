@@ -88,7 +88,10 @@ export async function getSessionAndUserByToken(locals: App.Locals, sessionId: st
   const db = ensureDB(locals);
   const now = Date.now();
 
-  await db.prepare("DELETE FROM sessions WHERE expires_at < ?").bind(now).run();
+  // Expiry is enforced by the SELECT, so cleanup need not write on every request.
+  if (crypto.getRandomValues(new Uint32Array(1))[0] % 100 === 0) {
+    await db.prepare("DELETE FROM sessions WHERE expires_at <= ?").bind(now).run();
+  }
 
   const row = await db
     .prepare(
@@ -100,10 +103,10 @@ export async function getSessionAndUserByToken(locals: App.Locals, sessionId: st
         users.role as role
       FROM sessions
       INNER JOIN users ON users.id = sessions.user_id
-      WHERE sessions.id = ?
+      WHERE sessions.id = ? AND sessions.expires_at > ?
       LIMIT 1`
     )
-    .bind(sessionId)
+    .bind(sessionId, now)
     .first<{
       session_id: string;
       user_id: string;

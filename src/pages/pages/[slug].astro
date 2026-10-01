@@ -2,7 +2,7 @@
 import { renderMarkdown } from "../../lib/markdown";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import BlogSidebar from "../../components/BlogSidebar.astro";
-import { getPublishedBySlugAndType, getPublishedContentByType, listCategoriesWithPostCounts } from "../../lib/content";
+import { getPublishedBySlugAndType, listPostSummaries, listCategoriesWithPostCounts } from "../../lib/content";
 import { processShortcodes } from "../../lib/shortcodes";
 import { formatPageUpdatedAt } from "../../lib/dates";
 
@@ -46,7 +46,7 @@ const [categories, recentPosts] = hasWidgets
   ? [[], []]
   : await Promise.all([
       listCategoriesWithPostCounts(Astro.locals),
-      getPublishedContentByType(Astro.locals, "post", 5).then((posts) =>
+      listPostSummaries(Astro.locals, 5).then((posts) =>
         posts.map((p) => ({
           slug: p.slug,
           title: p.title,

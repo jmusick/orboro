@@ -4,6 +4,7 @@ interface Props {
   iconFilled?: boolean;
   image?: string;
   title?: string;
+  headingLevel?: 'h2' | 'h3' | 'h4';
   href?: string;
   class?: string;
   [key: string]: any;
@@ -11,7 +12,8 @@ interface Props {
 
 import Icon from './Icon.astro';
 
-const { icon, iconFilled = false, image, title, href, class: className = '', ...rest } = Astro.props;
+const { icon, iconFilled = false, image, title, headingLevel = 'h3', href, class: className = '', ...rest } = Astro.props;
+const Heading = headingLevel;
 
 const Element = href ? 'a' : 'div';
 const elementProps = href ? { href } : {};
@@ -37,7 +39,7 @@ const elementProps = href ? { href } : {};
     </div>
   )}
   <div class="card__body">
-    {title && <h3 class="card__title">{title}</h3>}
+    {title && <Heading class="card__title">{title}</Heading>}
     <div class="card__content">
       <slot />
     </div>

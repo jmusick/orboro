@@ -65,9 +65,10 @@ export function generateExpeditionRumourSheet(_attrs: Record<string, string>, no
 #ers-root *{box-sizing:border-box;}
 
 .ers-filter-row{display:flex;gap:.4rem;margin-bottom:.6rem;}
-#ers-filter{flex:1;background:var(--surface,#0c1324);border:1px solid var(--line,#1f2b46);border-radius:var(--r-sm,6px);padding:.45rem .75rem;color:var(--text,#e8f3ff);font:inherit;font-size:.85rem;outline:none;transition:border-color .12s;}
+#ers-filter{flex:1;background:var(--surface,#0c1324);border:1px solid var(--line-strong,#667aa3);border-radius:var(--r-sm,6px);padding:.45rem .75rem;color:var(--text,#e8f3ff);font:inherit;font-size:.85rem;outline:none;transition:border-color .12s;}
 #ers-filter::placeholder{color:var(--muted,#97a8c4);}
 #ers-filter:focus{border-color:var(--accent,#70d0ff);}
+#ers-filter:focus-visible{outline:2px solid var(--accent,#70d0ff);outline-offset:2px;}
 #ers-filter-clear{background:transparent;border:1px solid var(--line,#1f2b46);color:var(--muted,#97a8c4);padding:.45rem .65rem;border-radius:var(--r-sm,6px);cursor:pointer;font:inherit;font-size:.85rem;line-height:1;transition:color .12s,border-color .12s;display:none;}
 #ers-filter-clear.visible{display:block;}
 #ers-filter-clear:hover{color:var(--text,#e8f3ff);border-color:var(--muted,#97a8c4);}

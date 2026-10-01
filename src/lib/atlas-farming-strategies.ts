@@ -882,7 +882,7 @@ export function generateAtlasFarmingStrategies(_attrs: Record<string, string>, n
     `<div class="afs-list">${accordionItems}</div>` +
     `<script${nonceAttr(nonce)}>${js}<\/script>` +
     `<div class="afs-meta">` +
-    `<span class="afs-credit">Tier list &amp; strategies by <a href="https://maxroll.gg/@bawloch" target="_blank" rel="noopener">BawLoch</a> · <a href="http://discord.gg/xq6FtCVRse" target="_blank" rel="noopener">Discord</a> · <a href="https://www.youtube.com/@BawLoch" target="_blank" rel="noopener">YouTube</a> · <a href="https://www.twitch.tv/bawlochs" target="_blank" rel="noopener">Twitch</a></span>` +
+    `<span class="afs-credit">Tier list &amp; strategies by <a href="https://maxroll.gg/@bawloch" target="_blank" rel="noopener">BawLoch</a> · <a href="https://discord.gg/xq6FtCVRse" target="_blank" rel="noopener">Discord</a> · <a href="https://www.youtube.com/@BawLoch" target="_blank" rel="noopener">YouTube</a> · <a href="https://www.twitch.tv/bawlochs" target="_blank" rel="noopener">Twitch</a></span>` +
     `</div>` +
     `</div>`
   );

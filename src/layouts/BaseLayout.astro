@@ -93,7 +93,7 @@ function nodeIcon(node: NavNode): string {
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
     <title>{title}</title>
@@ -127,6 +127,7 @@ function nodeIcon(node: NavNode): string {
         --accent-2: #ff3fb8;
         --accent-3: #a8ff60;
         --line: #222c4a;
+        --line-strong: #667aa3;
 
         --font-ui: "Schibsted Grotesk Variable", "Segoe UI", system-ui, sans-serif;
         --font-read: "Source Sans 3 Variable", "Segoe UI", system-ui, sans-serif;
@@ -159,6 +160,13 @@ function nodeIcon(node: NavNode): string {
       :focus-visible {
         outline: 2px solid var(--accent);
         outline-offset: 2px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation: none !important;
+          transition: none !important;
+          scroll-behavior: auto !important;
+        }
       }
       a {
         color: var(--accent);
@@ -213,7 +221,7 @@ function nodeIcon(node: NavNode): string {
         width: 42px;
         height: 38px;
         background: var(--surface);
-        border: 1px solid var(--line);
+        border: 1px solid var(--line-strong);
         border-radius: var(--r-md,10px);
         cursor: pointer;
         flex-shrink: 0;
@@ -798,7 +806,7 @@ function nodeIcon(node: NavNode): string {
         transition: transform 0.2s ease;
         display: inline-block;
       }
-      .prose details.is-open > summary::before { transform: rotate(90deg); }
+      .prose details[open] > summary::before { transform: rotate(90deg); }
       .prose summary:hover { background: rgb(112 208 255 / 4%); color: var(--accent); }
       .prose details > *:not(summary) {
         padding-left: 1.25rem;
@@ -844,7 +852,7 @@ function nodeIcon(node: NavNode): string {
         >
           <span class="nav-toggle-bar" /><span class="nav-toggle-bar" /><span class="nav-toggle-bar" />
         </button>
-        <nav id="site-nav">
+        <nav id="site-nav" aria-label="Main">
           <a href="/" class={isActive("/") ? "active" : ""}><Icon name="home" size={15} />Home</a>
           <a href="/blog" class={isActive("/blog") ? "active" : ""}><Icon name="file-text" size={15} />Blog</a>
           {navTree.map(node => {
@@ -882,53 +890,7 @@ function nodeIcon(node: NavNode): string {
         });
       }
 
-      function initAccordions() {
-        document.querySelectorAll('.prose details').forEach(function(details) {
-          if (details.dataset.accordionInit) return;
-          details.dataset.accordionInit = '1';
-          var summary = details.querySelector('summary');
-          if (!summary) return;
-
-          var wrapper = document.createElement('div');
-          wrapper.className = 'details-body';
-          Array.from(details.children).forEach(function(child) {
-            if (child !== summary) wrapper.appendChild(child);
-          });
-          details.appendChild(wrapper);
-          wrapper.style.cssText = 'overflow:hidden;transition:max-height 0.22s ease,opacity 0.18s ease;';
-
-          if (details.open) {
-            wrapper.style.maxHeight = wrapper.scrollHeight + 'px';
-            wrapper.style.opacity = '1';
-            details.classList.add('is-open');
-          } else {
-            wrapper.style.maxHeight = '0';
-            wrapper.style.opacity = '0';
-          }
-
-          summary.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (!details.open) {
-              details.open = true;
-              details.classList.add('is-open');
-              wrapper.offsetHeight;
-              wrapper.style.maxHeight = wrapper.scrollHeight + 'px';
-              wrapper.style.opacity = '1';
-            } else {
-              details.classList.remove('is-open');
-              wrapper.style.maxHeight = '0';
-              wrapper.style.opacity = '0';
-              var done = false;
-              wrapper.addEventListener('transitionend', function handler(ev) {
-                if (done || ev.propertyName !== 'max-height') return;
-                done = true;
-                details.open = false;
-                wrapper.removeEventListener('transitionend', handler);
-              });
-            }
-          });
-        });
-      }
+      // Native details/summary preserves keyboard toggling and reflow without height caps.
 
       function setSubmenuOpen(item, open) {
         item.classList.toggle('open', open);
@@ -1054,11 +1016,11 @@ function nodeIcon(node: NavNode): string {
       }
 
       styleNodeTables();
-      initAccordions();
+
       initMobileNav();
       document.addEventListener('astro:page-load', function() {
         styleNodeTables();
-        initAccordions();
+
         closeMobileNav();
         initMobileNav();
       });

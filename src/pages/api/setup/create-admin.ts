@@ -42,7 +42,7 @@ export const POST: APIRoute = async ({ request, locals, cookies, url, redirect }
     console.error("[create-admin] Error:", error);
     return new Response(
       JSON.stringify({
-        error: error instanceof Error ? error.message : String(error),
+        error: "Setup failed",
       }),
       { status: 500, headers: { "content-type": "application/json" } }
     );

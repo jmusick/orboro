@@ -64,7 +64,13 @@ const profiles = [
 ---
 
 
-<BaseLayout title="Orboro.net" description="Latest posts and gamer profiles from Orboro.net.">
+<BaseLayout title="Orboro.net | Gaming guides, analysis, and developer resources" description="World of Warcraft and Path of Exile guides, game analysis, and developer resources from JD." structuredData={{
+	"@context": "https://schema.org",
+	"@graph": [
+		{ "@type": "WebSite", "@id": "https://orboro.net/#website", url: "https://orboro.net/", name: "Orboro.net", author: { "@id": "https://orboro.net/#jd" } },
+		{ "@type": "Person", "@id": "https://orboro.net/#jd", name: "JD", url: "https://orboro.net/pages/about" },
+	],
+}}>
 	{lead && (
 		<article slot="headerFeature" class="lead" aria-labelledby="lead-title">
 			<div class="lead__body">

@@ -20,7 +20,7 @@ const posts = await getPublishedContentByCategory(Astro.locals, slug, "post");
     ) : (
       <div class="posts-grid">
         {posts.map((post) => (
-          <Card href={`/blog/${post.slug}`} title={post.title} />
+          <Card href={`/blog/${post.slug}`} title={post.title} headingLevel="h2" />
         ))}
       </div>
     )}

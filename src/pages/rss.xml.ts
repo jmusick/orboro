@@ -1,17 +1,7 @@
 import type { APIRoute } from 'astro';
-import { marked } from 'marked';
 import { getDB } from '../lib/db';
 import { excerptFromMarkdown } from '../lib/content';
-import { processShortcodes } from '../lib/shortcodes';
-
-function escapeXml(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;');
-}
+import { escapeXml, escapeCdata, renderFeedHtml } from '../lib/feed';
 
 export const GET: APIRoute = async ({ site, locals }) => {
   const BASE = (site ?? new URL('https://orboro.net')).origin;
@@ -44,15 +34,16 @@ export const GET: APIRoute = async ({ site, locals }) => {
     rows.map(async (row) => {
       const link = `${BASE}/blog/${row.slug}`;
       const pubDate = new Date(row.published_at ?? row.created_at).toUTCString();
-      const html = await processShortcodes(String(await marked.parse(row.markdown)));
+      const excerpt = excerptFromMarkdown(row.markdown.replace(/\{\{\w+[^}]*\}\}/g, ''));
+      const html = renderFeedHtml(row.markdown, excerpt, link, BASE);
       return [
         '  <item>',
         `    <title>${escapeXml(row.title)}</title>`,
         `    <link>${link}</link>`,
         `    <guid isPermaLink="true">${link}</guid>`,
         `    <pubDate>${pubDate}</pubDate>`,
-        `    <description>${escapeXml(excerptFromMarkdown(row.markdown))}</description>`,
-        `    <content:encoded><![CDATA[${html}]]></content:encoded>`,
+        `    <description>${escapeXml(excerpt)}</description>`,
+        `    <content:encoded><![CDATA[${escapeCdata(html)}]]></content:encoded>`,
         '  </item>',
       ].join('\n');
     })

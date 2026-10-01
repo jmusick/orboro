@@ -1,12 +1,13 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import BlogSidebar from "../components/BlogSidebar.astro";
-import { getPublishedContentByType, listCategoriesWithPostCounts } from "../lib/content";
+import { PRIVACY_UPDATED_AT } from "../lib/privacy";
+import { listPostSummaries, listCategoriesWithPostCounts } from "../lib/content";
 
 // Text-only page: share the blog sidebar so the panel isn't mostly empty.
 const [categories, posts] = await Promise.all([
   listCategoriesWithPostCounts(Astro.locals),
-  getPublishedContentByType(Astro.locals, "post", 5),
+  listPostSummaries(Astro.locals, 5),
 ]);
 const recentPosts = posts.map((p) => ({
   slug: p.slug,
@@ -19,7 +20,7 @@ const recentPosts = posts.map((p) => ({
   <div class="page-layout">
   <section>
     <h1>Privacy Policy</h1>
-    <p class="updated">Last updated: August 2026</p>
+    <p class="updated">Last updated: <time datetime={PRIVACY_UPDATED_AT}>{new Date(`${PRIVACY_UPDATED_AT}T00:00:00Z`).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" })}</time></p>
 
     <h2>Overview</h2>
     <p>

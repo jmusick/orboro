@@ -28,7 +28,7 @@ const navActive = currentPath.startsWith('/admin/nav');
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Admin | {title}</title>
     <style>
       /* ── EasyMDE chrome ── */
@@ -109,8 +109,16 @@ const navActive = currentPath.startsWith('/admin/nav');
         --accent-2: #ff3fb8;
         --accent-3: #a8ff60;
         --line: #1f2b46;
+        --line-strong: #667aa3;
       }
       *, *::before, *::after { box-sizing: border-box; }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation: none !important;
+          transition: none !important;
+          scroll-behavior: auto !important;
+        }
+      }
       body {
         margin: 0;
         font-family: "Schibsted Grotesk Variable", "Segoe UI", system-ui, sans-serif;

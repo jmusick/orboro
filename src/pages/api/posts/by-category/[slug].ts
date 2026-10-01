@@ -16,7 +16,9 @@ export const GET: APIRoute = async ({ params, site, request, locals }) => {
   }
 
   const cache = (caches as CacheStorage & { readonly default: Cache }).default;
-  const cacheKey = new Request(request.url);
+  const cacheUrl = new URL(request.url);
+  cacheUrl.search = "";
+  const cacheKey = new Request(cacheUrl);
   const cached = await cache.match(cacheKey);
   // Cache API responses have immutable headers, but middleware mutates response
   // headers (HSTS, CSP, etc.) on every request — rewrap so that still works.
