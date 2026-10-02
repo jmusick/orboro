@@ -140,7 +140,7 @@ const css = `
 #ac-root button.ac-spec-card{position:relative;display:grid;grid-template-columns:2.35rem 1fr auto;gap:.65rem;align-items:center;width:100%;padding:.7rem;border:1px solid transparent;border-radius:var(--r-md,10px);background:transparent;color:var(--text,#e8f3ff);text-align:left;cursor:pointer;transition:background .15s,border-color .15s,transform .15s;}
 #ac-root button.ac-spec-card:hover{background:rgb(255 255 255 / 4%);border-color:var(--line,#1f2b46);transform:translateX(2px);}
 #ac-root button.ac-spec-card:focus-visible{outline:2px solid var(--accent,#70d0ff);outline-offset:1px;}
-#ac-root button.ac-spec-card[aria-pressed="true"]{background:color-mix(in srgb,var(--class-color) 10%,transparent);border-color:color-mix(in srgb,var(--class-color) 60%,var(--line,#1f2b46));}
+#ac-root button.ac-spec-card[aria-pressed="true"]{background:color-mix(in srgb,var(--class-color) 10%,transparent);border-color:var(--accent,#70d0ff);}
 #ac-root .ac-monogram{display:grid;place-items:center;width:2.35rem;height:2.35rem;border:1px solid color-mix(in srgb,var(--class-color) 55%,transparent);border-radius:var(--r-md,10px);background:color-mix(in srgb,var(--class-color) 12%,transparent);color:var(--class-color);font-size:.7rem;font-weight:900;}
 /* Must out-specify .prose img (0,1,1), which would otherwise add 1rem vertical
    margin, its own border and a 10px radius to every spec icon. */
@@ -167,7 +167,7 @@ const css = `
 #ac-root .ac-tabs{display:flex;gap:.35rem;margin:1rem 0;padding:.3rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-md,10px);background:rgb(5 7 15 / 45%);overflow-x:auto;}
 #ac-root button.ac-tab{flex:1 0 auto;padding:.55rem .7rem;border:0;border-radius:var(--r-sm,6px);background:transparent;color:var(--muted,#97a8c4);font-size:.76rem;font-weight:700;cursor:pointer;}
 #ac-root button.ac-tab:focus-visible{outline:2px solid var(--accent,#70d0ff);outline-offset:-2px;}
-#ac-root button.ac-tab[aria-selected="true"]{background:rgb(112 208 255 / 10%);color:var(--accent,#70d0ff);box-shadow:inset 0 0 0 1px rgb(112 208 255 / 20%);}
+#ac-root button.ac-tab[aria-selected="true"]{background:rgb(112 208 255 / 10%);color:var(--accent,#70d0ff);box-shadow:inset 0 0 0 1px var(--accent,#70d0ff);}
 #ac-root .ac-panel[hidden]{display:none;}
 #ac-root .ac-panel:focus-visible{outline:2px solid rgb(112 208 255 / 45%);outline-offset:4px;}
 #ac-root .ac-panel-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:.75rem;}

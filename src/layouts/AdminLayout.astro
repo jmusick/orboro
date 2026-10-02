@@ -32,9 +32,9 @@ const navActive = currentPath.startsWith('/admin/nav');
     <title>Admin | {title}</title>
     <style>
       /* ── EasyMDE chrome ── */
-      .editor-toolbar {
+      :global(.EasyMDEContainer .editor-toolbar) {
         background: #111a30 !important;
-        border: 1px solid #1f2b46 !important;
+        border: 1px solid var(--line-strong, #667aa3) !important;
         border-radius: 8px 8px 0 0 !important;
         opacity: 1 !important;
       }
@@ -57,11 +57,11 @@ const navActive = currentPath.startsWith('/admin/nav');
       .editor-statusbar { color: #97a8c4 !important; border-top-color: #1f2b46 !important; }
 
       /* ── Custom dark CodeMirror theme (cm-s-orboro) + broad fallback ── */
-      .cm-s-orboro.CodeMirror,
-      .EasyMDEContainer .CodeMirror {
+      :global(.cm-s-orboro.CodeMirror),
+      :global(.EasyMDEContainer .CodeMirror) {
         background: #0c1324 !important;
         color: #e8f3ff !important;
-        border: 1px solid #1f2b46 !important;
+        border: 1px solid var(--line-strong, #667aa3) !important;
         border-top: 0 !important;
         border-radius: 0 0 8px 8px !important;
         font-family: "JetBrains Mono", Consolas, monospace;
