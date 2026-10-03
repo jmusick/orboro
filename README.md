@@ -69,6 +69,7 @@ npm run dev
 - `npm run test:markdown` - Verify code highlighting and plain-text escaping
 - `npm run test:dates` - Verify page update dates and rejection of implausible timestamps
 - `npm run test:feed` - Verify feed URLs, widget excerpts, CDATA, sitemap dates, and single-segment slugs
+- `npm run test:json` - Verify inline JSON cannot inject HTML and preserves original values
 - `npm run build` - Production build
 - `npm run preview` - Preview build
 - `npm run deploy` - Build and `wrangler deploy` (manual deploy; normally a push to `master` does it)

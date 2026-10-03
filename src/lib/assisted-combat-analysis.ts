@@ -1,5 +1,6 @@
 import researchData from "./assisted-combat-data.json";
 import { nonceAttr } from "./csp";
+import { jsonForHtml } from "./json";
 import specIcons from "./assisted-combat-spec-icons.json";
 import * as render from "./assisted-combat-render.js";
 // The browser gets the exact same template code the server just ran, rather
@@ -421,10 +422,7 @@ const clientJs = "(function(){\n" + renderSource.replace(/^export\s+/gm, "") + "
 function buildHtml(): string {
   const summary = data.summary;
   const classes = [...new Set(data.specs.map((spec) => spec.gameClass))];
-  const safeJson = JSON.stringify(data)
-    .replace(/&/g, "\\u0026")
-    .replace(/</g, "\\u003c")
-    .replace(/>/g, "\\u003e");
+  const safeJson = jsonForHtml(data);
 
   const initialState = render.defaultState(data);
   const initialSpecs = render.filterSpecs(data, initialState);

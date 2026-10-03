@@ -2,6 +2,7 @@
 import Footer from "../components/Footer.astro";
 import Icon from "../components/Icon.astro";
 import { listNavItems } from "../lib/content";
+import { jsonForHtml } from "../lib/json";
 import { ClientRouter } from "astro:transitions";
 // Self-hosted so the CSP's `font-src 'self'` holds — no Google Fonts request.
 import "@fontsource-variable/schibsted-grotesk";
@@ -110,7 +111,7 @@ function nodeIcon(node: NavNode): string {
     {description && <meta name="twitter:description" content={description} />}
     <meta name="twitter:image" content={ogImage} />
     {structuredData && (
-      <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+      <script type="application/ld+json" set:html={jsonForHtml(structuredData)} />
     )}
     <ClientRouter />
     <style is:global>

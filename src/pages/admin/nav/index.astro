@@ -3,6 +3,7 @@ import AdminLayout from "../../../layouts/AdminLayout.astro";
 import Button from "../../../components/Button.astro";
 import { ensureRole } from "../../../lib/http";
 import { listNavItems, listAdminContent } from "../../../lib/content";
+import { jsonForHtml } from "../../../lib/json";
 
 const access = ensureRole(Astro, ["admin"]);
 if (access instanceof Response) return access;
@@ -35,7 +36,7 @@ const initContent = publishedContent.map((c) => ({
   {saved && <div class="success-banner">Navigation saved successfully.</div>}
   {error === "invalid" && <div class="error-banner">Invalid navigation data. Please try again.</div>}
 
-  <script is:inline type="application/json" id="nav-init" set:html={JSON.stringify({ nav: initNav, content: initContent })} />
+  <script is:inline type="application/json" id="nav-init" set:html={jsonForHtml({ nav: initNav, content: initContent })} />
 
   <section class="nav-section">
     <form id="nav-form" method="post" action="/api/nav/save">
