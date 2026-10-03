@@ -15,7 +15,7 @@ export default defineConfig({
 		inlineStylesheets: 'never',
 	},
 	session: {
-		// This app uses custom JWT auth, use lruCache to prevent auto KV binding
+		// Auth uses custom D1 sessions; this driver prevents an unused Astro KV binding.
 		driver: sessionDrivers.lruCache(),
 	},
 	adapter: cloudflare({

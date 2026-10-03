@@ -24,33 +24,57 @@ const recentPosts = posts.map((p) => ({
 
     <h2>Overview</h2>
     <p>
-      This site (Orboro.net) is a personal site operated by JD. It does not sell, share,
-      or monetise any personal data. This policy explains what limited information is collected
-      and why.
+      Orboro.net is a personal site operated by JD. You can read its public pages without
+      an account. The site uses Cloudflare for hosting and Google Analytics for usage
+      measurement. This policy describes the information involved in those services,
+      administrator login, and requests to external image providers.
     </p>
 
-    <h2>Information Collected</h2>
-    <h3>Server logs</h3>
+    <h2>Information collected</h2>
+    <h3>Hosting and diagnostics</h3>
     <p>
-      Like most web servers, this site may log standard request metadata, including IP address,
-      browser user-agent, referring URL, and the page requested. These logs are used solely for
-      diagnosing errors and understanding traffic patterns. They are not linked to any personal
-      identity and are retained for a short period before being discarded.
+      Cloudflare processes requests to deliver pages and images and operate its network.
+      Request information can include your IP address, the requested URL, browser details,
+      and referring information. Worker request/error logging and sampled tracing are enabled
+      to diagnose failures and monitor operation. Log retention depends on Cloudflare's service
+      and account settings; this site does not promise a fixed deletion period for those records.
     </p>
 
     <h3>Analytics</h3>
     <p>
-      This site uses Google Analytics to understand how visitors use it: pages viewed, approximate
-      location, device/browser type, and referring pages. Google Analytics sets cookies and stores an
-      identifier in your browser to do this. This data is aggregated and is not linked to your name,
-      email, or any account. No advertising pixels are used, and no data is sold or shared with
-      advertisers.
+      Google Analytics measures visits and pages viewed and can collect browser/device details,
+      referring information and approximate location. Google's tag uses cookies and browser
+      identifiers to distinguish visits. These identifiers mean the collection should not be
+      treated as completely anonymous, even when reports show aggregate statistics.
     </p>
+    <p>
+      Analytics loads on public pages and the administrator login/setup screens. Page-view
+      events send the page title and full page URL, including query parameters. The site does
+      not deliberately send login email addresses or passwords as analytics fields. It currently
+      has no cookie consent banner and does not wait for an on-site opt-in before loading the tag.
+      The authenticated administration interface does not load the analytics tag.
+    </p>
+    <p>
+      Analytics retention and Google's additional data-sharing or advertising features depend
+      on the Google Analytics account settings. Those settings have not been verified for this
+      policy update. The site code does not include a separate advertising pixel.
+    </p>
+
     <p>
       You can opt out of Google Analytics tracking using
       <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer">
         Google's browser opt-out add-on
       </a>, or with any browser extension that blocks third-party analytics scripts.
+    </p>
+
+    <h3>Administrator account and session</h3>
+    <p>
+      The only site account belongs to JD, the administrator; there is no public registration.
+      Cloudflare D1 stores the account email, a password hash, and session records. Successful
+      login sets an <code>orboro_session</code> cookie to keep the administrator signed in for
+      up to 14 days. It is HttpOnly, uses SameSite=Lax, and is marked Secure over HTTPS.
+      Logging out revokes that session and removes the cookie. Reading public pages does not
+      require this login cookie.
     </p>
 
     <h3>Third-party links</h3>
@@ -64,34 +88,44 @@ const recentPosts = posts.map((p) => ({
     <p>
       Various "Useful Links" pages (for individual games, FOSS software, and similar topics) display bookmarks pulled from
       <a href="https://tagsta.sh/" target="_blank" rel="noopener noreferrer">Tagstash</a>, a bookmarking
-      service. That data is fetched by this site's own server and cached briefly; Tagstash does not
-      receive any information about you as a visitor from this. Favicon images shown next to each
-      bookmark are loaded from Google's favicon service, which, like any third-party image, may see
-      your IP address and browser details when your browser requests the image.
+      service. Bookmark data is fetched by this site's server and cached for ten minutes.
+      That API request does not forward your browser cookies, IP address or request headers.
+      Your browser loads bookmark favicons directly from the image URLs supplied by Tagstash;
+      the Tagstash credit icon uses Google's favicon service. Those image hosts receive your
+      IP address and browser request details. The favicon requests omit the referring page URL.
     </p>
 
-
-    <h2>Data Storage</h2>
+    <h3>Images and publication updates</h3>
     <p>
-      The site is hosted on Cloudflare's infrastructure. Cloudflare's own
+      Site uploads are stored in Cloudflare R2 and served through media.orboro.net. Articles
+      may also display images hosted elsewhere; loading them contacts their hosts. Images
+      published on the site are publicly accessible. When content is published, the server
+      notifies IndexNow of its public URL and a WebSub hub of the public RSS feed URL.
+      These publication notifications do not forward visitor request information.
+    </p>
+
+    <h2>Service providers and storage</h2>
+    <p>
+      Cloudflare hosts the site, its D1 database and R2 images. Its
       <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">
         Privacy Policy
       </a>
-      governs any data processed at the network layer. Analytics data described above is processed by
-      Google in accordance with
+      describes its handling of information. Google processes analytics information under
       <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">
         Google's Privacy Policy
       </a>.
     </p>
 
-    <h2>Your Rights</h2>
+    <h2>Choices and contact</h2>
     <p>
-      Beyond the aggregated analytics data and transient server logs described above, no personal
-      data is collected, so there is little to access, correct, or delete. If you have a concern,
-      you can reach out via the contact details on the platform profiles listed on the homepage.
+      You can block analytics scripts using the tools linked above and manage cookies through
+      your browser. Blocking analytics does not stop Cloudflare from processing the requests
+      needed to serve the site. For questions or requests about your information, contact JD
+      through the platform profiles linked on the homepage. What can be located or deleted
+      depends on the information held and the relevant provider's controls.
     </p>
 
-    <h2>Changes to This Policy</h2>
+    <h2>Changes to this policy</h2>
     <p>
       This policy may be updated occasionally. The "last updated" date at the top of the page
       will reflect any changes.

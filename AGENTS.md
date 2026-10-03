@@ -5,9 +5,10 @@ Conventions and gotchas for anyone (human or agent) working on this codebase. Se
 ## Architecture
 
 - Astro v7, `output: "server"`, deployed as the Cloudflare **Worker** `orboro-net` via `@astrojs/cloudflare` (Workers Builds, git-integrated with GitHub `jmusick/orboro` — pushing to `master` runs `npm run build` + `npx wrangler deploy`). Migrated from a Pages project in v1.33.0.
-- `wrangler.toml` is the source of truth for bindings and runtime config (D1 `DB`, compatibility date/flags). `main` is `@astrojs/cloudflare/entrypoints/server`; `astro build` writes the real deploy config to `dist/server/wrangler.json` and points `.wrangler/deploy/config.json` at it. Dashboard-only: secrets and the `orboro.net` custom domain.
+- `wrangler.toml` is the source of truth for bindings and runtime config (D1 `DB`, R2 `MEDIA`, static `ASSETS`, compatibility date/flags, logs/traces). `main` is `@astrojs/cloudflare/entrypoints/server`; `astro build` writes the real deploy config to `dist/server/wrangler.json` and points `.wrangler/deploy/config.json` at it. Custom domains, production secrets and edge security rules are managed outside the repo; do not infer their live settings from source.
 - All content (pages, posts, categories, nav) lives in Cloudflare D1, not markdown files in the repo. `src/lib/content.ts` is the data-access layer.
 - Auth is custom (PBKDF2 password hashing, session cookie), not a third-party library. See `src/lib/auth.ts`, `src/middleware.ts`.
+- Current operation is a single user, JD, with the admin role. `editor`/`author` remain in the schema and route guards, but there is no public registration or user-management UI. Author ownership restrictions are absent; adding non-admin users requires a permissions review first. Sessions are D1-backed opaque tokens, not JWTs, with a 14-day lifetime.
 - Styling is hand-written scoped CSS per component using the CSS variables defined in `BaseLayout.astro` (`--bg`, `--surface`, `--surface-2`, `--text`, `--muted`, `--accent`, `--accent-2`, `--accent-3`, `--line`, plus the type and layout tokens described under "Design system"). No Tailwind, no component library.
 
 ## Card accents
@@ -20,7 +21,7 @@ The one surviving left border is `.nav-item--child` in `src/pages/admin/nav/inde
 
 ## Radius and transitions
 
-`BaseLayout.astro` defines a **three-tier radius scale** in `:root` — `--r-sm: 6px` (inline controls: chips, code, favicons, small buttons), `--r-md: 10px` (cards, panels, callouts, inputs), `--r-lg: 16px` (page-level shells and heroes), plus `--r-pill: 999px`. Every component references them with the usual fallback form:
+`BaseLayout.astro` defines a **three-tier radius scale** in `:root` — `--r-sm: 6px` (inline controls: chips, code, favicons, small buttons), `--r-md: 10px` (cards, panels, callouts, inputs), `--r-lg: 16px` (page-level shells and heroes), plus `--r-pill: 999px`. Use the usual fallback form; some legacy admin styles still need consolidation:
 
 ```css
 border-radius: var(--r-md, 10px);
@@ -92,7 +93,7 @@ Page/post markdown can embed rich, self-contained widgets via `{{token}}` or `{{
 
 Skipping this means the widget silently does nothing for any visitor who navigated in via the nav bar instead of a fresh page load — easy to miss when testing by typing the URL directly.
 
-**Gotcha — `.prose` element selectors out-specify your shortcode's classes:** shortcode HTML is injected into `<div class="prose">`, and `BaseLayout.astro` styles bare elements there — `.prose img` (adds `margin: 1rem 0`, a border, and a border-radius), `.prose h2` (adds `margin: 2.5rem 0 0.9rem`, an accent color, and a `border-bottom`), `.prose ul` (adds a `1.35rem` left indent), plus `.prose p`, `.prose li`, and `.prose a`. Those selectors have specificity (0,1,1), so a bare `.my-image` rule at (0,1,0) **loses** and your reset is silently ignored. Scope anything that styles one of those elements with the widget's root id:
+**Gotcha — `.prose` element selectors out-specify your shortcode's classes:** shortcode HTML is injected into `<div class="prose">`, and `BaseLayout.astro` styles bare elements there — `.prose img` (adds `margin: 1rem 0`, a border, and a border-radius), `.prose h2` (adds `margin: 2.75rem 0 0.8rem` and heading typography, with plain text color and no bottom border), `.prose ul` (adds a `1.35rem` left indent), plus `.prose p`, `.prose li`, and `.prose a`. Those selectors have specificity (0,1,1), so a bare `.my-image` rule at (0,1,0) **loses** and your reset is silently ignored. Scope anything that styles one of those elements with the widget's root id:
 
 ```css
 /* loses to .prose img — margin/border still applied */
@@ -143,10 +144,46 @@ attribute entirely if no nonce is given) on every call — don't "simplify" that
 `nonce` directly in `buildHtml()`, or every request after the first would ship a stale, non-matching
 nonce.
 
-Still open: this is Report-Only, not enforcing — `'unsafe-inline'` is gone from the policy, but
-nothing blocks yet, so a missed nonce only shows up as a violation in `Content-Security-Policy-Report-Only`
-reports (there's still no `report-to` endpoint — see the TODO). Flip to `Content-Security-Policy` once
-that's been watched for a while with no unexpected violations.
+Still open: CSP is Report-Only and has no report destination. Before enforcement,
+collect reports or browser evidence, move the editor's dynamically created style
+to a compatible stylesheet, address inline style attributes and external favicon
+origins, and test nonce behavior across ClientRouter navigation. A style nonce
+does not authorize style attributes. Never auto-nonce user-authored HTML.
+
+**Inline JSON must be safe for HTML parsing.** Use `jsonForHtml` from `src/lib/json.ts`
+for every inline JSON/JSON-LD body, including `set:html` and shortcode strings.
+It escapes `<`, `>` and `&` as JSON Unicode escapes. Bare `JSON.stringify` allows
+`</script>` in a title to end even a non-executable data block. Ordinary API JSON
+and form-input values do not need this HTML-specific serializer. Run `npm run test:json`
+when changing this boundary. Markdown raw HTML is still permitted; this fix does
+not sanitize article content or make untrusted publishing safe.
+
+## Media storage
+
+- `MEDIA` binds the `orboro-net-media` R2 bucket. Production uploads use
+  `https://media.orboro.net/...`; local uploads use `/media/...` and local R2.
+- Uploads accept PNG/JPEG/GIF/WebP/AVIF, up to 10 MiB, with signature checks.
+  The bytes are stored as supplied, without decoding, resizing or metadata stripping.
+- Deleting a media-library record deletes D1 metadata only. It does not remove
+  the object or update content references.
+- `npm run media:migrate -- --local` previews content-image migration; `--apply`
+  copies objects and rewrites D1 URLs. Review the dry-run manifest before deliberate
+  `--remote --apply` use. Code deployment does not migrate content or objects.
+
+## Privacy documentation
+
+`src/pages/privacy-policy.astro` is a code-backed page, not a D1 content row.
+Keep it aligned with actual collection and update `PRIVACY_UPDATED_AT` in
+`src/lib/privacy.ts` when its substance changes; the sitemap uses that same date.
+Google Analytics loads on BaseLayout pages, including login/setup, but not on
+authenticated AdminLayout pages. Manual page views send `location.href`, including
+query strings. No consent banner or consent-mode configuration is implemented.
+Bookmark data is fetched server-side with a ten-minute cache, while browsers load
+favicon URLs supplied by Tagstash and the Google-hosted credit icon directly.
+Those images use `referrerpolicy="no-referrer"` but still contact their hosts.
+Workers logs/traces are enabled in Wrangler; retention and Google sharing/advertising
+settings require dashboard verification. Do not promise anonymization, no sharing,
+or a retention period without evidence. `TODO.md` is local and gitignored.
 
 ## Content model
 
@@ -170,7 +207,8 @@ SQL-escape single quotes in markdown content as `''` (not `\'`) — it's SQLite.
 
 ## Verifying a change without a browser
 
-There's no headless browser available (see below), so the practical loop for confirming a page/shortcode change actually renders right is:
+The repo has no headless browser tooling. When a browser integration is unavailable,
+the practical loop for confirming a page/shortcode emits the expected markup is:
 
 ```bash
 npm run build
@@ -179,7 +217,7 @@ curl -s http://127.0.0.1:8787/pages/some-slug | grep -o 'expected-class-or-text'
 # ... then kill the wrangler dev process
 ```
 
-This confirms the HTML/CSS/JS came out as expected (and that shortcodes didn't leave a literal `{{token}}` in the output because a fetch or shortcode registration failed). It does **not** confirm visual layout, spacing, or hover states — for those, a human needs to look at it in an actual browser. Say so explicitly rather than claiming a visual change "looks right" from curl output alone.
+This confirms the HTML/CSS/JS came out as expected (and that shortcodes didn't leave a literal `{{token}}` in the output because a fetch or shortcode registration failed). It does **not** confirm visual layout, spacing, or hover states — use an available browser integration or a human browser check for those. Say so explicitly rather than claiming a visual change "looks right" from curl output alone.
 
 ## D1: local vs. remote
 
@@ -193,9 +231,9 @@ This confirms the HTML/CSS/JS came out as expected (and that shortcodes didn't l
 - Prefer `127.0.0.1` over `localhost` — some integrations (OAuth redirect URIs, etc.) require an exact literal match, and `localhost` vs `127.0.0.1` are different origins to a browser even though they resolve to the same place. `dev:astro` runs `astro dev --host 127.0.0.1`, and `.vscode/launch.json` points at `http://127.0.0.1:4321`.
 - `npm run dev:astro` (Astro dev server, fast, hot-reloading) vs `npm run dev` (builds, then `wrangler dev` — full Cloudflare runtime: D1 bindings, secrets, Cache API, but no hot reload, re-run after each change). Use the latter when testing anything that touches D1, `caches.default`, or `cloudflare:workers` env/secrets, since `astro dev` may not mirror that runtime exactly.
 - Secrets for local dev go in `.dev.vars` (gitignored, never commit). Production secrets: `wrangler secret put <NAME>` (or dashboard → Worker → Settings → Variables and Secrets).
-- `/admin` login (`src/pages/api/auth/login.ts`) is email + password only — hCaptcha was removed in v1.34.0, and there is currently no captcha or rate limiting on it. The app needs no runtime secrets.
+- `/admin` login (`src/pages/api/auth/login.ts`) is email + password only — hCaptcha was removed in v1.34.0. There is no app-level captcha, MFA or login throttling; any Cloudflare edge rules must be verified separately. The app needs no runtime secrets.
 - **Gotcha — `astro dev` hot reload doesn't reliably pick up edits to `BaseLayout.astro`'s `<style is:global>` block.** The dev server keeps serving the old CSS even across hard reloads, so a style fix looks like it "didn't work". Restart the dev server after changing global styles before concluding anything. If port 4321 is already taken (e.g. another session's server), run `npx astro dev --host 127.0.0.1 --port <other>` rather than killing it.
-- No headless browser tooling is set up in this repo (Playwright was deliberately removed — see git history). There's no automated way to screenshot or click-test the app in this environment; visual changes need a human to check in an actual browser.
+- No headless browser tooling is set up in this repo (Playwright was deliberately removed — see git history). Use an available browser integration or a human browser check for visual/interaction verification; do not claim it from build/curl output alone or automatically reinstall headless tooling.
 
 ## External API calls from shortcodes/pages
 

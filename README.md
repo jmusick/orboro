@@ -1,6 +1,13 @@
 # Orboro.net
 
-Astro + Cloudflare starter for a markdown-first CMS/blog with role-based auth and D1 storage.
+Orboro.net is JD's personal site and Markdown CMS, built with Astro 7 and deployed
+as the Cloudflare Worker `orboro-net`. Content and account records live in D1;
+uploaded images live in R2. See `package.json` for the current version.
+
+JD is the only user, with an admin account. The schema and route guards also
+support `editor` and `author`, but there is no public registration or user-management
+UI. Author ownership restrictions are not implemented; review those permissions
+before adding non-admin users.
 
 ## Requirements
 
@@ -8,12 +15,12 @@ Astro + Cloudflare starter for a markdown-first CMS/blog with role-based auth an
 - npm
 - Cloudflare account + Wrangler CLI access for D1 operations
 
-## What This Scaffold Includes
+## Features
 
 - Astro SSR configured for Cloudflare (`@astrojs/cloudflare`)
 - D1 schema + migrations for users, sessions, content, media, categories, and nav items
 - Initial admin setup flow (`/admin/setup`)
-- Email/password auth with role-based permissions (`admin`, `editor`, `author`)
+- Custom email/password auth with PBKDF2 password hashes and D1-backed sessions; no JWT or third-party auth service
 - CMS content editor for markdown posts/pages with live preview; EasyMDE and its toolbar fonts are pinned npm dependencies bundled locally
 - Shortcode system for rich, self-contained widgets embedded in markdown (e.g. an external bookmarks list, featured-links cards) — see `src/lib/shortcodes.ts` and [AGENTS.md](AGENTS.md)
 - Blog routes (`/blog`, `/blog/[slug]`, `/blog/category/[slug]`), plus a homepage feed of recent posts — both the homepage feed and `/blog` cards show each post's featured image (`content.featured_image_url`) as a thumbnail, and posts are attributed to JD in the visible byline and JSON-LD author field
@@ -22,6 +29,9 @@ Astro + Cloudflare starter for a markdown-first CMS/blog with role-based auth an
 - Dynamic navigation builder with unlimited nesting
 - Basic media library records (URL + alt + caption)
 - `sitemap.xml` (generated from published D1 content) and SEO meta tags; `robots.txt` is a static file in `public/`
+- RSS at `/rss.xml`, with WebSub update notifications, and IndexNow notifications for published content
+- Public read-only JSON at `/api/posts/by-category/[slug]`, with published post summaries and a ten-minute cache
+- Safe inline JSON/JSON-LD serialization through `src/lib/json.ts`
 - Google Analytics (gtag.js), wired into `BaseLayout.astro` with page views tracked manually per Astro View Transitions navigation (see [AGENTS.md](AGENTS.md))
 - Security response headers (HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`, and a report-only CSP) set in `src/middleware.ts` for all SSR'd routes, plus `public/_headers` for static assets — see [AGENTS.md](AGENTS.md)
 
@@ -30,7 +40,7 @@ Astro + Cloudflare starter for a markdown-first CMS/blog with role-based auth an
 1. Install dependencies:
 
 ```bash
-npm install
+npm ci
 ```
 
 2. Create D1 DB (one-time):
@@ -39,7 +49,10 @@ npm install
 npx wrangler d1 create orboro-db
 ```
 
-3. Update `database_id` in `wrangler.toml`.
+3. Update `database_id` in `wrangler.toml`. For a separate deployment, also
+   provision an R2 bucket for `MEDIA` and configure its public custom domain;
+   local development simulates the binding. Production image URLs currently
+   use `https://media.orboro.net` in `src/lib/media-upload.ts`.
 
 4. Apply migrations:
 
@@ -47,19 +60,23 @@ npx wrangler d1 create orboro-db
 npm run d1:migrate:local
 ```
 
-5. Start local dev:
-
-```bash
-npm run dev:astro
-```
-
-or build and run through the full Cloudflare runtime (`wrangler dev`, D1 bindings, Cache API — closer to production, but won't hot-reload; re-run after each change):
+5. Start local dev with the full Cloudflare runtime:
 
 ```bash
 npm run dev
 ```
 
-6. Open `/admin`, then run initial setup at `/admin/setup` if prompted.
+Open `http://127.0.0.1:8787`. This builds first and does not hot-reload;
+restart it after changes. For faster work that does not depend on Cloudflare
+runtime behavior, Astro's dev server runs at `http://127.0.0.1:4321`:
+
+```bash
+npm run dev:astro
+```
+
+6. Open `/admin`, then run initial setup at `/admin/setup` if prompted. This
+   creates an admin in local D1 only. A fresh instance's setup route is public
+   until the first user exists; initialize it before exposing that instance.
 
 ## Scripts
 
@@ -75,12 +92,18 @@ npm run dev
 - `npm run deploy` - Build and `wrangler deploy` (manual deploy; normally a push to `master` does it)
 - `npm run astro` - Astro CLI passthrough
 - `npm run cf:types` - Regenerate Cloudflare worker types
+- `npm run data:assisted-combat` - Rebuild assisted-combat data from external research inputs; requires `ASSISTED_COMBAT_RESEARCH_ROOT` and `ASSISTED_COMBAT_VAULT_ROOT`
+- `npm run data:midnight-s2-interrupts` - Rebuild the interrupt reference data from its public Google Sheets source
+- `npm run data:spec-icons` - Download vendored WoW spec icons; `-- --resolve` refreshes the ID map and `-- --force` refreshes images
+- `npm run media:migrate` - Preview content-image migration to R2; see the local/remote and `--apply` notes below
 - `npm run d1:migrate:local` - Apply local migrations
 - `npm run d1:migrate:remote` - Apply remote migrations
 
 Deploy note:
 
 - Hosted as the Cloudflare Worker `orboro-net` (Workers Builds, git-integrated with GitHub `jmusick/orboro`): pushing to `master` runs `npm run build` then `npx wrangler deploy`. `astro build` writes the real deploy config to `dist/server/wrangler.json`, which `wrangler deploy`/`wrangler dev` pick up.
+- Repository bindings are `DB` (D1), `MEDIA` (R2), and `ASSETS` (static assets). Custom domains are configured outside the repo. Wrangler enables Workers logs and sampled traces; provider retention and dashboard security rules must be checked in the Cloudflare account.
+- Apply any new schema migrations locally, verify them, then apply them remotely before deploying code that requires them. SQL content seeds are a separate step: pushing code does not copy local content into production.
 
 ## Database Schema
 
@@ -124,6 +147,14 @@ None — the app currently needs no runtime secrets. If you add one, put it in `
 - Existing image URLs can still be added to the media library. Deleting a media record removes its D1 metadata only; it does not delete the R2 object or update pages that reference the URL.
 - To support additional content types later, add new values in `content.page_type` and build matching routes.
 - `/privacy-policy` (`src/pages/privacy-policy.astro`) describes what tracking is active. Update it whenever you add, remove, or change a tracking/analytics script.
+
+## Current security and privacy boundaries
+
+- Admin login is password-only. Sessions last 14 days and logout revokes the current session. The app has no MFA, password recovery, or built-in login throttling; any edge protection is configured separately.
+- CSP is Report-Only and has no reporting endpoint. Inline JSON is safely encoded, but authored Markdown still permits raw HTML. Publishing is currently a trusted-admin capability; these controls do not establish safe untrusted publishing.
+- Google Analytics loads through `BaseLayout`, including the unauthenticated login/setup screens. The authenticated admin layout does not load it. Page views send the full URL, including query strings; there is no consent banner or consent-mode setup in the source.
+- Analytics retention, Google advertising/data-sharing settings, Cloudflare log retention, and live edge rules cannot be established from this repo. Check those dashboards before making claims about their settings in the privacy policy.
+- `TODO.md` is a local, gitignored review backlog, not a shipped project file.
 
 ## Troubleshooting
 
