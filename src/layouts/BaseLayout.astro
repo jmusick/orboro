@@ -1,5 +1,6 @@
 ---
 import Footer from "../components/Footer.astro";
+import ConsentBanner from "../components/ConsentBanner.astro";
 import Icon from "../components/Icon.astro";
 import { listNavItems } from "../lib/content";
 import { jsonForHtml } from "../lib/json";
@@ -72,24 +73,6 @@ function nodeIcon(node: NavNode): string {
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BLR72SL0L6"></script>
-    <script is:inline nonce={nonce}>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() { dataLayer.push(arguments); }
-      gtag("js", new Date());
-      // send_page_view: false — View Transitions means this script only runs once
-      // per session, so we fire page_view manually on astro:page-load instead
-      // (fires on the initial load and every client-side navigation).
-      gtag("config", "G-BLR72SL0L6", { send_page_view: false });
-      document.addEventListener("astro:page-load", () => {
-        gtag("event", "page_view", {
-          page_location: location.href,
-          page_path: location.pathname,
-          page_title: document.title,
-        });
-      });
-    </script>
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -877,6 +860,7 @@ function nodeIcon(node: NavNode): string {
         <slot />
       </main>
       <Footer />
+      <ConsentBanner />
     </div>
     <script is:inline nonce={nonce}>
       function styleNodeTables() {

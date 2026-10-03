@@ -1,0 +1,174 @@
+---
+const nonce = Astro.locals.nonce;
+---
+
+<div id="analytics-consent" class="consent-banner" role="dialog" aria-modal="false"
+  aria-labelledby="consent-title" aria-describedby="consent-description" hidden>
+  <div class="consent-copy">
+    <p id="consent-title" class="consent-title">Allow analytics cookies?</p>
+    <p id="consent-description">
+      Google Analytics helps measure visits to Orboro.net. It loads only if you accept.
+      You can decline and keep browsing, or change your choice in the footer.
+      {" "}<a href="/privacy-policy">Privacy policy</a>
+    </p>
+  </div>
+  <div class="consent-actions">
+    <button type="button" data-analytics-consent="denied">Decline</button>
+    <button type="button" data-analytics-consent="granted">Accept</button>
+  </div>
+</div>
+
+<script id="analytics-controller" is:inline nonce={nonce}>
+  (function () {
+    // One controller survives ClientRouter swaps; listeners find the current DOM.
+    if (window.orboroAnalyticsConsent) return;
+    window.orboroAnalyticsConsent = true;
+    var STORAGE_KEY = 'orboro-analytics-consent';
+    var MEASUREMENT_ID = 'G-BLR72SL0L6';
+    var choice = null;
+    var loaded = false;
+    var opener = null;
+    try { choice = localStorage.getItem(STORAGE_KEY); } catch (_) {}
+
+    function gtag() { window.dataLayer.push(arguments); }
+    function loadAnalytics() {
+      if (loaded || choice !== 'granted') return;
+      loaded = true;
+      window.dataLayer = window.dataLayer || [];
+      gtag('consent', 'default', {
+        ad_storage: 'denied', ad_user_data: 'denied',
+        ad_personalization: 'denied', analytics_storage: 'denied'
+      });
+      gtag('consent', 'update', { analytics_storage: 'granted' });
+      gtag('js', new Date());
+      gtag('config', MEASUREMENT_ID, { send_page_view: false });
+      var script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://www.googletagmanager.com/gtag/js?id=' + MEASUREMENT_ID;
+      // Use the current page's nonce even when acceptance follows a client navigation.
+      var controller = document.getElementById('analytics-controller');
+      if (controller && controller.nonce) script.nonce = controller.nonce;
+      document.head.appendChild(script);
+    }
+    function pageView() {
+      // AdminLayout never renders this banner; do not track a swap into /admin.
+      if (choice !== 'granted' || !document.getElementById('analytics-consent')) return;
+      loadAnalytics();
+      gtag('event', 'page_view', {
+        page_location: location.href, page_path: location.pathname, page_title: document.title
+      });
+    }
+    function init() {
+      var banner = document.getElementById('analytics-consent');
+      if (!banner) return;
+      banner.hidden = choice === 'granted' || choice === 'denied';
+      document.querySelectorAll('[data-analytics-preferences]').forEach(function (button) {
+        button.hidden = false;
+      });
+      if (choice === 'granted') loadAnalytics();
+    }
+    function clearAnalyticsCookies() {
+      // GA can set cookies on the parent domain as well as the current host.
+      var parts = location.hostname.split('.');
+      var domains = [];
+      for (var i = 0; i < parts.length - 1; i++) domains.push(parts.slice(i).join('.'));
+      document.cookie.split(';').forEach(function (entry) {
+        var name = entry.split('=')[0].trim();
+        if (!/^_ga(?:_|$)|^_gid$|^_gat(?:_|$)/.test(name)) return;
+        var expiry = '=; Max-Age=0; path=/';
+        document.cookie = name + expiry;
+        domains.forEach(function (domain) {
+          document.cookie = name + expiry + '; domain=' + domain;
+          document.cookie = name + expiry + '; domain=.' + domain;
+        });
+      });
+    }
+    function withdraw() {
+      window['ga-disable-' + MEASUREMENT_ID] = true;
+      if (loaded) gtag('consent', 'update', { analytics_storage: 'denied' });
+      clearAnalyticsCookies();
+      // A running tag cannot be unloaded; reload after persisting the refusal.
+      location.reload();
+    }
+    document.addEventListener('click', function (event) {
+      if (!(event.target instanceof Element)) return;
+      var banner = document.getElementById('analytics-consent');
+      if (!banner) return;
+      var preferences = event.target.closest('[data-analytics-preferences]');
+      if (preferences) {
+        opener = preferences;
+        banner.hidden = false;
+        banner.querySelector('button').focus();
+        return;
+      }
+      var button = event.target.closest('[data-analytics-consent]');
+      if (!button || !banner.contains(button)) return;
+      choice = button.getAttribute('data-analytics-consent');
+      try { localStorage.setItem(STORAGE_KEY, choice); } catch (_) {}
+      banner.hidden = true;
+      var focusTarget = opener && opener.isConnected ? opener : document.querySelector('[data-analytics-preferences]');
+      if (focusTarget) focusTarget.focus();
+      if (choice === 'granted') {
+        if (!loaded) pageView();
+      } else {
+        clearAnalyticsCookies();
+        if (loaded) withdraw();
+      }
+    });
+    window.addEventListener('storage', function (event) {
+      if (event.key !== STORAGE_KEY && event.key !== null) return;
+      choice = event.key === null ? null : event.newValue;
+      if (choice !== 'granted' && loaded) withdraw();
+      else { init(); if (choice === 'granted') pageView(); }
+    });
+    document.addEventListener('astro:page-load', function () { init(); pageView(); });
+    init();
+  })();
+</script>
+
+<style>
+  .consent-banner {
+    position: fixed;
+    inset: auto 1.2rem 1.2rem;
+    z-index: 90;
+    max-width: 68rem;
+    max-height: calc(100dvh - 2.4rem);
+    overflow-y: auto;
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-md, 10px);
+    font-family: var(--font-ui);
+  }
+  .consent-banner[hidden] { display: none; }
+  .consent-copy { flex: 1; min-width: 0; }
+  .consent-banner p { margin: 0; font-size: 0.9rem; line-height: 1.6; }
+  .consent-banner .consent-title { margin-bottom: 0.35rem; font-size: 1rem; font-weight: 700; }
+  #consent-description { color: var(--muted); }
+  .consent-banner a { white-space: nowrap; }
+  .consent-actions { display: flex; gap: 0.65rem; flex-shrink: 0; }
+  .consent-actions button {
+    min-height: 44px;
+    padding: 0.6rem 1.1rem;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-sm, 6px);
+    background: var(--surface-2);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .consent-actions button:hover { color: var(--accent); border-color: var(--accent); }
+  .consent-actions button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  @media (max-width: 700px) {
+    .consent-banner { inset: auto 0.75rem 0.75rem; padding: 1rem; flex-direction: column; align-items: stretch; gap: 1rem; }
+    .consent-actions button { flex: 1; }
+  }
+</style>

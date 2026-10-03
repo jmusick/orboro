@@ -15,6 +15,7 @@ const version = packageJson.version;
       <a href="https://github.com/jmusick/orboro" target="_blank" rel="noopener"><Icon name="github" size={13} filled />Source</a>
       <a href="https://www.patreon.com/cw/Orboro" target="_blank" rel="noopener"><Icon name="patreon" size={13} filled />Support Me</a>
       <a href="/privacy-policy"><Icon name="shield" size={13} />Privacy Policy</a>
+      <button type="button" data-analytics-preferences hidden>Cookie preferences</button>
     </nav>
   </div>
 </footer>
@@ -40,11 +41,14 @@ const version = packageJson.version;
 
   .footer-nav {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
     gap: 1.25rem;
     justify-self: end;
   }
 
-  .footer-nav a {
+  .footer-nav a,
+  .footer-nav button {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
@@ -54,7 +58,18 @@ const version = packageJson.version;
     transition: color 0.2s ease;
   }
 
-  .footer-nav a:hover {
+  .footer-nav button {
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .footer-nav button[hidden] { display: none; }
+
+  .footer-nav a:hover,
+  .footer-nav button:hover {
     color: var(--accent);
   }
 

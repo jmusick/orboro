@@ -32,7 +32,7 @@ before adding non-admin users.
 - RSS at `/rss.xml`, with WebSub update notifications, and IndexNow notifications for published content
 - Public read-only JSON at `/api/posts/by-category/[slug]`, with published post summaries and a ten-minute cache
 - Safe inline JSON/JSON-LD serialization through `src/lib/json.ts`
-- Google Analytics (gtag.js), wired into `BaseLayout.astro` with page views tracked manually per Astro View Transitions navigation (see [AGENTS.md](AGENTS.md))
+- Opt-in Google Analytics (gtag.js) through `ConsentBanner.astro`, with Accept/Decline, footer Cookie preferences, and manual page views across Astro View Transitions (see [AGENTS.md](AGENTS.md))
 - Security response headers (HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`, and a report-only CSP) set in `src/middleware.ts` for all SSR'd routes, plus `public/_headers` for static assets — see [AGENTS.md](AGENTS.md)
 
 ## Quick Start
@@ -87,6 +87,7 @@ npm run dev:astro
 - `npm run test:dates` - Verify page update dates and rejection of implausible timestamps
 - `npm run test:feed` - Verify feed URLs, widget excerpts, CDATA, sitemap dates, and single-segment slugs
 - `npm run test:json` - Verify inline JSON cannot inject HTML and preserves original values
+- `npm run test:consent` - Verify analytics gating, saved choices, navigation/page views, current-page nonces, withdrawal, and storage restrictions
 - `npm run build` - Production build
 - `npm run preview` - Preview build
 - `npm run deploy` - Build and `wrangler deploy` (manual deploy; normally a push to `master` does it)
@@ -152,7 +153,9 @@ None — the app currently needs no runtime secrets. If you add one, put it in `
 
 - Admin login is password-only. Sessions last 14 days and logout revokes the current session. The app has no MFA, password recovery, or built-in login throttling; any edge protection is configured separately.
 - CSP is Report-Only and has no reporting endpoint. Inline JSON is safely encoded, but authored Markdown still permits raw HTML. Publishing is currently a trusted-admin capability; these controls do not establish safe untrusted publishing.
-- Google Analytics loads through `BaseLayout`, including the unauthenticated login/setup screens. The authenticated admin layout does not load it. Page views send the full URL, including query strings; there is no consent banner or consent-mode setup in the source.
+- `ConsentBanner.astro` loads Google Analytics only after acceptance, including a saved choice. It appears on `BaseLayout` pages, including unauthenticated login/setup; the authenticated admin layout does not load analytics. Without acceptance or JavaScript, the Google tag is not fetched. Accepted page views send the full URL, including query strings.
+- The analytics choice is stored in this browser's localStorage under `orboro-analytics-consent` until changed or cleared. Footer **Cookie preferences** reopens the banner. Declining after acceptance disables analytics, clears GA cookies on the current host and parent domains, and reloads the page. Changes propagate to other open tabs through storage events; if localStorage is unavailable, the choice lasts only until a full reload.
+- The tag's consent configuration grants analytics storage only after acceptance and keeps advertising storage, advertising user data, and advertising personalization denied. This preference does not gate necessary admin session cookies, Cloudflare hosting requests, or external images/favicons.
 - Analytics retention, Google advertising/data-sharing settings, Cloudflare log retention, and live edge rules cannot be established from this repo. Check those dashboards before making claims about their settings in the privacy policy.
 - `TODO.md` is a local, gitignored review backlog, not a shipped project file.
 
@@ -162,6 +165,7 @@ None — the app currently needs no runtime secrets. If you add one, put it in `
 - `npm run dev` uses your configured Cloudflare bindings and local D1 simulation, while `npm run dev:astro` runs Astro directly and may not mirror Cloudflare runtime behavior exactly (e.g. `caches.default`, secrets from `.dev.vars`).
 - Apply production/staging schema updates with `npm run d1:migrate:remote` before testing against remote data.
 - Content edited locally (via the admin UI or `wrangler d1 execute DB --local`) only exists in local D1 — it does not appear on the live site until reproduced against remote D1.
+- To verify the consent banner, use footer **Cookie preferences** to change a saved choice. In browser developer tools, confirm no `gtag.js` request before acceptance or after declining, then check acceptance, reloads, in-site navigation, and withdrawal. Check the banner at desktop and phone widths; `npm run test:consent` verifies controller behavior but does not establish visual layout.
 
 ## More
 

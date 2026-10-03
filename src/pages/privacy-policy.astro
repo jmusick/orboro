@@ -48,13 +48,17 @@ const recentPosts = posts.map((p) => ({
       treated as completely anonymous, even when reports show aggregate statistics.
     </p>
     <p>
-      Analytics loads on public pages and the administrator login/setup screens. Page-view
+      Analytics loads on public pages and the administrator login/setup screens only after
+      you accept analytics cookies in the consent banner. Declining keeps the analytics tag
+      from loading. Your choice is saved in this browser's local storage until you change
+      it or clear that storage. Without JavaScript, the analytics tag does not load. Page-view
       events send the page title and full page URL, including query parameters. The site does
-      not deliberately send login email addresses or passwords as analytics fields. It currently
-      has no cookie consent banner and does not wait for an on-site opt-in before loading the tag.
+      not deliberately send login email addresses or passwords as analytics fields.
       The authenticated administration interface does not load the analytics tag.
     </p>
     <p>
+      The site's tag configuration keeps advertising storage, advertising user data, and
+      advertising personalization consent denied, even when you accept analytics.
       Analytics retention and Google's additional data-sharing or advertising features depend
       on the Google Analytics account settings. Those settings have not been verified for this
       policy update. The site code does not include a separate advertising pixel.
@@ -118,8 +122,17 @@ const recentPosts = posts.map((p) => ({
 
     <h2>Choices and contact</h2>
     <p>
-      You can block analytics scripts using the tools linked above and manage cookies through
-      your browser. Blocking analytics does not stop Cloudflare from processing the requests
+      Use <strong>Cookie preferences</strong> in the footer to change your analytics choice.
+      Withdrawing consent removes this site's Google Analytics cookies and reloads the page
+      to stop the running tag. If local storage is unavailable, your choice lasts only for the
+      current page session, including in-site navigation, and is lost on a full reload.
+      When local storage is available, changing the choice also updates other open tabs.
+      This choice controls analytics; necessary administrator session cookies and external
+      images described above are not controlled by the banner.
+    </p>
+    <p>
+      You can also block analytics scripts using the tools linked above and manage
+      cookies through your browser. Blocking analytics does not stop Cloudflare from processing the requests
       needed to serve the site. For questions or requests about your information, contact JD
       through the platform profiles linked on the homepage. What can be located or deleted
       depends on the information held and the relevant provider's controls.

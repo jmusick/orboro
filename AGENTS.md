@@ -107,7 +107,9 @@ The symptom is misleading: unexplained gaps, stray borders, or indentation that 
 
 **Gotcha — a class-level `display` beats the `hidden` attribute:** the browser's UA stylesheet sets `[hidden]{display:none}` at the same specificity as a class selector like `.sql-live{display:flex}`, and your page's `<style>` block loads after the UA sheet — so on a tie, your class wins and toggling `el.hidden = true` visibly does nothing. `spell-queue-lab.ts`'s `#sql-root .sql-live[hidden]{display:none;}` is the fix: pair every element you show/hide via the `hidden` property with an explicit `<root> .your-class[hidden]{display:none;}` rule if that class also sets its own `display`.
 
-**Same gotcha applies to Google Analytics:** the gtag.js snippet in `BaseLayout.astro`'s `<head>` is identical on every page, so Astro's head-diffing persists it across View Transitions rather than re-running it — meaning `gtag('config', ...)`'s automatic page-view fires exactly once per browser session, not on every in-site navigation. The site sets `send_page_view: false` and instead sends `gtag('event', 'page_view', ...)` manually on `astro:page-load` (which fires on the initial load and every subsequent client-side navigation), so don't "simplify" that back to the stock snippet or analytics will undercount navigation. Both `<script>` tags there also need `is:inline` — without it, Astro tries to process/type-check the inline script as a module and fails on the untyped `dataLayer`/`gtag` globals.
+**Google Analytics is opt-in:** `ConsentBanner.astro` is the only loader for gtag.js. It loads the tag only after acceptance (including saved acceptance), stores the choice in `orboro-analytics-consent` localStorage, and leaves advertising consent denied. Footer Cookie preferences reopens the banner; withdrawing consent disables the running tag, clears GA cookies on the host and parent domains, and reloads. Its nonce-bearing `is:inline` script installs one guarded controller with document-level listeners that survive ClientRouter swaps. Keep `send_page_view: false` and manual page views on `astro:page-load`, plus one view when first accepting; reaccepting an already active choice must not double count. Only track pages that contain the banner, so AdminLayout remains excluded. Run `npm run test:consent` when changing this boundary.
+
+Consent choices have no automatic expiry; they remain until changed or browser storage is cleared. When localStorage is unavailable, the controller keeps the choice in memory across ClientRouter navigation but loses it on a full reload. Storage events synchronize changes across tabs and stop a running tag when consent is withdrawn elsewhere. No JavaScript means no Google tag. The dynamically created tag reads the **current page's** nonce from `#analytics-controller`, not a nonce captured on an earlier page. Keep the explicit `[hidden]` display resets on the banner and footer preference button. Browser verification should cover desktop/phone layout, refusal across navigation, acceptance after a swap, saved acceptance on reload, and withdrawal; the controller tests alone do not verify visuals or real Google network traffic.
 
 ## Security response headers
 
@@ -126,7 +128,7 @@ paths the Worker never touches.
 
 The CSP is Report-Only, with a per-request nonce (generated in `middleware.ts`, exposed as
 `Astro.locals.nonce`) on `script-src`/`style-src` instead of `'unsafe-inline'`. `'unsafe-inline'` is
-dropped entirely, so **every** inline `<script>`/`<style>` — `BaseLayout.astro`'s `gtag`/nav/accordion
+dropped entirely, so **every** inline `<script>`/`<style>` — `ConsentBanner.astro`'s controller, `BaseLayout.astro`'s nav/accordion
 scripts, the handful of admin-page inline scripts, and each
 shortcode's own `<style>`/`<script>` — must carry `nonce={Astro.locals.nonce}` (Astro components) or
 `nonceAttr(nonce)` from `src/lib/csp.ts` (shortcode HTML strings, threaded through
@@ -175,9 +177,12 @@ not sanitize article content or make untrusted publishing safe.
 `src/pages/privacy-policy.astro` is a code-backed page, not a D1 content row.
 Keep it aligned with actual collection and update `PRIVACY_UPDATED_AT` in
 `src/lib/privacy.ts` when its substance changes; the sitemap uses that same date.
-Google Analytics loads on BaseLayout pages, including login/setup, but not on
-authenticated AdminLayout pages. Manual page views send `location.href`, including
-query strings. No consent banner or consent-mode configuration is implemented.
+Google Analytics loads on BaseLayout pages, including login/setup, only after
+analytics acceptance, and not on authenticated AdminLayout pages. Manual page views
+send `location.href`, including query strings. ConsentBanner stores the choice in
+localStorage, gates the tag entirely until acceptance, and keeps advertising consent
+denied. Withdrawing consent clears GA cookies and reloads; this choice does not gate
+external images or necessary administrator session cookies.
 Bookmark data is fetched server-side with a ten-minute cache, while browsers load
 favicon URLs supplied by Tagstash and the Google-hosted credit icon directly.
 Those images use `referrerpolicy="no-referrer"` but still contact their hosts.
