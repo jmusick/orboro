@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Card from "../../components/Card.astro";
-import BlogSidebar from "../../components/BlogSidebar.astro";
+import Sidebar from "../../components/Sidebar.astro";
 import { getPublishedContentByType, listContentCategoryNames, listCategoriesWithPostCounts, excerptFromMarkdown } from "../../lib/content";
 
 const posts = await getPublishedContentByType(Astro.locals, "post", 500);
@@ -82,7 +82,7 @@ const postCards = posts.map((post) => {
 
         <p id="blog-empty" class="empty-state" hidden>No posts match your search.</p>
       </section>
-      <BlogSidebar categories={categories} recentPosts={recentPosts} />
+      <Sidebar categories={categories} recentPosts={recentPosts} />
     </div>
   )}
 </BaseLayout>
@@ -166,7 +166,7 @@ const postCards = posts.map((post) => {
     align-items: start;
   }
 
-  .blog-layout :global(aside.blog-sidebar) {
+  .blog-layout :global(aside.site-sidebar) {
     position: sticky;
     top: 1.5rem;
   }

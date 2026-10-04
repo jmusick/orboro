@@ -1,7 +1,7 @@
 ---
 import { renderMarkdown } from "../../lib/markdown";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import BlogSidebar from "../../components/BlogSidebar.astro";
+import Sidebar from "../../components/Sidebar.astro";
 import { getPublishedBySlugAndType, listPostSummaries, listCategoriesWithPostCounts } from "../../lib/content";
 import { processShortcodes } from "../../lib/shortcodes";
 import { formatPageUpdatedAt } from "../../lib/dates";
@@ -69,7 +69,7 @@ const absoluteImageUrl = page.featuredImageUrl ? new URL(page.featuredImageUrl, 
       )}
       <div class="prose" set:html={html} />
     </article>
-    {!hasWidgets && <BlogSidebar categories={categories} recentPosts={recentPosts} />}
+    {!hasWidgets && <Sidebar categories={categories} recentPosts={recentPosts} />}
   </div>
 </BaseLayout>
 
@@ -82,7 +82,7 @@ const absoluteImageUrl = page.featuredImageUrl ? new URL(page.featuredImageUrl, 
     align-items: start;
   }
 
-  .page-layout--sidebar :global(aside.blog-sidebar) {
+  .page-layout--sidebar :global(aside.site-sidebar) {
     position: sticky;
     top: 1.5rem;
   }

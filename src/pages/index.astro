@@ -1,8 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Button from "../components/Button.astro";
-import Icon from "../components/Icon.astro";
-import { getPublishedContentByType, excerptFromMarkdown } from "../lib/content";
+import Sidebar from "../components/Sidebar.astro";
+import { getPublishedContentByType, excerptFromMarkdown, listCategoriesWithPostCounts } from "../lib/content";
 
 const rawPosts = await getPublishedContentByType(Astro.locals, "post", 8);
 const posts = rawPosts.map((post) => {
@@ -19,48 +19,8 @@ const lead = posts[0];
 const leadExcerpt = lead ? excerptFromMarkdown(lead.markdown, 200) : "";
 const feedPosts = posts.slice(1);
 
-const profiles = [
-	{
-		platform: "Patreon",
-		handle: "Support Orboro.net",
-		icon: "patreon",
-		url: "https://www.patreon.com/cw/Orboro",
-	},
-	{
-		platform: "Discord",
-		handle: "xing_yuen",
-		icon: "discord",
-	},
-	{
-		platform: "Battle.net",
-		handle: "Xing#1673",
-		icon: "battlenet",
-	},
-	{
-		platform: "Steam",
-		handle: "XingYuen",
-		icon: "steam",
-		url: "https://steamcommunity.com/id/XingYuen/",
-	},
-	{
-		platform: "Reddit",
-		handle: "u/XingYuen",
-		icon: "reddit",
-		url: "https://www.reddit.com/user/XingYuen/",
-	},
-	{
-		platform: "YouTube",
-		handle: "@XingYuen",
-		icon: "youtube",
-		url: "https://www.youtube.com/@XingYuen",
-	},
-	{
-		platform: "Twitch",
-		handle: "xingyuen",
-		icon: "twitch",
-		url: "https://www.twitch.tv/xingyuen",
-	},
-];
+const categories = await listCategoriesWithPostCounts(Astro.locals);
+const recentPosts = posts.slice(0, 5);
 ---
 
 
@@ -116,25 +76,7 @@ const profiles = [
 			)}
 		</section>
 
-		<aside class="profiles" aria-labelledby="profiles-title">
-			<h2 id="profiles-title">Find me elsewhere</h2>
-			<ul class="profiles-list">
-				{profiles.map((profile) => {
-					const Tag = profile.url ? "a" : "div";
-					const linkProps = profile.url ? { href: profile.url, target: "_blank", rel: "noopener noreferrer" } : {};
-					return (
-						<li>
-							<Tag class="profile-row" {...linkProps}>
-								<Icon name={profile.icon} size={18} filled={true} />
-								<span class="profile-row__platform">{profile.platform}</span>
-								<span class="profile-row__handle">{profile.handle}</span>
-								{profile.url && <Icon name="external-link" size={13} class="profile-row__external" />}
-							</Tag>
-						</li>
-					);
-				})}
-			</ul>
-		</aside>
+		<Sidebar categories={categories} recentPosts={recentPosts} />
 	</div>
 </BaseLayout>
 
@@ -221,11 +163,11 @@ const profiles = [
 		height: auto;
 	}
 
-	/* ── Feed + profiles ─────────────────────── */
+	/* ── Feed + sidebar ─────────────────────── */
 	.home-layout {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) 17rem;
-		gap: 3.5rem;
+		grid-template-columns: minmax(0, 1fr) 280px;
+		gap: 2.5rem;
 		align-items: start;
 	}
 
@@ -237,8 +179,7 @@ const profiles = [
 		margin-bottom: 0.5rem;
 	}
 
-	.feed-header h2,
-	.profiles h2 {
+	.feed-header h2 {
 		margin: 0;
 		font-size: 1.25rem;
 	}
@@ -323,78 +264,15 @@ const profiles = [
 		line-height: 1.6;
 	}
 
-	.profiles h2 {
-		margin-bottom: 0.75rem;
+	.home-layout :global(aside.site-sidebar) {
+		position: sticky;
+		top: 1.5rem;
 	}
 
-	.profiles-list {
-		margin: 0;
-		padding: 0;
-		list-style: none;
-	}
-
-	.profiles-list li {
-		margin: 0;
-		border-bottom: 1px solid var(--line);
-	}
-
-	.profiles-list li:last-child {
-		border-bottom: none;
-	}
-
-	.profile-row {
-		display: flex;
-		align-items: center;
-		gap: 0.7rem;
-		padding: 0.7rem 0.25rem;
-		color: var(--text);
-		font-size: 0.95rem;
-		text-decoration: none;
-		transition: color 0.2s ease;
-	}
-
-	.profile-row :global(svg) {
-		flex-shrink: 0;
-		color: var(--muted);
-		transition: color 0.2s ease;
-	}
-
-	a.profile-row:hover,
-	a.profile-row:hover :global(svg) {
-		color: var(--accent);
-	}
-
-	.profile-row__platform {
-		font-weight: 600;
-	}
-
-	.profile-row__handle {
-		min-width: 0;
-		margin-left: auto;
-		overflow: hidden;
-		color: var(--muted);
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-
-	.profile-row :global(.profile-row__external) {
-		margin-left: -0.3rem;
-	}
-
-	@media (max-width: 1100px) {
+	@media (max-width: 900px) {
 		.home-layout {
 			grid-template-columns: 1fr;
 			gap: 2.5rem;
-		}
-
-		.profiles-list {
-			display: grid;
-			grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
-			column-gap: 2rem;
-		}
-
-		.profiles-list li:last-child {
-			border-bottom: 1px solid var(--line);
 		}
 	}
 

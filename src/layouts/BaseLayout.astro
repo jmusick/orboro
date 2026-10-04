@@ -184,7 +184,7 @@ function nodeIcon(node: NavNode): string {
         align-items: center;
         justify-content: space-between;
         gap: 2rem;
-        padding: 1.5rem 0 1rem;
+        padding: 1.5rem 0;
       }
       .header-logo {
         display: block;
@@ -231,7 +231,6 @@ function nodeIcon(node: NavNode): string {
         display: flex;
         align-items: stretch;
         gap: 0;
-        margin-bottom: 1rem;
         background: var(--surface);
         border: 1px solid var(--line);
         border-radius: var(--r-md,10px);
@@ -543,6 +542,13 @@ function nodeIcon(node: NavNode): string {
       /* ── Prose ────────────────────────────────── */
       .prose { line-height: 1.7; }
       .prose p { margin: 0 0 1rem; }
+
+      /* The sidebar already bounds the reading column; fill its available width. */
+      .page-layout--sidebar,
+      .post-layout,
+      .home-layout {
+        --measure: 100%;
+      }
 
       /* Running text gets Source Sans 3 and a readable measure. Only direct
          children, so shortcode widgets keep the UI face and full width. */

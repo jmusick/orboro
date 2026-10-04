@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import BlogSidebar from "../components/BlogSidebar.astro";
+import Sidebar from "../components/Sidebar.astro";
 import { PRIVACY_UPDATED_AT } from "../lib/privacy";
 import { listPostSummaries, listCategoriesWithPostCounts } from "../lib/content";
 
@@ -146,7 +146,7 @@ const recentPosts = posts.map((p) => ({
 
     <hr />
   </section>
-  <BlogSidebar categories={categories} recentPosts={recentPosts} />
+  <Sidebar categories={categories} recentPosts={recentPosts} />
   </div>
 </BaseLayout>
 
@@ -159,7 +159,7 @@ const recentPosts = posts.map((p) => ({
     align-items: start;
   }
 
-  .page-layout :global(aside.blog-sidebar) {
+  .page-layout :global(aside.site-sidebar) {
     position: sticky;
     top: 1.5rem;
   }
@@ -171,7 +171,7 @@ const recentPosts = posts.map((p) => ({
   }
 
   section {
-    max-width: 720px;
+    min-width: 0;
   }
 
   .updated {

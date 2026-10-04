@@ -1,7 +1,7 @@
 ---
 import { renderMarkdown } from "../../lib/markdown";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import BlogSidebar from "../../components/BlogSidebar.astro";
+import Sidebar from "../../components/Sidebar.astro";
 import {
   getPublishedBySlugAndType,
   listPostSummaries,
@@ -127,7 +127,7 @@ const structuredData = {
         </nav>
       )}
     </article>
-    <BlogSidebar categories={categories} recentPosts={recentPosts} />
+    <Sidebar categories={categories} recentPosts={recentPosts} />
   </div>
 </BaseLayout>
 
@@ -139,7 +139,7 @@ const structuredData = {
     align-items: start;
   }
 
-  .post-layout :global(aside.blog-sidebar) {
+  .post-layout :global(aside.site-sidebar) {
     position: sticky;
     top: 1.5rem;
   }

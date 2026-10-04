@@ -15,9 +15,53 @@ interface Props {
 }
 
 const { categories, recentPosts, activeCategorySlug } = Astro.props;
+
+const profiles = [
+	{
+		platform: "Patreon",
+		handle: "Support Orboro.net",
+		icon: "patreon",
+		url: "https://www.patreon.com/cw/Orboro",
+	},
+	{
+		platform: "Discord",
+		handle: "xing_yuen",
+		icon: "discord",
+	},
+	{
+		platform: "Battle.net",
+		handle: "Xing#1673",
+		icon: "battlenet",
+	},
+	{
+		platform: "Steam",
+		handle: "XingYuen",
+		icon: "steam",
+		url: "https://steamcommunity.com/id/XingYuen/",
+	},
+	{
+		platform: "Reddit",
+		handle: "u/XingYuen",
+		icon: "reddit",
+		url: "https://www.reddit.com/user/XingYuen/",
+	},
+	{
+		platform: "YouTube",
+		handle: "@XingYuen",
+		icon: "youtube",
+		url: "https://www.youtube.com/@XingYuen",
+	},
+	{
+		platform: "Twitch",
+		handle: "xingyuen",
+		icon: "twitch",
+		url: "https://www.twitch.tv/xingyuen",
+	},
+];
+
 ---
 
-<aside class="blog-sidebar">
+<aside class="site-sidebar">
   {categories.length > 0 && (
     <section class="sidebar-block">
       <h2>Categories</h2>
@@ -51,17 +95,42 @@ const { categories, recentPosts, activeCategorySlug } = Astro.props;
       </div>
     </section>
   )}
+  <section class="sidebar-block" aria-labelledby="profiles-title">
+    <h2 id="profiles-title">Find me elsewhere</h2>
+    <ul class="sidebar-list profiles-list">
+      {profiles.map((profile) => {
+        const Tag = profile.url ? "a" : "div";
+        const linkProps = profile.url ? { href: profile.url, target: "_blank", rel: "noopener noreferrer" } : {};
+        return (
+          <li>
+            <Tag class="sidebar-row sidebar-row--profile" {...linkProps}>
+              <Icon name={profile.icon} size={18} filled={true} />
+              <span class="sidebar-row__text profile-text">
+                <strong>{profile.platform}</strong>
+                <span class="profile-handle">{profile.handle}</span>
+              </span>
+              {profile.url && <Icon name="external-link" size={13} />}
+            </Tag>
+          </li>
+        );
+      })}
+    </ul>
+  </section>
 </aside>
 
 <style>
-  .blog-sidebar {
+  .site-sidebar {
     display: flex;
     flex-direction: column;
-    gap: 1.75rem;
+    gap: 1.5rem;
+  }
+
+  .sidebar-block {
+    margin: 0;
   }
 
   .sidebar-block h2 {
-    margin: 0 0 1rem;
+    margin: 0 0 0.75rem;
     font-size: 1.1rem;
   }
 
@@ -82,12 +151,11 @@ const { categories, recentPosts, activeCategorySlug } = Astro.props;
     color: var(--text);
     text-decoration: none;
     font-size: 0.85rem;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color 0.2s ease;
   }
 
-  .sidebar-row:hover {
+  a.sidebar-row:hover {
     border-color: var(--accent);
-    box-shadow: 0 0 0.8rem rgb(112 208 255 / 15%);
   }
 
   .sidebar-row--active {
@@ -128,5 +196,33 @@ const { categories, recentPosts, activeCategorySlug } = Astro.props;
     color: var(--accent);
     font-size: 0.75rem;
     font-weight: 600;
+  }
+
+  .profiles-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .profiles-list li {
+    margin: 0;
+  }
+
+  .sidebar-row--profile :global(svg) {
+    flex-shrink: 0;
+    color: var(--muted);
+  }
+
+  .profile-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .profile-handle {
+    color: var(--muted);
+    font-size: 0.78rem;
   }
 </style>
