@@ -1,5 +1,6 @@
 ---
 import AdminLayout from "../../../layouts/AdminLayout.astro";
+import FormMessage from "../../../components/FormMessage.astro";
 import Button from "../../../components/Button.astro";
 import { ensureRole } from "../../../lib/http";
 
@@ -8,6 +9,7 @@ if (access instanceof Response) return access;
 ---
 
 <AdminLayout title="New Category">
+  {Astro.url.searchParams.get("error") === "invalid" && <FormMessage error fields={[{ id: "name", label: "Name" }, { id: "slug", label: "Slug" }]}>Category was not saved. Provide a name and a valid slug. Re-enter any unsaved changes before saving again.</FormMessage>}
   <section class="editor-section">
     <form method="post" action="/api/categories/save" class="category-editor">
       <div class="form-row">

@@ -19,7 +19,7 @@ export const POST: APIRoute = async (context) => {
   const featuredImageUrl = String(form.get("featuredImageUrl") ?? "").trim() || null;
 
   if (!title || !slug || !markdown) {
-    return context.redirect("/admin/content?error=invalid");
+    return context.redirect(`/admin/content/${id ? encodeURIComponent(id) : "new"}?error=invalid`);
   }
 
   const savedId = await saveContent(context.locals, {
@@ -45,5 +45,5 @@ export const POST: APIRoute = async (context) => {
     }
   }
 
-  return context.redirect(`/admin/content/${savedId}`);
+  return context.redirect(`/admin/content/${savedId}?saved=1`);
 };

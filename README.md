@@ -32,6 +32,7 @@ before adding non-admin users.
 - RSS at `/rss.xml`, with WebSub update notifications, and IndexNow notifications for published content
 - Public read-only JSON at `/api/posts/by-category/[slug]`, with published post summaries and a ten-minute cache
 - Safe inline JSON/JSON-LD serialization through `src/lib/json.ts`
+- Accessible filter selection and polite result/verdict feedback; shared form errors focus a summary with links to relevant fields, including EasyMDE. Invalid content/category submissions return to the editor but do not retain unsaved values.
 - Opt-in Google Analytics (gtag.js) through `ConsentBanner.astro`, with Accept/Decline, footer Cookie preferences, and manual page views across Astro View Transitions (see [AGENTS.md](AGENTS.md))
 - Security response headers (HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`, and a report-only CSP) set in `src/middleware.ts` for all SSR'd routes, plus `public/_headers` for static assets — see [AGENTS.md](AGENTS.md)
 

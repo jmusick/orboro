@@ -1,5 +1,6 @@
 ---
 import AdminLayout from "../../../layouts/AdminLayout.astro";
+import FormMessage from "../../../components/FormMessage.astro";
 import Button from "../../../components/Button.astro";
 import { getCategoryById } from "../../../lib/content";
 import { ensureRole } from "../../../lib/http";
@@ -22,8 +23,9 @@ const saved = url.searchParams.get("saved") === "1";
 ---
 
 <AdminLayout title={`Edit ${category.name}`}>
+  {Astro.url.searchParams.get("error") === "invalid" && <FormMessage error fields={[{ id: "name", label: "Name" }, { id: "slug", label: "Slug" }]}>Category was not saved. Provide a name and a valid slug. Re-enter any unsaved changes before saving again.</FormMessage>}
   {saved && (
-    <div class="success-banner">Category saved successfully.</div>
+    <FormMessage>Category saved successfully.</FormMessage>
   )}
 
   <section class="editor-section">

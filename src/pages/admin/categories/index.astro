@@ -1,5 +1,6 @@
 ---
 import AdminLayout from "../../../layouts/AdminLayout.astro";
+import FormMessage from "../../../components/FormMessage.astro";
 import Button from "../../../components/Button.astro";
 import Pill from "../../../components/Pill.astro";
 import Icon from "../../../components/Icon.astro";
@@ -17,7 +18,7 @@ const error = url.searchParams.get("error");
 <AdminLayout title="Categories">
   <section class="content-header">
     {error === "invalid" && (
-      <div class="error-banner">Name and slug are required.</div>
+      <FormMessage error>Unable to complete the category request. Try again from the category editor.</FormMessage>
     )}
     <Button href="/admin/categories/new" variant="primary" icon="plus">
       New Category

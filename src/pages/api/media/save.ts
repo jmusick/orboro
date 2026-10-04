@@ -12,7 +12,7 @@ export const POST: APIRoute = async (context) => {
   const caption = String(form.get("caption") ?? "").trim();
 
   if (!url || !altText) {
-    return context.redirect("/admin/media?error=invalid");
+    return context.redirect("/admin/media?form=url&error=invalid");
   }
 
   await saveMedia(context.locals, {

@@ -1,0 +1,50 @@
+---
+interface Props {
+  id?: string;
+  error?: boolean;
+  fields?: { id: string; label: string }[];
+}
+const { error = false, fields = [], id = error ? "form-error" : "form-status" } = Astro.props;
+---
+
+<div id={id} class:list={["form-message", { "form-message--error": error }]} role={error ? undefined : "status"} aria-atomic="true" tabindex={error ? "-1" : undefined} data-form-error={error || undefined}>
+  <p><slot /></p>
+  {fields.length > 0 && <ul>{fields.map(field => <li><a href={`#${field.id}`} data-error-field={field.id}>{field.label}</a></li>)}</ul>}
+</div>
+
+<script>
+  function initMessages() {
+    document.querySelectorAll<HTMLElement>('[data-form-error]').forEach(summary => {
+      if (summary.dataset.messageInit) return;
+      summary.dataset.messageInit = '1';
+      summary.querySelectorAll<HTMLAnchorElement>('[data-error-field]').forEach(link => {
+        const field = document.getElementById(link.dataset.errorField || '');
+        if (!field) return;
+        const descriptions = new Set((field.getAttribute('aria-describedby') || '').split(' ').filter(Boolean));
+        descriptions.add(summary.id);
+        field.setAttribute('aria-describedby', [...descriptions].join(' '));
+        const editor = field.parentElement?.querySelector<HTMLElement>('.CodeMirror textarea, .CodeMirror [contenteditable="true"]');
+        if (editor) editor.setAttribute('aria-describedby', [...descriptions].join(' '));
+        link.addEventListener('click', event => {
+          event.preventDefault();
+          // EasyMDE hides its source textarea; focus its generated editing surface.
+          const editor = field.parentElement?.querySelector<HTMLElement>('.CodeMirror textarea, .CodeMirror [contenteditable="true"]');
+          (editor || field).focus();
+        });
+      });
+      summary.focus();
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initMessages);
+  else initMessages();
+  document.addEventListener('astro:page-load', initMessages);
+</script>
+
+<style>
+  .form-message { margin: 0 0 1.25rem; padding: 1rem; border: 1px solid var(--line); border-radius: var(--r-md, 10px); background: var(--surface); }
+  .form-message p { margin: 0; }
+  .form-message ul { margin: .5rem 0 0; padding-left: 1.25rem; }
+  .form-message a { color: var(--accent); text-decoration: underline; }
+  .form-message--error { border-color: var(--accent); }
+  .form-message:focus, .form-message a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+</style>

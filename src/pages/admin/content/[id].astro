@@ -1,6 +1,7 @@
 ---
 import AdminLayout from "../../../layouts/AdminLayout.astro";
 import easyMdeUrl from "easymde/dist/easymde.min.js?url";
+import FormMessage from "../../../components/FormMessage.astro";
 import Button from "../../../components/Button.astro";
 import { getContentById, listCategories, getContentCategoryIds } from "../../../lib/content";
 import { ensureRole } from "../../../lib/http";
@@ -23,6 +24,8 @@ const selectedCategoryIds = await getContentCategoryIds(Astro.locals, id);
 ---
 
 <AdminLayout title={`Edit ${content.title}`}>
+  {Astro.url.searchParams.get("saved") === "1" && <FormMessage>Content saved successfully.</FormMessage>}
+  {Astro.url.searchParams.get("error") === "invalid" && <FormMessage error fields={[{ id: "title", label: "Title" }, { id: "slug", label: "Slug" }, { id: "markdown", label: "Markdown" }]}>Content was not saved. Provide a title, a valid slug and Markdown. Re-enter any unsaved changes before saving again.</FormMessage>}
   <section class="editor-section">
     <form method="post" action="/api/content/save" id="content-form" class="content-editor">
       <input type="hidden" name="id" value={content.id} />

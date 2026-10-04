@@ -1,5 +1,6 @@
 ---
 import AdminLayout from "../../../layouts/AdminLayout.astro";
+import FormMessage from "../../../components/FormMessage.astro";
 import Button from "../../../components/Button.astro";
 import Icon from "../../../components/Icon.astro";
 import { ensureRole } from "../../../lib/http";
@@ -10,15 +11,19 @@ if (access instanceof Response) return access;
 const media = await listMedia(Astro.locals);
 const error = Astro.url.searchParams.get("error");
 const errorMessages: Record<string, string> = {
-  invalid: "Choose an image and provide alt text.",
+  invalid: "Media was not saved. Choose an image or enter an image URL, and provide alt text. For uploads, alt text is limited to 500 characters and captions to 1,000.",
   "too-large": "The image must be no larger than 10 MB.",
   unsupported: "Use a PNG, JPEG, GIF, WebP, or AVIF image.",
   "upload-failed": "The upload failed. Please try again.",
 };
+const source = Astro.url.searchParams.get("form");
+const errorFields = source === "upload"
+  ? [{ id: "file", label: "Image file" }, { id: "uploadAltText", label: "Alt text" }, { id: "uploadCaption", label: "Caption" }]
+  : source === "url" ? [{ id: "url", label: "Image URL" }, { id: "altText", label: "Alt text" }] : [];
 ---
 
 <AdminLayout title="Media">
-  {error && errorMessages[error] && <p class="form-message form-message--error" role="alert">{errorMessages[error]}</p>}
+  {error && errorMessages[error] && <FormMessage error fields={errorFields}>{errorMessages[error]}</FormMessage>}
   {Astro.url.searchParams.has("uploaded") && <p class="form-message" role="status">Image uploaded to the media library.</p>}
   <section class="form-section">
     <h2>Upload Image</h2>

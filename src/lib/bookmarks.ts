@@ -116,9 +116,9 @@ export async function generateBookmarksList(attrs: Record<string, string>, nonce
 
   const categoryChips = categories.length > 0
     ? `<div class="bml-cats">` +
-      `<button type="button" class="bml-cat bml-cat--active" data-category="">All <span class="bml-cat__count">${sorted.length}</span></button>` +
+      `<button type="button" class="bml-cat bml-cat--active" data-category="" aria-pressed="true">All <span class="bml-cat__count">${sorted.length}</span></button>` +
       categories
-        .map((c) => `<button type="button" class="bml-cat" data-category="${esc(c)}">${esc(c)} <span class="bml-cat__count">${categoryCounts.get(c)}</span></button>`)
+        .map((c) => `<button type="button" class="bml-cat" data-category="${esc(c)}" aria-pressed="false">${esc(c)} <span class="bml-cat__count">${categoryCounts.get(c)}</span></button>`)
         .join("") +
       `</div>`
     : "";
@@ -144,6 +144,7 @@ export async function generateBookmarksList(attrs: Record<string, string>, nonce
 
 .bml-item[hidden]{display:none;}
 
+#bml-root p.bml-status{margin:0 0 .7rem;font-size:.85rem;color:var(--muted,#97a8c4);}
 .bml-cats{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.7rem;}
 .bml-cat{display:inline-flex;align-items:center;gap:.35rem;background:transparent;border:1px solid var(--line,#1f2b46);color:var(--muted,#97a8c4);padding:.3rem .65rem;border-radius:var(--r-pill,999px);font:inherit;font-size:.78rem;font-weight:600;cursor:pointer;transition:color .15s ease,border-color .15s ease,background .15s ease;}
 .bml-cat:hover{color:var(--text,#e8f3ff);border-color:var(--muted,#97a8c4);}
@@ -179,13 +180,19 @@ export async function generateBookmarksList(attrs: Record<string, string>, nonce
     root.dataset.bmlInit='1';
     root.querySelectorAll('.bml-cat').forEach(function(chip){
       chip.addEventListener('click',function(){
-        root.querySelectorAll('.bml-cat').forEach(function(c){c.classList.remove('bml-cat--active');});
+        root.querySelectorAll('.bml-cat').forEach(function(c){c.classList.remove('bml-cat--active');c.setAttribute('aria-pressed','false');});
         chip.classList.add('bml-cat--active');
+        chip.setAttribute('aria-pressed','true');
+        var visible=0;
         var category=chip.dataset.category;
         root.querySelectorAll('.bml-item').forEach(function(item){
           var cats=(item.dataset.categories||'').split(' ');
           item.hidden=!!category&&cats.indexOf(category)===-1;
+          if(!item.hidden)visible++;
         });
+        var message=visible+' bookmark'+(visible===1?'':'s')+' shown'+(category?' in '+category:' in all categories')+'.';
+        var status=root.querySelector('.bml-status');
+        if(status.textContent!==message)status.textContent=message;
       });
     });
   }
@@ -201,5 +208,5 @@ export async function generateBookmarksList(attrs: Record<string, string>, nonce
 
   const script = js ? `<script${nonceAttr(nonce)}>${js}<\/script>` : "";
 
-  return `<div id="bml-root"><style${nonceAttr(nonce)}>${css}</style>${categoryChips}<div class="bml-list">${itemsHtml}</div><hr class="bml-divider" />${credit}${script}</div>`;
+  return `<div id="bml-root"><style${nonceAttr(nonce)}>${css}</style>${categoryChips}<p class="bml-status" role="status" aria-atomic="true">${sorted.length} bookmarks shown in all categories.</p><div class="bml-list">${itemsHtml}</div><hr class="bml-divider" />${credit}${script}</div>`;
 }

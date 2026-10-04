@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import FormMessage from "../../components/FormMessage.astro";
 import Button from "../../components/Button.astro";
 import { getUserCount } from "../../lib/content";
 
@@ -13,6 +14,9 @@ if (userCount > 0) {
   <section class="setup-section">
     <h1>Create Initial Admin</h1>
     <p class="setup-subtitle">Set up your first admin account to manage the Orboro.net CMS.</p>
+
+    {Astro.url.searchParams.get("error") === "invalid" && <FormMessage error fields={[{ id: "email", label: "Email address" }, { id: "password", label: "Password" }]}>Account was not created. Enter an email address and a password with at least 10 characters.</FormMessage>}
+    {Astro.url.searchParams.get("error") === "failed" && <FormMessage error>Account setup failed. Please try again.</FormMessage>}
 
     <form method="post" action="/api/setup/create-admin" class="setup-form">
       <div class="form-group">
@@ -31,12 +35,14 @@ if (userCount > 0) {
         <input 
           id="password" 
           type="password" 
-          name="password" 
+          name="password"
+          autocomplete="new-password"
+          aria-describedby="password-hint"
           minlength="10" 
           required
           placeholder="At least 10 characters"
         />
-        <small class="password-hint">Use a strong password with letters, numbers, and symbols</small>
+        <small id="password-hint" class="password-hint">Use a strong password with letters, numbers, and symbols</small>
       </div>
       <Button type="submit" variant="primary" icon="lock">
         Create Admin Account

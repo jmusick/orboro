@@ -1,5 +1,6 @@
 ---
 import AdminLayout from "../../../layouts/AdminLayout.astro";
+import FormMessage from "../../../components/FormMessage.astro";
 import Button from "../../../components/Button.astro";
 import Pill from "../../../components/Pill.astro";
 import Icon from "../../../components/Icon.astro";
@@ -25,6 +26,7 @@ const getStatusIcon = (status: string) => {
 ---
 
 <AdminLayout title="Content">
+  {Astro.url.searchParams.get("error") === "invalid" && <FormMessage error>Unable to complete the content request. Select the content and try again.</FormMessage>}
   <section class="content-header">
     <Button href="/admin/content/new" variant="primary" icon="plus">
       Create New Content
@@ -67,7 +69,7 @@ const getStatusIcon = (status: string) => {
             <option value="draft">Draft</option>
           </select>
         </div>
-        <span id="filter-count" class="filter-count"></span>
+        <span id="filter-count" class="filter-count" role="status" aria-atomic="true"></span>
       </div>
 
       <div class="content-table-wrapper">
@@ -179,9 +181,10 @@ const getStatusIcon = (status: string) => {
         });
 
         if (countEl) {
-          countEl.textContent = visible.length === allRows.length
+          var message = visible.length === allRows.length
             ? allRows.length + ' items'
             : visible.length + ' of ' + allRows.length + ' items';
+          if (countEl.textContent !== message) countEl.textContent = message;
         }
         if (noResults) noResults.style.display = visible.length === 0 ? '' : 'none';
       }

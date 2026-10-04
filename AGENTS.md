@@ -111,6 +111,18 @@ The symptom is misleading: unexplained gaps, stray borders, or indentation that 
 
 Consent choices have no automatic expiry; they remain until changed or browser storage is cleared. When localStorage is unavailable, the controller keeps the choice in memory across ClientRouter navigation but loses it on a full reload. Storage events synchronize changes across tabs and stop a running tag when consent is withdrawn elsewhere. No JavaScript means no Google tag. The dynamically created tag reads the **current page's** nonce from `#analytics-controller`, not a nonce captured on an earlier page. Keep the explicit `[hidden]` display resets on the banner and footer preference button. Browser verification should cover desktop/phone layout, refusal across navigation, acceptance after a swap, saved acceptance on reload, and withdrawal; the controller tests alone do not verify visuals or real Google network traffic.
 
+## Form feedback
+
+`src/components/FormMessage.astro` provides shared form feedback. Successes use
+an atomic polite status. Errors receive focus on arrival and expose links to
+relevant controls; descriptions are associated without declaring all linked fields
+invalid. Keep existing hint IDs when extending `aria-describedby`. Markdown links
+must focus EasyMDE's generated input, which inherits error descriptions from its
+source textarea. The controller guards each summary and initializes on
+`astro:page-load`. Do not move focus for filtering or simulator updates; use concise
+polite statuses and avoid rewriting unchanged text. Content/category validation
+redirects return to their editor but do not retain unsaved form values.
+
 ## Security response headers
 
 Because this is `output: "server"`, every page and API route is rendered by the Worker — **not**

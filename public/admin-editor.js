@@ -52,6 +52,8 @@ if (markdownEl instanceof HTMLTextAreaElement && typeof EasyMDE !== "undefined")
     const editorInput = easyMde.codemirror.getInputField();
     editorInput.id = "markdown-editor";
     editorInput.setAttribute("aria-labelledby", markdownLabel.id);
+    const description = markdownEl.getAttribute("aria-describedby");
+    if (description) editorInput.setAttribute("aria-describedby", description);
     if (editorInput.isContentEditable) {
       editorInput.setAttribute("role", "textbox");
       editorInput.setAttribute("aria-multiline", "true");

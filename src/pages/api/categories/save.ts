@@ -11,7 +11,7 @@ export const POST: APIRoute = async (context) => {
   const slug = sanitizeSlug(String(form.get("slug") ?? ""));
 
   if (!name || !slug) {
-    return context.redirect("/admin/categories?error=invalid");
+    return context.redirect(`/admin/categories/${id ? encodeURIComponent(id) : "new"}?error=invalid`);
   }
 
   const savedId = await saveCategory(context.locals, { id, name, slug });

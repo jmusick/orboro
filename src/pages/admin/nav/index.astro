@@ -1,5 +1,6 @@
 ---
 import AdminLayout from "../../../layouts/AdminLayout.astro";
+import FormMessage from "../../../components/FormMessage.astro";
 import Button from "../../../components/Button.astro";
 import { ensureRole } from "../../../lib/http";
 import { listNavItems, listAdminContent } from "../../../lib/content";
@@ -33,8 +34,8 @@ const initContent = publishedContent.map((c) => ({
 ---
 
 <AdminLayout title="Navigation">
-  {saved && <div class="success-banner">Navigation saved successfully.</div>}
-  {error === "invalid" && <div class="error-banner">Invalid navigation data. Please try again.</div>}
+  {saved && <FormMessage>Navigation saved successfully.</FormMessage>}
+  {error === "invalid" && <FormMessage error fields={[{ id: "nav-list", label: "Review navigation items" }]}>Navigation was not saved. Review the items and try again.</FormMessage>}
 
   <script is:inline type="application/json" id="nav-init" set:html={jsonForHtml({ nav: initNav, content: initContent })} />
 
@@ -45,7 +46,7 @@ const initContent = publishedContent.map((c) => ({
       <div class="nav-panel">
         <h2 class="panel-title">Current Navigation</h2>
         <p class="panel-desc">Top-level items appear in the nav bar. Sub-items appear as a dropdown. Use ↑↓ to reorder within each level.</p>
-        <ul id="nav-list" class="nav-list"></ul>
+        <ul id="nav-list" tabindex="-1" class="nav-list"></ul>
       </div>
 
       <div class="nav-panel add-panel">

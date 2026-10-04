@@ -40,11 +40,6 @@ export const POST: APIRoute = async ({ request, locals, cookies, url, redirect }
     return redirect("/admin");
   } catch (error) {
     console.error("[create-admin] Error:", error);
-    return new Response(
-      JSON.stringify({
-        error: "Setup failed",
-      }),
-      { status: 500, headers: { "content-type": "application/json" } }
-    );
+    return redirect("/admin/setup?error=failed");
   }
 };

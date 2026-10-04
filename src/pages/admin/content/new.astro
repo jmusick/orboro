@@ -1,6 +1,7 @@
 ---
 import AdminLayout from "../../../layouts/AdminLayout.astro";
 import easyMdeUrl from "easymde/dist/easymde.min.js?url";
+import FormMessage from "../../../components/FormMessage.astro";
 import Button from "../../../components/Button.astro";
 import { ensureRole } from "../../../lib/http";
 import { listCategories } from "../../../lib/content";
@@ -11,6 +12,7 @@ const categories = await listCategories(Astro.locals);
 ---
 
 <AdminLayout title="Create Content">
+  {Astro.url.searchParams.get("error") === "invalid" && <FormMessage error fields={[{ id: "title", label: "Title" }, { id: "slug", label: "Slug" }, { id: "markdown", label: "Markdown" }]}>Content was not saved. Provide a title, a valid slug and Markdown. Re-enter any unsaved changes before saving again.</FormMessage>}
   <section class="editor-section">
     <form method="post" action="/api/content/save" id="content-form" class="content-editor">
       <div class="form-row">

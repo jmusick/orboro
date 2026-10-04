@@ -11,7 +11,7 @@ export const POST: APIRoute = async (context) => {
   }
   const contentLength = Number(context.request.headers.get("content-length"));
   if (contentLength > MAX_MEDIA_BYTES + 20_000) {
-    return context.redirect("/admin/media?error=too-large");
+    return context.redirect("/admin/media?form=upload&error=too-large");
   }
 
   const form = await context.request.formData();
@@ -20,19 +20,19 @@ export const POST: APIRoute = async (context) => {
   const caption = String(form.get("caption") ?? "").trim();
 
   if (!(file instanceof File) || !altText || altText.length > 500 || caption.length > 1000) {
-    return context.redirect("/admin/media?error=invalid");
+    return context.redirect("/admin/media?form=upload&error=invalid");
   }
   if (file.size === 0) {
-    return context.redirect("/admin/media?error=invalid");
+    return context.redirect("/admin/media?form=upload&error=invalid");
   }
   if (file.size > MAX_MEDIA_BYTES) {
-    return context.redirect("/admin/media?error=too-large");
+    return context.redirect("/admin/media?form=upload&error=too-large");
   }
 
   const bytes = new Uint8Array(await file.arrayBuffer());
   const image = identifyImage(bytes);
   if (!image) {
-    return context.redirect("/admin/media?error=unsupported");
+    return context.redirect("/admin/media?form=upload&error=unsupported");
   }
 
   const now = new Date();
@@ -54,7 +54,7 @@ export const POST: APIRoute = async (context) => {
     }
   } catch (error) {
     console.error("Media upload failed", { error });
-    return context.redirect("/admin/media?error=upload-failed");
+    return context.redirect("/admin/media?form=upload&error=upload-failed");
   }
 
   return context.redirect("/admin/media?uploaded=1");

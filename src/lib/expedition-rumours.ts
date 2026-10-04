@@ -154,7 +154,9 @@ export function generateExpeditionRumourSheet(_attrs: Record<string, string>, no
       }
     }
     verdict.className='ers-verdict ers-verdict--'+status;
-    iconEl.textContent=icon;mainEl.textContent=main;subEl.textContent=sub;
+    if(iconEl.textContent!==icon)iconEl.textContent=icon;
+    if(mainEl.textContent!==main)mainEl.textContent=main;
+    if(subEl.textContent!==sub)subEl.textContent=sub;
     cntEl.textContent=count>0?String(count):'';
   }
 
@@ -219,13 +221,13 @@ export function generateExpeditionRumourSheet(_attrs: Record<string, string>, no
     `<span class="ers-hint"><span>■</span> = no Aldur's (boss / unique map)</span>` +
     `<button type="button" class="ers-reset" id="ers-reset">Clear</button>` +
     `</div>` +
-    `<div id="ers-verdict" class="ers-verdict ers-verdict--neutral">` +
-    `<div class="ers-verdict__icon" id="ers-icon">○</div>` +
+    `<div id="ers-verdict" role="status" aria-atomic="true" class="ers-verdict ers-verdict--neutral">` +
+    `<div class="ers-verdict__icon" id="ers-icon" aria-hidden="true">○</div>` +
     `<div class="ers-verdict__body">` +
     `<div class="ers-verdict__main" id="ers-main">Select your logbook's active rumours above</div>` +
     `<div class="ers-verdict__sub" id="ers-sub"></div>` +
     `</div>` +
-    `<div class="ers-verdict__count" id="ers-count"></div>` +
+    `<div class="ers-verdict__count" id="ers-count" aria-hidden="true"></div>` +
     `</div>` +
     `<script${nonceAttr(nonce)}>${js}<\/script>` +
     `<div class="ers-meta">` +
