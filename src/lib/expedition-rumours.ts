@@ -64,6 +64,7 @@ export function generateExpeditionRumourSheet(_attrs: Record<string, string>, no
 #ers-root{font-family:inherit;margin:0;}
 #ers-root *{box-sizing:border-box;}
 
+#ers-root .ers-filter-label{display:block;margin-bottom:.4rem;font-size:.85rem;font-weight:600;color:var(--text,#e8f3ff);}
 .ers-filter-row{display:flex;gap:.4rem;margin-bottom:.6rem;}
 #ers-filter{flex:1;background:var(--surface,#0c1324);border:1px solid var(--line-strong,#667aa3);border-radius:var(--r-sm,6px);padding:.45rem .75rem;color:var(--text,#e8f3ff);font:inherit;font-size:.85rem;outline:none;transition:border-color .12s;}
 #ers-filter::placeholder{color:var(--muted,#97a8c4);}
@@ -208,6 +209,7 @@ export function generateExpeditionRumourSheet(_attrs: Record<string, string>, no
   return (
     `<div id="ers-root">` +
     `<style${nonceAttr(nonce)}>${css}</style>` +
+    `<label class="ers-filter-label" for="ers-filter">Filter rumours</label>` +
     `<div class="ers-filter-row">` +
     `<input type="text" id="ers-filter" placeholder="Filter by rumour name…" autocomplete="off" spellcheck="false">` +
     `<button type="button" id="ers-filter-clear" aria-label="Clear filter">✕</button>` +

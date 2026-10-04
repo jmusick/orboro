@@ -45,6 +45,21 @@ if (markdownEl instanceof HTMLTextAreaElement && typeof EasyMDE !== "undefined")
     ],
   });
 
+  // EasyMDE hides the source textarea. Name its actual editable input instead,
+  // for both CodeMirror's desktop textarea and mobile contenteditable modes.
+  const markdownLabel = document.querySelector("#markdown-label");
+  if (markdownLabel instanceof HTMLLabelElement) {
+    const editorInput = easyMde.codemirror.getInputField();
+    editorInput.id = "markdown-editor";
+    editorInput.setAttribute("aria-labelledby", markdownLabel.id);
+    if (editorInput.isContentEditable) {
+      editorInput.setAttribute("role", "textbox");
+      editorInput.setAttribute("aria-multiline", "true");
+    }
+    markdownLabel.htmlFor = editorInput.id;
+    markdownLabel.addEventListener("click", () => easyMde.codemirror.focus());
+  }
+
   // Inject dark theme after EasyMDE initializes so it's last in the cascade
   const s = document.createElement("style");
   s.textContent = `
