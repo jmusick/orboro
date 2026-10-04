@@ -144,6 +144,7 @@ const css = `
 #sql-root button.sql-primary:hover{background:#52edff;box-shadow:0 0 1.1rem rgb(112 208 255 / 22%);transform:translateY(-1px);}
 #sql-root button.sql-secondary{margin-top:.45rem;padding:.62rem .8rem;border:1px solid rgb(112 208 255 / 30%);background:rgb(112 208 255 / 5%);color:var(--accent,#70d0ff);}
 #sql-root button.sql-secondary:hover{border-color:rgb(112 208 255 / 55%);background:rgb(112 208 255 / 9%);}
+#sql-root button.sql-primary:focus-visible{outline:2px solid var(--accent,#70d0ff);outline-offset:3px;}
 #sql-root p.sql-shortcut{margin:.5rem 0 0;text-align:center;color:rgb(151 168 196 / 72%);font-size:.66rem;}
 #sql-root kbd{padding:.08rem .3rem;border:1px solid var(--line,#1f2b46);border-bottom-width:2px;border-radius:var(--r-sm,6px);background:var(--surface,#0c1324);color:var(--text,#e8f3ff);font-family:inherit;}
 
@@ -409,9 +410,11 @@ const js = `
     root.querySelectorAll('[data-sqw]').forEach(function(el){el.addEventListener('click',function(){sqw.value=el.dataset.sqw;updateAll();});});
     spellButton.addEventListener('click',castInput);
     get('sql-reset-button').addEventListener('click',resetTest);
-    document.addEventListener('keydown',function(event){
-      if(!root.isConnected||event.key!=='1'||event.repeat)return;
-      var tag=event.target&&event.target.tagName;if(tag&&/INPUT|TEXTAREA|SELECT|BUTTON/.test(tag))return;
+    spellButton.addEventListener('keydown',function(event){
+      if(!root.isConnected||document.activeElement!==spellButton||event.defaultPrevented||event.key!=='1'||event.repeat||event.isComposing)return;
+      if(event.ctrlKey||event.altKey||event.metaKey||event.shiftKey)return;
+      var target=event.target;
+      if(target instanceof HTMLElement&&(target.isContentEditable||target.closest('input,textarea,select,[role="textbox"]')))return;
       event.preventDefault();castInput();
     });
     updateAll();requestAnimationFrame(tick);
@@ -450,12 +453,12 @@ export function generateSpellQueueLab(_attrs: Record<string, string>, nonce?: st
     `<div class="sql-intro"><p class="sql-intro-copy"><strong>Now try it yourself.</strong> Press during the highlighted end of the global cooldown below and WoW can hold the action until the GCD finishes. Press too early and the input is ignored. Press after the GCD and the delay becomes a rotational gap.</p><span class="sql-retail">Retail model</span></div>` +
     `<div class="sql-workspace">` +
     `<aside class="sql-panel sql-controls" aria-label="Simulation controls">` +
-    `<p class="sql-eyebrow">Live timing test</p><h2 class="sql-heading">Find the window your rhythm can hit.</h2><p class="sql-copy">Click the spell or press 1 repeatedly. Your first press starts a 30-second timer — cast at your normal rhythm and we will measure your real press interval and variation from it.</p>` +
+    `<p class="sql-eyebrow">Live timing test</p><h2 class="sql-heading">Find the window your rhythm can hit.</h2><p class="sql-copy">Click the spell or focus Cast Arcane Pulse and press 1 repeatedly. Your first press starts a 30-second timer — cast at your normal rhythm and we will measure your real press interval and variation from it.</p>` +
     `<div class="sql-control"><div class="sql-control-head"><label for="sql-sqw">Spell Queue Window</label><output class="sql-value" id="sql-sqw-value">250 ms</output></div><input id="sql-sqw" type="range" min="0" max="400" step="10" value="250"><div class="sql-range-notes"><span>0 ms</span><span>400 ms</span></div><div class="sql-quick" aria-label="Queue window presets"><button type="button" class="sql-chip" data-sqw="0">Off</button><button type="button" class="sql-chip" data-sqw="100">100</button><button type="button" class="sql-chip active" data-sqw="250">250</button><button type="button" class="sql-chip" data-sqw="400">400</button></div></div>` +
     `<div class="sql-control"><div class="sql-control-head"><label for="sql-gcd">Global cooldown</label><output class="sql-value" id="sql-gcd-value">1.00 s</output></div><input id="sql-gcd" type="range" min="750" max="1500" step="50" value="1000"><div class="sql-range-notes"><span>0.75 s</span><span>1.50 s</span></div></div>` +
     `<div class="sql-control"><div class="sql-control-head"><label for="sql-latency">World latency</label><output class="sql-value" id="sql-latency-value">40 ms</output></div><input id="sql-latency" type="range" min="0" max="200" step="5" value="40"><div class="sql-range-notes"><span>0 ms</span><span>200 ms RTT</span></div></div>` +
     `<div class="sql-control"><div class="sql-control-head"><label>Test your rhythm</label><output class="sql-value" id="sql-timer-value">30s</output></div><div class="sql-timer-track"><i id="sql-timer-fill" style="width:100%"></i></div><p class="sql-copy" style="margin:.5rem 0 0;">Cast for 30 seconds at the pace you actually play. We measure your average interval and its variation from those real presses instead of a guess.</p><dl class="sql-rhythm-stats" id="sql-rhythm-stats" hidden><div><dt>Average interval</dt><dd id="sql-rhythm-cadence-value">— ms</dd></div><div><dt>Variation</dt><dd id="sql-rhythm-jitter-value">± — ms</dd></div></dl></div>` +
-    `<button type="button" class="sql-primary" id="sql-spell-button">Cast Arcane Pulse</button><button type="button" class="sql-secondary" id="sql-reset-button">Reset test</button><p class="sql-shortcut">Click or press <kbd>1</kbd> repeatedly</p>` +
+    `<button type="button" class="sql-primary" id="sql-spell-button" aria-describedby="sql-shortcut">Cast Arcane Pulse</button><button type="button" class="sql-secondary" id="sql-reset-button">Reset test</button><p class="sql-shortcut" id="sql-shortcut">Click to cast, or press <kbd>1</kbd> repeatedly while Cast Arcane Pulse is focused.</p>` +
     `</aside>` +
     `<section class="sql-panel sql-stage" aria-labelledby="sql-live-title"><div class="sql-stage-head"><div><p class="sql-eyebrow">Current GCD</p><h2 class="sql-heading" id="sql-live-title">Input timeline</h2><p class="sql-stage-copy">One cycle repeats continuously so you can test your own cadence.</p></div><span class="sql-live" id="sql-live-status" hidden>Simulator running</span></div>` +
     `<div class="sql-timeline-wrap"><div class="sql-scale"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>Ready</span></div><div class="sql-track" id="sql-track" aria-label="Current global cooldown progress"><div class="sql-queue-band" id="sql-queue-band"><span>Queue open</span></div><div class="sql-cursor" id="sql-cursor"></div></div><div class="sql-track-labels"><span>GCD starts</span><span id="sql-open-label">Queue opens at 750 ms</span><span>Next cast</span></div><div class="sql-legend"><span><i class="sql-dot" style="background:var(--muted)"></i> Too early</span><span><i class="sql-dot" style="background:var(--accent-2)"></i> Queued</span><span><i class="sql-dot" style="background:var(--accent)"></i> Cast after ready</span></div></div>` +
