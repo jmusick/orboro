@@ -3,6 +3,7 @@ node_modules/
 
 # Build and generated output
 dist/
+outputs/
 .astro/
 coverage/
 *.tsbuildinfo
@@ -15,7 +16,13 @@ coverage/
 .env.*
 !.env.example
 .dev.vars
+.dev.vars.*
+!.dev.vars.example
 *.local
+
+# Python cache files
+__pycache__/
+*.py[cod]
 
 # Logs
 *.log
@@ -27,6 +34,7 @@ pnpm-debug.log*
 # OS-specific files
 .DS_Store
 Thumbs.db
+Desktop.ini
 
 # IDE settings
 .idea/
