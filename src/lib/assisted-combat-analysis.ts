@@ -83,8 +83,12 @@ const css = `
    off-centre inside the circle. */
 #ac-root .ac-info{display:inline-grid;place-items:center;flex:0 0 auto;width:1rem;height:1rem;margin-left:.28rem;border:1px solid currentColor;border-radius:50%;color:inherit;font-family:Georgia,serif;font-size:.62rem;font-style:italic;font-weight:700;line-height:1;letter-spacing:0;text-transform:none;opacity:.78;cursor:help;vertical-align:middle;}
 #ac-root .ac-info:hover,#ac-root .ac-info:focus-visible{opacity:1;outline:2px solid rgb(112 208 255 / 45%);outline-offset:2px;}
-#ac-tooltip{position:fixed;z-index:10000;max-width:min(340px,calc(100vw - 24px));padding:.65rem .75rem;border:1px solid rgb(112 208 255 / 42%);border-radius:var(--r-md,10px);background:rgb(5 9 20 / 98%);box-shadow:0 .75rem 2rem rgb(0 0 0 / 48%),0 0 1.2rem rgb(112 208 255 / 10%);color:var(--text,#e8f3ff);font-family:inherit;font-size:.78rem;font-style:normal;font-weight:500;line-height:1.5;opacity:0;visibility:hidden;transform:translateY(-3px);transition:opacity .06s ease,transform .06s ease,visibility 0s linear .06s;pointer-events:none;}
-#ac-tooltip.is-visible{opacity:1;visibility:visible;transform:translateY(0);transition:opacity .06s ease,transform .06s ease;}
+#ac-tooltip{box-sizing:border-box;width:max-content;overflow-wrap:anywhere;position:fixed;z-index:10000;max-width:min(340px,calc(100vw - 24px));padding:.65rem .75rem;border:1px solid rgb(112 208 255 / 42%);border-radius:var(--r-md,10px);background:rgb(5 9 20 / 98%);box-shadow:0 .75rem 2rem rgb(0 0 0 / 48%),0 0 1.2rem rgb(112 208 255 / 10%);color:var(--text,#e8f3ff);font-family:inherit;font-size:.78rem;font-style:normal;font-weight:500;line-height:1.5;opacity:0;visibility:hidden;transform:translateY(-3px);transition:opacity .06s ease,transform .06s ease,visibility 0s linear .06s;pointer-events:none;}
+#ac-tooltip .ac-tooltip-text{display:block;max-height:calc(100vh - 48px);overflow-y:auto;}
+#ac-tooltip::before,#ac-tooltip::after{content:"";position:absolute;left:0;right:0;height:10px;pointer-events:auto;}
+#ac-tooltip::before{top:-10px;}
+#ac-tooltip::after{bottom:-10px;}
+#ac-tooltip.is-visible{pointer-events:auto;opacity:1;visibility:visible;transform:translateY(0);transition:opacity .06s ease,transform .06s ease;}
 #ac-root button.ac-method-toggle{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:1rem;width:100%;margin:1rem 0 0;padding:.8rem .9rem;border:1px solid rgb(112 208 255 / 22%);border-radius:var(--r-md,10px);background:rgb(5 7 15 / 38%);color:var(--text,#e8f3ff);font-size:.88rem;font-weight:800;text-align:left;cursor:pointer;transition:border-color .15s,background .15s;}
 #ac-root button.ac-method-toggle:hover{border-color:rgb(112 208 255 / 42%);background:rgb(112 208 255 / 6%);}
 #ac-root .ac-method-toggle__label{display:flex;align-items:center;gap:.55rem;}
@@ -253,6 +257,9 @@ const wiring = `
       el=document.createElement('div');
       el.id='ac-tooltip';
       el.setAttribute('role','tooltip');
+      var content=document.createElement('span');
+      content.className='ac-tooltip-text';
+      el.appendChild(content);
       document.body.appendChild(el);
     }
     return el;
@@ -266,44 +273,101 @@ const wiring = `
     if(window.__acTooltipBound)return;
     window.__acTooltipBound=1;
     var active=null;
+    var hovered=null;
+    var overTooltip=false;
+    var dismissed=null;
+    var hideTimer=null;
     function iconFrom(target){
       return target&&target.closest?target.closest('#ac-root .ac-info[data-tooltip]'):null;
     }
+    function inTooltip(target){
+      return target&&target.closest?!!target.closest('#ac-tooltip'):false;
+    }
+    function cancelHide(){
+      if(hideTimer!==null)clearTimeout(hideTimer);
+      hideTimer=null;
+    }
     function hide(){
+      cancelHide();
       tooltipEl().classList.remove('is-visible');
       if(active)active.removeAttribute('aria-describedby');
       active=null;
     }
-    function show(icon){
-      var text=icon.getAttribute('data-tooltip');
-      if(!text)return;
-      var el=tooltipEl();
-      if(active&&active!==icon)active.removeAttribute('aria-describedby');
-      active=icon;
-      el.textContent=text;
-      el.style.left='12px';
-      el.style.top='12px';
-      el.classList.add('is-visible');
+    function position(icon,el){
       var iconRect=icon.getBoundingClientRect();
-      var box=el.getBoundingClientRect();
       var gap=8;
+      var below=window.innerHeight-12-iconRect.bottom-gap;
+      var above=iconRect.top-gap-12;
+      var room=Math.min(window.innerHeight-24,Math.max(below,above));
+      // Scroll long descriptions within the larger available side, not over the trigger.
+      el.querySelector('.ac-tooltip-text').style.maxHeight=Math.max(24,room-24)+'px';
+      var box=el.getBoundingClientRect();
       var left=iconRect.left+(iconRect.width/2)-(box.width/2);
       left=Math.max(12,Math.min(left,window.innerWidth-box.width-12));
       var top=iconRect.bottom+gap;
       if(top+box.height>window.innerHeight-12)top=iconRect.top-box.height-gap;
-      top=Math.max(12,top);
+      top=Math.max(12,Math.min(top,window.innerHeight-box.height-12));
       el.style.left=Math.round(left)+'px';
       el.style.top=Math.round(top)+'px';
+    }
+    function show(icon){
+      if(!icon.isConnected||icon===dismissed)return;
+      var text=icon.getAttribute('data-tooltip');
+      if(!text)return;
+      cancelHide();
+      var el=tooltipEl();
+      if(active&&active!==icon)active.removeAttribute('aria-describedby');
+      active=icon;
+      var content=el.querySelector('.ac-tooltip-text');
+      if(content.textContent!==text)content.textContent=text;
+      el.classList.add('is-visible');
+      position(icon,el);
       icon.setAttribute('aria-describedby','ac-tooltip');
     }
-    document.addEventListener('pointerover',function(e){var i=iconFrom(e.target);if(i)show(i);});
-    document.addEventListener('pointerout',function(e){var i=iconFrom(e.target);if(i&&!i.contains(e.relatedTarget))hide();});
-    document.addEventListener('focusin',function(e){var i=iconFrom(e.target);if(i)show(i);});
-    document.addEventListener('focusout',function(e){if(iconFrom(e.target))hide();});
-    document.addEventListener('keydown',function(e){if(e.key==='Escape')hide();});
-    window.addEventListener('scroll',hide,true);
-    window.addEventListener('resize',hide);
-    document.addEventListener('astro:before-swap',hide);
+    function update(preferred){
+      cancelHide();
+      var focused=iconFrom(document.activeElement);
+      if(dismissed&&hovered!==dismissed&&focused!==dismissed&&!overTooltip) dismissed=null;
+      var icon=preferred||hovered||(overTooltip?active:null)||focused;
+      if(icon&&icon.isConnected&&icon!==dismissed)show(icon);
+      else hide();
+    }
+    function deferUpdate(){
+      cancelHide();
+      // The CSS hit area bridges the 8px gap; this also tolerates diagonal exits.
+      hideTimer=setTimeout(function(){hideTimer=null;update();},120);
+    }
+    document.addEventListener('pointerover',function(e){
+      var icon=iconFrom(e.target);
+      if(icon){hovered=icon;overTooltip=false;update(icon);}
+      else if(inTooltip(e.target)){overTooltip=true;update();}
+    });
+    document.addEventListener('pointerout',function(e){
+      var icon=iconFrom(e.target);
+      if(icon&&!icon.contains(e.relatedTarget)){
+        hovered=iconFrom(e.relatedTarget);
+        overTooltip=inTooltip(e.relatedTarget);
+        if(hovered||overTooltip)update();else deferUpdate();
+      }else if(inTooltip(e.target)&&!inTooltip(e.relatedTarget)){
+        overTooltip=false;
+        hovered=iconFrom(e.relatedTarget);
+        if(hovered)update();else deferUpdate();
+      }
+    });
+    document.addEventListener('focusin',function(e){update(iconFrom(e.target));});
+    document.addEventListener('focusout',function(){deferUpdate();});
+    document.addEventListener('keydown',function(e){
+      if(e.key==='Escape'&&active){dismissed=active;overTooltip=false;hide();}
+    });
+    function reposition(){
+      if(active&&active.isConnected)position(active,tooltipEl());
+      else hide();
+    }
+    window.addEventListener('scroll',reposition,true);
+    window.addEventListener('resize',reposition);
+    document.addEventListener('astro:before-swap',function(){
+      hide();hovered=null;overTooltip=false;dismissed=null;
+    });
   }
 
   function init(){
