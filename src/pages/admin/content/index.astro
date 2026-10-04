@@ -41,23 +41,32 @@ const getStatusIcon = (status: string) => {
   ) : (
     <section class="content-table-section">
       <div class="filter-bar">
-        <input
-          id="filter-search"
-          type="search"
-          class="filter-input"
-          placeholder="Search title or slug…"
-          autocomplete="off"
-        />
-        <select id="filter-type" class="filter-select">
-          <option value="">All types</option>
-          <option value="post">Post</option>
-          <option value="page">Page</option>
-        </select>
-        <select id="filter-status" class="filter-select">
-          <option value="">All statuses</option>
-          <option value="published">Published</option>
-          <option value="draft">Draft</option>
-        </select>
+        <div class="filter-field filter-field--search">
+          <label for="filter-search">Search content</label>
+          <input
+            id="filter-search"
+            type="search"
+            class="filter-input"
+            placeholder="Title, slug, or category…"
+            autocomplete="off"
+          />
+        </div>
+        <div class="filter-field">
+          <label for="filter-type">Content type</label>
+          <select id="filter-type" class="filter-select">
+            <option value="">All types</option>
+            <option value="post">Post</option>
+            <option value="page">Page</option>
+          </select>
+        </div>
+        <div class="filter-field">
+          <label for="filter-status">Status</label>
+          <select id="filter-status" class="filter-select">
+            <option value="">All statuses</option>
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+          </select>
+        </div>
         <span id="filter-count" class="filter-count"></span>
       </div>
 
@@ -65,12 +74,20 @@ const getStatusIcon = (status: string) => {
         <table class="content-table" id="content-table">
           <thead>
             <tr>
-              <th class="sortable" data-col="title">Title <span class="sort-icon"></span></th>
-              <th class="sortable" data-col="type">Type <span class="sort-icon"></span></th>
-              <th class="sortable" data-col="categories">Categories <span class="sort-icon"></span></th>
-              <th class="sortable" data-col="status">Status <span class="sort-icon"></span></th>
-              <th class="sortable" data-col="slug">Slug <span class="sort-icon"></span></th>
-              <th>Actions</th>
+              {[
+                ["title", "Title"],
+                ["type", "Type"],
+                ["categories", "Categories"],
+                ["status", "Status"],
+                ["slug", "Slug"],
+              ].map(([column, label]) => (
+                <th scope="col" class="sortable" data-col={column}>
+                  <button type="button" class="sort-button" aria-label={`Sort by ${label.toLowerCase()}`}>
+                    {label} <span class="sort-icon" aria-hidden="true"></span>
+                  </button>
+                </th>
+              ))}
+              <th scope="col">Actions</th>
             </tr>
           </thead>
           <tbody id="content-tbody">
@@ -171,16 +188,23 @@ const getStatusIcon = (status: string) => {
 
       function updateSortIcons() {
         headers.forEach(function (th) {
+          var col = th.getAttribute('data-col');
+          if (col === sortCol) {
+            th.setAttribute('aria-sort', sortDir === 'asc' ? 'ascending' : 'descending');
+          } else {
+            th.removeAttribute('aria-sort');
+          }
           var icon = th.querySelector('.sort-icon');
           if (!icon) return;
-          var col = th.getAttribute('data-col');
           icon.textContent = col === sortCol ? (sortDir === 'asc' ? ' ↑' : ' ↓') : '';
         });
       }
 
       headers.forEach(function (th) {
-        th.addEventListener('click', function () {
-          var col = this.getAttribute('data-col');
+        var button = th.querySelector('.sort-button');
+        if (!button) return;
+        button.addEventListener('click', function () {
+          var col = th.getAttribute('data-col');
           if (sortCol === col) {
             sortDir = sortDir === 'asc' ? 'desc' : 'asc';
           } else {
@@ -225,40 +249,51 @@ const getStatusIcon = (status: string) => {
 
   .filter-bar {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     gap: 0.75rem;
     margin-bottom: 1rem;
     flex-wrap: wrap;
   }
 
-  .filter-input {
+  .filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .filter-field--search {
     flex: 1;
-    min-width: 200px;
+    min-width: min(200px, 100%);
+  }
+  .filter-field label { font-size: 0.82rem; font-weight: 600; }
+
+  .filter-input {
+    width: 100%;
+    min-width: 0;
     padding: 0.6rem 0.9rem;
     border: 1px solid var(--line-strong);
-    border-radius: 8px;
+    border-radius: var(--r-md, 10px);
     background: var(--surface);
     color: var(--text);
     font-family: inherit;
     font-size: 0.9rem;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease;
   }
-  .filter-input:focus { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); box-shadow: 0 0 0.6rem rgb(112 208 255 / 18%); }
+  .filter-input:focus { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
 
   .filter-select {
     padding: 0.6rem 0.9rem;
     border: 1px solid var(--line-strong);
-    border-radius: 8px;
+    border-radius: var(--r-md, 10px);
     background: var(--surface);
     color: var(--text);
     font-family: inherit;
     font-size: 0.9rem;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease;
   }
-  .filter-select:focus { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); box-shadow: 0 0 0.6rem rgb(112 208 255 / 18%); }
+  .filter-select:focus { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
 
-  .filter-count { font-size: 0.82rem; color: var(--muted); white-space: nowrap; margin-left: auto; }
+  .filter-count { font-size: 0.82rem; color: var(--muted); white-space: nowrap; margin-left: auto; padding-bottom: 0.6rem; }
 
   .content-table-wrapper { overflow-x: auto; }
 
@@ -278,10 +313,30 @@ const getStatusIcon = (status: string) => {
     white-space: nowrap;
   }
 
-  .content-table th.sortable { cursor: pointer; user-select: none; }
-  .content-table th.sortable:hover {
+  .content-table th.sortable { padding: 0; }
+  .sort-button {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    width: 100%;
+    min-height: 44px;
+    padding: 0.75rem;
+    border: 0;
+    border-radius: var(--r-sm, 6px);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: color 0.2s ease, background-color 0.2s ease;
+  }
+  .sort-button:hover {
     color: var(--text);
-    background: linear-gradient(90deg, rgb(112 208 255 / 10%) 0%, transparent 100%);
+    background-color: rgb(from var(--accent) r g b / 10%);
+  }
+  .sort-button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -3px;
   }
 
   .sort-icon { font-style: normal; color: var(--accent); font-size: 0.85rem; }

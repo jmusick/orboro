@@ -51,12 +51,18 @@ const initContent = publishedContent.map((c) => ({
       <div class="nav-panel add-panel">
         <h2 class="panel-title">Add Item</h2>
         <div class="add-row">
-          <select id="content-select" class="field-select">
-            <option value="">— select page —</option>
-          </select>
-          <select id="parent-select" class="field-select">
-            <option value="">Top Level</option>
-          </select>
+          <div class="nav-field add-field">
+            <label for="content-select">Page or post</label>
+            <select id="content-select" class="field-select">
+              <option value="">— select page —</option>
+            </select>
+          </div>
+          <div class="nav-field add-field">
+            <label for="parent-select">Parent item</label>
+            <select id="parent-select" class="field-select">
+              <option value="">Top Level</option>
+            </select>
+          </div>
           <button type="button" id="add-btn" class="btn-add">Add to Nav</button>
         </div>
       </div>
@@ -122,23 +128,37 @@ const initContent = publishedContent.map((c) => ({
         var a = navItems.find(function (i) { return i.clientId === siblings[idx].clientId; });
         var b = navItems.find(function (i) { return i.clientId === siblings[swapIdx].clientId; });
         var tmp = a.sortOrder; a.sortOrder = b.sortOrder; b.sortOrder = tmp;
-        render();
+        render({ id: clientId, control: dir < 0 ? 'up' : 'down' });
       }
 
       function removeItem(clientId) {
+        var item = navItems.find(function (i) { return i.clientId === clientId; });
+        if (!item) return;
         var toRemove = {};
         function collect(id) {
           toRemove[id] = true;
           navItems.filter(function (i) { return i.parentId === id; }).forEach(function (c) { collect(c.clientId); });
         }
         collect(clientId);
+        var siblings = siblingsOf(item.parentId)
+          .sort(function (a, b) { return a.sortOrder - b.sortOrder; });
+        var idx = siblings.findIndex(function (i) { return i.clientId === clientId; });
+        var neighbour = siblings[idx + 1] || siblings[idx - 1];
+        var removed = siblings[idx];
         navItems = navItems.filter(function (i) { return !toRemove[i.clientId]; });
-        render();
+        render({ id: neighbour ? neighbour.clientId : removed.parentId, control: neighbour ? 'remove' : 'label' });
       }
 
       function updateLabel(clientId, val) {
         var item = navItems.find(function (i) { return i.clientId === clientId; });
-        if (item) item.label = val;
+        if (item) {
+          item.label = val;
+          // Update names without replacing the input or disturbing its caret.
+          document.querySelectorAll('#nav-list [data-id]').forEach(function (control) {
+            if (control.getAttribute('data-id') !== clientId) return;
+            control.setAttribute('aria-label', controlName(control.getAttribute('data-focus'), item));
+          });
+        }
       }
 
       function changeParent(clientId, newParentId) {
@@ -149,7 +169,15 @@ const initContent = publishedContent.map((c) => ({
         item.parentId = newParentId || null;
         var siblings = siblingsOf(item.parentId).filter(function (i) { return i.clientId !== clientId; });
         item.sortOrder = siblings.reduce(function (m, i) { return Math.max(m, i.sortOrder); }, -1) + 1;
-        render();
+        render({ id: clientId, control: 'parent' });
+      }
+
+      function controlName(control, item) {
+        var content = allContent.find(function (c) { return c.id === item.contentId; });
+        var name = item.label.trim() || (content ? content.title : 'unlabelled item');
+        if (control === 'up' || control === 'down') return 'Move ' + name + ' ' + control;
+        if (control === 'remove') return 'Remove ' + name;
+        return (control === 'label' ? 'Label' : 'Parent') + ' for ' + name;
       }
 
       function buildParentOptions(excludeClientId, currentParentId) {
@@ -179,8 +207,8 @@ const initContent = publishedContent.map((c) => ({
           for (var d = 0; d < depth; d++) html += '<div class="nav-child-indent"></div>';
           html +=
             '<div class="nav-item-controls">' +
-              '<button type="button" class="btn-updown" data-dir="-1" data-id="' + escapeHtml(item.clientId) + '"' + (idx === 0 ? ' disabled' : '') + '>&#8679;</button>' +
-              '<button type="button" class="btn-updown" data-dir="1" data-id="' + escapeHtml(item.clientId) + '"' + (idx === items.length - 1 ? ' disabled' : '') + '>&#8681;</button>' +
+              '<button type="button" class="btn-updown" data-focus="up" aria-label="' + escapeHtml(controlName('up', item)) + '" data-dir="-1" data-id="' + escapeHtml(item.clientId) + '"' + (idx === 0 ? ' disabled' : '') + '>&#8679;</button>' +
+              '<button type="button" class="btn-updown" data-focus="down" aria-label="' + escapeHtml(controlName('down', item)) + '" data-dir="1" data-id="' + escapeHtml(item.clientId) + '"' + (idx === items.length - 1 ? ' disabled' : '') + '>&#8681;</button>' +
             '</div>' +
             '<div class="nav-item-body">' +
               '<div class="nav-item-meta">' +
@@ -188,9 +216,11 @@ const initContent = publishedContent.map((c) => ({
                 '<span class="nav-url">' + escapeHtml(url) + '</span>' +
               '</div>' +
               '<div class="nav-item-row">' +
-                '<input type="text" class="nav-label-input" data-id="' + escapeHtml(item.clientId) + '" value="' + escapeHtml(item.label) + '" placeholder="Label" />' +
-                '<select class="nav-parent-select" data-id="' + escapeHtml(item.clientId) + '">' + buildParentOptions(item.clientId, item.parentId) + '</select>' +
-                '<button type="button" class="btn-remove" data-id="' + escapeHtml(item.clientId) + '">Remove</button>' +
+                '<div class="nav-field nav-label-field"><label for="nav-label-' + escapeHtml(item.clientId) + '">Label</label>' +
+                  '<input id="nav-label-' + escapeHtml(item.clientId) + '" type="text" class="nav-label-input" data-focus="label" aria-label="' + escapeHtml(controlName('label', item)) + '" data-id="' + escapeHtml(item.clientId) + '" value="' + escapeHtml(item.label) + '" /></div>' +
+                '<div class="nav-field"><label for="nav-parent-' + escapeHtml(item.clientId) + '">Parent</label>' +
+                  '<select id="nav-parent-' + escapeHtml(item.clientId) + '" class="nav-parent-select" data-focus="parent" aria-label="' + escapeHtml(controlName('parent', item)) + '" data-id="' + escapeHtml(item.clientId) + '">' + buildParentOptions(item.clientId, item.parentId) + '</select></div>' +
+                '<button type="button" class="btn-remove" data-focus="remove" aria-label="' + escapeHtml(controlName('remove', item)) + '" data-id="' + escapeHtml(item.clientId) + '">Remove</button>' +
               '</div>' +
             '</div>' +
           '</li>';
@@ -199,7 +229,7 @@ const initContent = publishedContent.map((c) => ({
         return html;
       }
 
-      function render() {
+      function render(focusRequest) {
         var list = document.getElementById('nav-list');
         if (!list) return;
         if (navItems.length === 0) {
@@ -222,11 +252,26 @@ const initContent = publishedContent.map((c) => ({
           });
         }
         syncAddDropdowns();
+        if (focusRequest) {
+          var controls = Array.from(list.querySelectorAll('[data-id]')).filter(function (control) {
+            return control.getAttribute('data-id') === focusRequest.id && !control.disabled;
+          });
+          var target = controls.find(function (control) { return control.getAttribute('data-focus') === focusRequest.control; });
+          // At the first/last position the clicked arrow becomes disabled.
+          // Keep focus on the same item's opposite arrow, then its label.
+          if (!target && (focusRequest.control === 'up' || focusRequest.control === 'down')) {
+            target = controls.find(function (control) { return control.getAttribute('data-focus') === (focusRequest.control === 'up' ? 'down' : 'up'); });
+          }
+          if (!target) target = controls.find(function (control) { return control.getAttribute('data-focus') === 'label'; });
+          if (!target) target = document.getElementById('content-select');
+          if (target) target.focus();
+        }
       }
 
       function syncParentSelect() {
         var sel = document.getElementById('parent-select');
         if (!sel) return;
+        var selected = sel.value;
         var opts = '<option value="">Top Level</option>';
         function addLevel(parentId, depth) {
           siblingsOf(parentId).sort(function (a, b) { return a.sortOrder - b.sortOrder; }).forEach(function (item) {
@@ -237,6 +282,7 @@ const initContent = publishedContent.map((c) => ({
         }
         addLevel(null, 0);
         sel.innerHTML = opts;
+        sel.value = navItems.some(function (item) { return item.clientId === selected; }) ? selected : '';
       }
 
       function syncAddDropdowns() {
@@ -245,14 +291,16 @@ const initContent = publishedContent.map((c) => ({
         var usedContentIds = navItems.map(function (n) { return n.contentId; });
         var avail = allContent.filter(function (c) { return usedContentIds.indexOf(c.id) === -1; });
         if (contentSel) {
+          var selected = contentSel.value;
           contentSel.innerHTML = avail.length === 0
             ? '<option value="">— all pages in nav —</option>'
             : '<option value="">— select page —</option>' + avail.map(function (c) {
                 return '<option value="' + escapeHtml(c.id) + '">' + escapeHtml(c.title) + ' (' + escapeHtml(c.pageType) + ')</option>';
               }).join('');
           contentSel.disabled = avail.length === 0;
+          contentSel.value = avail.some(function (item) { return item.id === selected; }) ? selected : '';
         }
-        if (addBtn) addBtn.disabled = !contentSel || contentSel.disabled;
+        if (addBtn) addBtn.disabled = !contentSel || !contentSel.value;
         syncParentSelect();
       }
 
@@ -266,8 +314,13 @@ const initContent = publishedContent.map((c) => ({
         if (!id) return;
         var c = allContent.find(function (c) { return c.id === id; });
         if (!c) return;
-        navItems.push({ clientId: newId(), contentId: id, label: c.title, parentId: parentId, sortOrder: maxOrder + 1 });
-        render();
+        var clientId = newId();
+        navItems.push({ clientId: clientId, contentId: id, label: c.title, parentId: parentId, sortOrder: maxOrder + 1 });
+        render({ id: clientId, control: 'label' });
+      });
+
+      document.getElementById('content-select').addEventListener('change', function () {
+        document.getElementById('add-btn').disabled = !this.value;
       });
 
       document.getElementById('nav-form').addEventListener('submit', function () {
@@ -328,10 +381,10 @@ const initContent = publishedContent.map((c) => ({
     .btn-updown {
       display: flex; align-items: center; justify-content: center;
       width: 28px; height: 28px;
-      border: 1px solid var(--line); border-radius: 6px;
+      border: 1px solid var(--line); border-radius: var(--r-sm, 6px);
       background: var(--surface); color: var(--text);
       cursor: pointer; font-size: 1.1rem; line-height: 1; padding: 0;
-      transition: all 0.15s ease;
+      transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
     }
     .btn-updown:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: rgb(112 208 255 / 8%); }
     .btn-updown:disabled { opacity: 0.3; cursor: default; }
@@ -355,64 +408,69 @@ const initContent = publishedContent.map((c) => ({
 
     .nav-url { font-size: 0.8rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-    .nav-item-row { display: flex; align-items: center; gap: 0.5rem; }
+    .nav-item-row { display: flex; align-items: flex-end; gap: 0.5rem; }
+    .nav-field { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+    .nav-field label { font-size: 0.8rem; font-weight: 600; color: var(--text); }
+    .nav-label-field { flex: 1; }
+    .add-field { flex: 1; min-width: min(160px, 100%); }
+    .nav-section button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
     .nav-parent-select {
       width: 160px;
       height: 2.5rem;
       padding: 0 0.7rem;
       box-sizing: border-box;
-      border: 1px solid var(--line-strong); border-radius: 8px;
+      border: 1px solid var(--line-strong); border-radius: var(--r-md, 10px);
       background: var(--surface); color: var(--muted);
       font-family: inherit; font-size: 0.82rem; cursor: pointer;
       white-space: nowrap; flex-shrink: 0;
-      transition: all 0.2s ease;
+      transition: border-color 0.2s ease, color 0.2s ease;
     }
-    .nav-parent-select:focus { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); color: var(--text); box-shadow: 0 0 0.6rem rgb(112 208 255 / 18%); }
+    .nav-parent-select:focus { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); color: var(--text); }
 
     .nav-label-input {
-      flex: 1;
+      width: 100%; min-width: 0;
       height: 2.5rem;
       padding: 0 0.9rem;
-      border: 1px solid var(--line-strong); border-radius: 8px;
+      border: 1px solid var(--line-strong); border-radius: var(--r-md, 10px);
       background: var(--surface); color: var(--text);
       font-family: inherit; font-size: 0.95rem;
       box-sizing: border-box;
-      transition: all 0.2s ease;
+      transition: border-color 0.2s ease;
     }
-    .nav-label-input:focus { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); box-shadow: 0 0 0.8rem rgb(112 208 255 / 20%); }
+    .nav-label-input:focus { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
 
     .btn-remove {
       flex-shrink: 0; padding: 0.4rem 0.8rem;
-      border: 1px solid rgb(255 61 77 / 40%); border-radius: 8px;
+      border: 1px solid rgb(255 61 77 / 40%); border-radius: var(--r-md, 10px);
       background: transparent; color: #ff3d4d;
       cursor: pointer; font-size: 0.875rem; font-family: inherit;
       white-space: nowrap;
-      transition: all 0.15s ease;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
     }
     .btn-remove:hover { background: rgb(255 61 77 / 10%); border-color: #ff3d4d; }
 
-    .add-row { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+    .add-row { display: flex; gap: 0.75rem; align-items: flex-end; flex-wrap: wrap; }
 
     .field-select {
-      flex: 1; min-width: 160px;
+      width: 100%; min-width: 0;
       padding: 0.75rem 1rem;
-      border: 1px solid var(--line-strong); border-radius: 8px;
+      border: 1px solid var(--line-strong); border-radius: var(--r-md, 10px);
       background: var(--surface); color: var(--text);
       font-family: inherit; font-size: 0.95rem; cursor: pointer;
-      transition: all 0.2s ease;
+      transition: border-color 0.2s ease;
     }
-    .field-select:focus { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); box-shadow: 0 0 0.8rem rgb(112 208 255 / 20%); }
+    .field-select:focus { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
     .field-select:disabled { opacity: 0.5; cursor: default; }
 
     .btn-add {
       padding: 0.75rem 1.2rem; white-space: nowrap;
-      border: 1px solid var(--accent); border-radius: 8px;
+      border: 1px solid var(--accent); border-radius: var(--r-md, 10px);
       background: rgb(112 208 255 / 10%); color: var(--accent);
       font-family: inherit; font-size: 0.95rem; font-weight: 500;
-      cursor: pointer; transition: all 0.2s ease;
+      cursor: pointer; transition: background-color 0.2s ease;
     }
-    .btn-add:hover:not(:disabled) { background: rgb(112 208 255 / 20%); box-shadow: 0 0 0.8rem rgb(112 208 255 / 25%); }
+    .btn-add:hover:not(:disabled) { background: rgb(112 208 255 / 20%); }
     .btn-add:disabled { opacity: 0.4; cursor: default; }
 
     .form-actions {
@@ -423,6 +481,9 @@ const initContent = publishedContent.map((c) => ({
     @media (max-width: 768px) {
       .add-row { flex-direction: column; align-items: stretch; }
       .field-select { width: 100%; }
+      .nav-item-row { flex-wrap: wrap; }
+      .nav-item-row > .nav-field { flex-basis: 100%; }
+      .nav-parent-select { width: 100%; }
     }
   </style>
 </AdminLayout>
