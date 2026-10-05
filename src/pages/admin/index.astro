@@ -4,25 +4,12 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 import Card from "../../components/Card.astro";
 import FormMessage from "../../components/FormMessage.astro";
 import Button from "../../components/Button.astro";
-import { getUserCount } from "../../lib/content";
 
-const userCount = await getUserCount(Astro.locals);
 const loggedIn = Boolean(Astro.locals.user);
-const setupNeeded = userCount === 0;
 const error = Astro.url.searchParams.get("error");
 ---
 
-{setupNeeded ? (
-  <BaseLayout title="Create Admin | Orboro.net" description="Initial admin setup">
-    <section>
-      <h1>Initial Setup</h1>
-      <p>Create the first admin account for this Orboro.net instance.</p>
-      <Button href="/admin/setup" variant="primary">
-        Get Started
-      </Button>
-    </section>
-  </BaseLayout>
-) : loggedIn ? (
+{loggedIn ? (
   <AdminLayout title="Dashboard">
     <section>
       <h2 style="margin: 0 0 1.5rem;">Quick Actions</h2>

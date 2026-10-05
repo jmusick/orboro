@@ -1,7 +1,7 @@
 {
   "name": "orboro",
   "type": "module",
-  "version": "1.43.8",
+  "version": "1.43.9",
   "engines": {
     "node": ">=22.12.0"
   },
@@ -22,6 +22,7 @@
     "data:midnight-s2-interrupts": "node scripts/generate-midnight-s2-interrupt-data.mjs",
     "data:spec-icons": "node scripts/fetch-spec-icons.mjs",
     "media:migrate": "node scripts/migrate-content-images.mjs",
+    "admin:create": "node scripts/create-admin.mjs",
     "cf:types": "wrangler types",
     "d1:migrate:local": "wrangler d1 migrations apply DB --local",
     "d1:migrate:remote": "wrangler d1 migrations apply DB --remote"
@@ -34,7 +35,8 @@
     "easymde": "2.21.0",
     "font-awesome": "4.7.0",
     "highlight.js": "^11.12.0",
-    "marked": "^18.0.14"
+    "marked": "^18.0.14",
+    "xss": "^1.0.15"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",

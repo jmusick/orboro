@@ -6,7 +6,7 @@
  *   ASSISTED_COMBAT_RESEARCH_ROOT  Wago DB2 export + the SimC comparison run
  *                                  (assisted-combat-<source-build>.md/.csv,
  *                                   simc-comparison-data.json)
- *   ASSISTED_COMBAT_VAULT_ROOT     curated writeups
+ *   ASSISTED_COMBAT_NOTES_ROOT     curated writeups
  *                                  (assisted-combat-whats-missing-by-spec.md,
  *                                   assisted-combat-vs-icy-veins.md)
  *
@@ -29,14 +29,13 @@ const repoRoot = path.resolve(import.meta.dirname, "..");
 const researchRoot =
   process.env.ASSISTED_COMBAT_RESEARCH_ROOT
   ?? "C:/Users/JD/Projects/orboro/games/world-of-warcraft/assisted-combat/source-snapshot/2026-08-06";
-const vaultRoot =
-  process.env.ASSISTED_COMBAT_VAULT_ROOT
-  ?? "C:/Users/JD/Vault/Research/Games/World of Warcraft/Assisted Combat";
+const notesRoot = process.env.ASSISTED_COMBAT_NOTES_ROOT;
 const outputPath = path.join(repoRoot, "src", "lib", "assisted-combat-data.json");
 
 const buildSlug = (build) => build.replace(/\./g, "-");
 
 async function read(root, name, envVar) {
+  if (!root) throw new Error(`Set ${envVar} to the directory that holds "${name}".`);
   try {
     return await fs.readFile(path.join(root, name), "utf8");
   } catch (error) {
@@ -49,12 +48,12 @@ async function read(root, name, envVar) {
 }
 
 const readResearch = (name) => read(researchRoot, name, "ASSISTED_COMBAT_RESEARCH_ROOT");
-const readVault = (name) => read(vaultRoot, name, "ASSISTED_COMBAT_VAULT_ROOT");
+const readNotes = (name) => read(notesRoot, name, "ASSISTED_COMBAT_NOTES_ROOT");
 
 const [simcJson, missingMd, icyMd, currentMd, currentCsv] = await Promise.all([
   readResearch("simc-comparison-data.json"),
-  readVault("assisted-combat-whats-missing-by-spec.md"),
-  readVault("assisted-combat-vs-icy-veins.md"),
+  readNotes("assisted-combat-whats-missing-by-spec.md"),
+  readNotes("assisted-combat-vs-icy-veins.md"),
   readResearch(`assisted-combat-${buildSlug(SOURCE_BUILD)}.md`),
   readResearch(`assisted-combat-${buildSlug(SOURCE_BUILD)}.csv`),
 ]);

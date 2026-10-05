@@ -41,13 +41,6 @@ function mapContentRow(row: any): ContentRecord {
   };
 }
 
-export async function getUserCount(locals: App.Locals): Promise<number> {
-  const db = getDB(locals);
-  if (!db) return 0;
-  const row = await db.prepare("SELECT COUNT(1) AS count FROM users").first<{ count: number }>();
-  return row?.count ?? 0;
-}
-
 export async function getPublishedContentByType(
   locals: App.Locals,
   pageType: string,

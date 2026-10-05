@@ -1,264 +1,93 @@
 # AGENTS.md
 
-Conventions and gotchas for anyone (human or agent) working on this codebase. See `README.md` for setup/scripts.
+Conventions and gotchas for anyone (human or agent) working on this codebase. `README.md` covers setup, scripts, deployment, media, privacy posture and local-dev troubleshooting; this file covers the rules and traps when changing code.
 
 ## Architecture
 
-- Astro v7, `output: "server"`, deployed as the Cloudflare **Worker** `orboro-net` via `@astrojs/cloudflare` (Workers Builds, git-integrated with GitHub `jmusick/orboro` — pushing to `master` runs `npm run build` + `npx wrangler deploy`). Migrated from a Pages project in v1.33.0.
-- `wrangler.toml` is the source of truth for bindings and runtime config (D1 `DB`, R2 `MEDIA`, static `ASSETS`, compatibility date/flags, logs/traces). `main` is `@astrojs/cloudflare/entrypoints/server`; `astro build` writes the real deploy config to `dist/server/wrangler.json` and points `.wrangler/deploy/config.json` at it. Custom domains, production secrets and edge security rules are managed outside the repo; do not infer their live settings from source.
-- All content (pages, posts, categories, nav) lives in Cloudflare D1, not markdown files in the repo. `src/lib/content.ts` is the data-access layer.
-- Auth is custom (PBKDF2 password hashing, session cookie), not a third-party library. See `src/lib/auth.ts`, `src/middleware.ts`.
-- Current operation is a single user, JD, with the admin role. `editor`/`author` remain in the schema and route guards, but there is no public registration or user-management UI. Author ownership restrictions are absent; adding non-admin users requires a permissions review first. Sessions are D1-backed opaque tokens, not JWTs, with a 14-day lifetime.
-- Styling is hand-written scoped CSS per component using the CSS variables defined in `BaseLayout.astro` (`--bg`, `--surface`, `--surface-2`, `--text`, `--muted`, `--accent`, `--accent-2`, `--accent-3`, `--line`, plus the type and layout tokens described under "Design system"). No Tailwind, no component library.
-
-## Card accents
-
-Cards, callouts, and blockquotes use a **uniform 1px frame** — `border: 1px solid var(--line)`, or a tinted `rgb(<accent> / ~22%)` where the block carries semantic color — with a symmetric `border-radius`. No colored left bar, no corner tick, no directional gradient wash. Color lives in the icon, the title, the hover state, and the border tint; the frame itself stays even on all four sides.
-
-Don't reintroduce `border-left: 3px solid var(--accent)` paired with an asymmetric `border-radius: 0 8px 8px 0` and a `linear-gradient(90deg, <tint>, transparent)` background — that combination was removed sitewide and is not wanted back. A top-left corner tick (a 2px `::before` elbow) was tried as a replacement and also rejected.
-
-The one surviving left border is `.nav-item--child` in `src/pages/admin/nav/index.astro`, where it encodes tree nesting in the admin nav editor rather than decorating a card.
-
-## Radius and transitions
-
-`BaseLayout.astro` defines a **three-tier radius scale** in `:root` — `--r-sm: 6px` (inline controls: chips, code, favicons, small buttons), `--r-md: 10px` (cards, panels, callouts, inputs), `--r-lg: 16px` (page-level shells and heroes), plus `--r-pill: 999px`. Use the usual fallback form; some legacy admin styles still need consolidation:
-
-```css
-border-radius: var(--r-md, 10px);
-```
-
-Shortcode `<style>` blocks are injected into the page, so they inherit these from `:root` — the fallback is belt-and-braces, matching the `var(--line,#1f2b46)` convention. Before this was consolidated the site used 13 distinct radii for the same handful of jobs (`.ac-stat` 10px, `.m2iu-stat` 9px, `.bml-item` 6px, `.pi-link` 8px), because each widget was styled in isolation. **Don't add a fourth tier** — pick the nearest existing one. Bare values are still correct for `0` resets, `50%` circles, and hairlines.
-
-**Never use `transition: all`.** Enumerate exactly the properties the `:hover` / `:focus` rule changes, so the transition can't pick up layout properties by accident. Note that children animate independently: `Card.astro` transitions `transform` on `.card__image img` and `opacity` on `.card__bg-icon` in their own rules, not via the parent.
+- Astro v7, `output: "server"`, deployed as the Cloudflare **Worker** `orboro-net` via `@astrojs/cloudflare` (Workers Builds, git-integrated with GitHub `jmusick/orboro`: a push to `master` runs `npm run build` + `npx wrangler deploy`).
+- `wrangler.toml` is the source of truth for bindings and runtime config (D1 `DB`, R2 `MEDIA`, static `ASSETS`, compatibility flags, logs/traces). `astro build` writes the real deploy config to `dist/server/wrangler.json`. Custom domains, production secrets and edge rules live outside the repo; do not infer their live settings from source.
+- All content (pages, posts, categories, nav) lives in D1, not markdown files. `src/lib/content.ts` is the data-access layer.
+- Auth is custom (PBKDF2 hashing, D1-backed opaque session tokens, 14-day lifetime): `src/lib/auth.ts`, `src/middleware.ts`. There is no setup or registration UI; a fresh or restored D1 gets its first admin from `npm run admin:create`.
+- Current operation is a single user, JD, with the admin role. `editor`/`author` remain in the schema and route guards, but author ownership restrictions are absent; adding non-admin users needs a permissions review first.
+- Styling is hand-written scoped CSS per component using the variables in `BaseLayout.astro` (`--bg`, `--surface`, `--surface-2`, `--text`, `--muted`, `--accent`, `--accent-2`, `--accent-3`, `--line`, plus the type and layout tokens below). No Tailwind, no component library.
 
 ## Design system
 
-The v1.37.0 refresh replaced a generic neon look with one taken from the brand's own assets. Keep new work inside it.
+The v1.37.0 refresh took the palette and type from the brand's own assets. Keep new work inside it.
 
-**Color.** The palette in `BaseLayout.astro`'s `:root` is lifted from the logo and header artwork, not picked fresh: `--accent: #70d0ff` is the orb blue sampled from `public/images/logo.png`, and `--bg: #080b18` / `--surface: #0e1428` / `--surface-2: #131a33` are the indigo of the header art. `--accent-2` (pink) and `--accent-3` (lime) survive only for `Pill.astro` status colors — keep them out of chrome, backgrounds, and gradients. The page background is a single faint indigo nebula at the top; don't bring back the three cyan/pink/lime radial blobs.
+**Color.** `--accent: #70d0ff` is the orb blue sampled from `public/images/logo.png`; `--bg: #080b18`, `--surface: #0e1428`, `--surface-2: #131a33` are the header art's indigo. `--accent-2` (pink) and `--accent-3` (lime) survive only for `Pill.astro` status colors: keep them out of chrome, backgrounds and gradients. The page background is one faint indigo nebula; don't bring back the cyan/pink/lime radial blobs.
 
-**Gotcha — the accent is hardcoded far beyond the token.** Roughly 160 tints across shortcodes, components, and admin pages are written as `rgb(112 208 255 / <alpha>)` or `#70d0ff` rather than `var(--accent)`, because shortcode CSS was authored in isolation. Changing the accent hue means a repo-wide replace of **both** the RGB triplet and the hex (that's how the old `0 229 255` / `#00e5ff` cyan was retired), or widgets will visibly disagree with the chrome. New code should use `var(--accent)` or `rgb(from var(--accent) r g b / <alpha>)` where it can.
+**Gotcha: the accent is hardcoded far beyond the token.** About 160 tints across shortcodes, components and admin pages are written as `rgb(112 208 255 / <alpha>)` or `#70d0ff`. Changing the hue means a repo-wide replace of **both** the RGB triplet and the hex, or widgets will disagree with the chrome. New code should use `var(--accent)` or `rgb(from var(--accent) r g b / <alpha>)`.
 
-**Type.** Two self-hosted variable fonts, imported at the top of `BaseLayout.astro` from `@fontsource-variable/schibsted-grotesk` and `@fontsource-variable/source-sans-3` (normal and italic):
+**Type.** Two self-hosted variable fonts imported at the top of `BaseLayout.astro` (`@fontsource-variable/schibsted-grotesk`, `@fontsource-variable/source-sans-3`): `--font-ui` (Schibsted Grotesk) for headings, navigation, UI and every shortcode widget; `--font-read` (Source Sans 3) for running article text only. They bundle into `/_astro/` so the CSP's `font-src 'self'` holds: **don't use a font CDN** without adding its origins to `src/middleware.ts`. Name a face in CSS only if it is actually imported. `AdminLayout.astro` has its own `:root` and uses only the UI face. Headings follow a major-third scale from the 17px body with `text-wrap: balance`.
 
-- `--font-ui` — Schibsted Grotesk: headings, navigation, UI, and everything inside shortcode widgets.
-- `--font-read` — Source Sans 3: running article text only.
+**Reading measure.** `--measure: 42rem` caps line length; layouts with the shared sidebar (`.page-layout--sidebar`, `.post-layout`, `.home-layout`) set it to `100%`. The reading font, measure and underlined links apply only to **direct children** of `.prose` (`> p`, `> ul`, `> ol`, `> blockquote`, `> h2`–`h4`) so widgets keep the UI font and full width. Don't loosen these to descendant selectors. In-prose `h2`s are plain `--text`.
 
-They're bundled into `/_astro/` so the CSP's `font-src 'self'` holds. **Don't switch to Google Fonts** (or any font CDN) without adding its origins to `font-src`/`style-src` in `src/middleware.ts`. Before v1.37.0 the CSS named "Space Grotesk" but nothing loaded it, so every visitor saw Segoe UI — if you name a face, make sure it's actually imported. `AdminLayout.astro` has its own `:root` but imports the same Schibsted Grotesk package, so `/admin` uses the UI face too (it uses only the UI face). Headings follow a major-third scale from the 17px body (`h1` 2.6rem/800, `h2` 1.66rem/700, `h3` 1.33rem) with `text-wrap: balance`.
+**Layout.** `main` is the same width on every page (a narrowing variant was rejected as jarring). A page whose markdown has no `{{token}}` renders in the blog post's two-column layout with `Sidebar.astro`; pages with shortcodes keep the full panel. `privacy-policy.astro` and the homepage use the same two columns. The newest post renders into `BaseLayout`'s `headerFeature` slot as a stacked hero (header art above headline and excerpt, natural aspect ratio): the one loud element on the site. Don't reintroduce a static banner above it.
 
-**Reading measure.** `--measure: 42rem` caps line length by default. Layouts with the shared sidebar (`.page-layout--sidebar`, `.post-layout`, `.home-layout`) override it to `100%` so copy fills the remaining content column. The reading font, the measure, and underlined links apply only to **direct children** of `.prose` (`.prose > p`, `> ul`, `> ol`, `> blockquote`, `> h2`–`h4`), so shortcode widgets injected into `.prose` keep the UI font and the full width. Don't loosen those to descendant selectors — every widget's paragraphs would switch reading fonts and shrink to 42rem. In-prose `h2`s are plain `--text` with no accent color or bottom border.
+**Cards.** Cards, callouts and blockquotes use a uniform 1px frame (`border: 1px solid var(--line)`, or a tinted `rgb(<accent> / ~22%)` for semantic color) with a symmetric radius. Color lives in the icon, title, hover state and border tint. Don't reintroduce `border-left: 3px solid var(--accent)` with an asymmetric radius and a `linear-gradient(90deg, …)` wash, and don't use a top-left corner tick: both were tried and removed. The one surviving left border is `.nav-item--child` in `src/pages/admin/nav/index.astro`, which encodes tree nesting.
 
-**Panel width is constant.** `main` is the same width on every page — a variant that narrowed the panel on text-only pages was tried and rejected because the jump between pages was jarring. The empty space beside a capped text column is filled with a sidebar instead: `src/pages/pages/[slug].astro` treats a page whose markdown has no `{{token}}` as text-only and renders it in the blog post's two-column layout with `Sidebar`; pages with shortcodes keep the full panel. `privacy-policy.astro` and the homepage use the same two columns. The shared `Sidebar.astro` includes categories, recent posts, and Find me elsewhere profiles.
+**Radius and transitions.** Three tiers in `:root`: `--r-sm: 6px` (chips, code, small buttons), `--r-md: 10px` (cards, panels, inputs), `--r-lg: 16px` (shells, heroes), plus `--r-pill`. Use `border-radius: var(--r-md, 10px)` (shortcode `<style>` blocks inherit `:root`, the fallback is belt-and-braces). **Don't add a fourth tier**; `0`, `50%` and hairlines may stay bare. **Never use `transition: all`**: list the properties the `:hover`/`:focus` rule changes. Children animate in their own rules (`Card.astro` transitions `.card__image img` and `.card__bg-icon` separately).
 
-**Home page.** The newest post renders into `BaseLayout`'s `headerFeature` slot as a stacked hero (full-width header art above the headline and excerpt, with its natural aspect ratio preserved) — that headline is deliberately the one loud element on the site. The old `home-header` banner image was removed; don't reintroduce a static banner above it.
+**Nav chevrons.** `.nav-caret` is a transparent button whose `::after` draws a rotated-square chevron; parent link and caret share one hover/active fill. Top-level carets point down and flip up when `aria-expanded="true"`; desktop flyout carets point left and flip right; stacked mobile carets all point down. Every state needs its **own** transform or the animation silently dies.
 
-**Nav chevrons.** `.nav-caret` is a transparent button whose `::after` draws a thin chevron (two borders of a rotated square). The parent link and its caret share one hover/active fill, so they read as a single item. Direction encodes where the menu opens: top-level points down and flips up when `aria-expanded="true"`; desktop flyout carets point left (flyouts open to the left) and flip right; in the stacked mobile nav all point down. Every state needs its **own** transform — giving open and closed the same value silently kills the animation.
-
-**Removed on purpose — don't reintroduce:** neon glow `box-shadow`s on hover or around `main`, `translateY` hover lift on cards and buttons, the fade-and-slide `@keyframes` on every `section`, the uppercase tracked "Featured · Latest post" eyebrow on the home hero (the date alone says it's the newest), middle-dot (` · `) meta strings (post pages and blog cards separate date, categories, and reading time with flex `gap` spacing instead), and monospace text for the home page's profile handles. Hover feedback is a color or border-color change only.
+**Removed on purpose, don't reintroduce:** neon glow `box-shadow`s, `translateY` hover lift, fade-and-slide `@keyframes` on every `section`, the uppercase "Featured · Latest post" eyebrow, middle-dot (` · `) meta strings (use flex `gap`), and monospace profile handles. Hover feedback is a color or border-color change only.
 
 ## The shortcode system
 
-Page/post markdown can embed rich, self-contained widgets via `{{token}}` or `{{token attr="value"}}` syntax, processed by `src/lib/shortcodes.ts` after `marked.parse()`. Each shortcode is a hardcoded, page-specific TS module in `src/lib/*.ts` (e.g. `atlas-farming-strategies.ts`, `bookmarks.ts`, `poe2-featured.ts`, `wow-featured.ts`, `assisted-combat-analysis.ts`) that returns a self-contained HTML string with its own inline `<style>` (and `<script>` if interactive), registered in the `SHORTCODES` map in `shortcodes.ts`.
+Page/post markdown embeds widgets via `{{token}}` or `{{token attr="value"}}`, expanded by `src/lib/shortcodes.ts` **after** `renderMarkdown()`. Each shortcode is a hardcoded TS module in `src/lib/*.ts` returning a self-contained HTML string with its own inline `<style>` (and `<script>` if interactive), registered in the `SHORTCODES` map.
 
-**A shortcode-only page has no prose for the meta description to use.** `src/pages/pages/[slug].astro` derives `<meta name="description">` from the page markdown, so a page whose entire body is `{{token}}` used to emit `content="{{atlasfarmingstrategies}}"`. `descriptionFromMarkdown` now strips shortcode tokens and falls back to the title, but the real fix is to give any page you care about a sentence or two of intro prose above the shortcode — that prose is the description Google shows.
+- **Shortcode-only pages need intro prose.** `<meta name="description">` is derived from page markdown; `descriptionFromMarkdown` strips tokens and falls back to the title, but a sentence or two of prose above the widget is what Google shows.
+- **Server-render anything worth indexing.** A widget rendered only from a client JSON blob is empty to crawlers and no-JS visitors. `assisted-combat-analysis.ts` is the reference: its templates live in dependency-free `assisted-combat-render.js` (top-level `export function`/`export var` only), imported by the shortcode and inlined into the browser via `?raw`, so server and client render from identical code. The client wrapper strips `export ` with a regex and evaluates the rest in an IIFE.
+- **Memoize expensive output.** The function runs on every request. Build output that is a pure function of a static import once into a module-level `cachedHtml` (see the nonce gotcha below).
+- **Generated data needs a generator.** `npm run data:assisted-combat` rebuilds `src/lib/assisted-combat-data.json` from research inputs that are not in this repo (set `ASSISTED_COMBAT_RESEARCH_ROOT` and `ASSISTED_COMBAT_NOTES_ROOT`; `scripts/generate-assisted-combat-data.mjs` documents them). Every published figure derives from them; only the pinned build/commit IDs are typed by hand. Don't hardcode totals.
+- **WoW spec icons are vendored.** `npm run data:spec-icons` downloads 40 icons into `public/images/wow-spec-icons/` and records the specId → icon map in `src/lib/assisted-combat-spec-icons.json`, resolved through wago.tools `ChrSpecialization` → `SpellIconFileID` → the community listfile (~100 MB, streamed and filtered, never stored). `--resolve` re-derives the map after a patch, `--force` re-downloads images. An `<img>` in `.prose` needs an `#ac-root img.ac-monogram`-style rule to beat `.prose img`.
+- **`marked` HTML-escapes quotes before shortcodes run**, so `attr="value"` arrives as `attr=&quot;value&quot;`. The attribute regex decodes entities first; don't "simplify" that away.
+- **Scripts must survive Astro View Transitions.** `ClientRouter` is enabled sitewide and inline scripts don't reliably re-run after in-site navigation. Interactive shortcodes follow `atlas-farming-strategies.ts` / `expedition-rumours.ts`: an IIFE whose `init()` finds its root, bails if `root.dataset.<name>Init` is set, otherwise sets it and wires listeners; call `init()` immediately (or on `DOMContentLoaded` while loading) **and** on `astro:page-load`. Test by navigating in from the nav bar, not just by typing the URL.
+- **`.prose` element selectors out-specify shortcode classes.** `.prose img`, `h2`, `ul`, `p`, `li`, `a` have specificity (0,1,1) and beat a bare `.my-class`, which shows up as unexplained gaps, borders or indents. Scope with the widget's root id: `#hl-root img.hl-img{margin:0;border:0}` (see `bookmarks.ts`, `wow-featured.ts`).
+- **A class-level `display` beats `hidden`.** Pair every element toggled via `el.hidden` with `<root> .cls[hidden]{display:none;}` if the class sets its own `display` (`spell-queue-lab.ts`).
 
-**Server-render anything worth indexing.** A widget that renders itself entirely from a client-side JSON blob ships a page with an empty content area: crawlers, AI scrapers, and no-JS visitors see nothing. `assisted-combat-analysis.ts` is the reference for the alternative — the templates live in a plain-JS module (`assisted-combat-render.js`) that the shortcode imports *and* inlines into the browser via a `?raw` import, so the server renders the initial view and the client re-renders from identical code instead of a drifting second copy. Keep that module dependency-free with only top-level `export function`/`export var` declarations: the client wrapper strips `export ` with a regex and evaluates the rest inside an IIFE.
+## Security
 
-**Memoize expensive shortcode output.** `output: "server"` means the shortcode function runs on *every request*. `assisted-combat-analysis.ts` serialises a ~280 KB JSON payload into the page, so it builds its HTML once into a module-level `cachedHtml` and returns that. Anything whose output is a pure function of a static import should do the same.
+**Headers.** Every page and API route is rendered by the Worker, not the static-assets layer, so `public/_headers` only affects static files. `src/middleware.ts` sets HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy` and `Content-Security-Policy-Report-Only` on every response. Fix a missing header in middleware, not just `_headers`.
 
-**Data-backed shortcodes need a generator, not hand-typed numbers.** `scripts/generate-assisted-combat-data.mjs` (`npm run data:assisted-combat`) rebuilds `src/lib/assisted-combat-data.json` from research inputs that are **not in this repo** — set `ASSISTED_COMBAT_RESEARCH_ROOT` and `ASSISTED_COMBAT_VAULT_ROOT` to point at them. Every published figure is derived from those inputs; only the pinned build/commit identifiers at the top of the script are typed by hand. Don't reintroduce hardcoded totals — they go stale silently the moment the source data changes.
+**CSP nonces.** The CSP is Report-Only, with a per-request nonce (`Astro.locals.nonce`) on `script-src`/`style-src` and no `'unsafe-inline'`. **Every** inline `<script>`/`<style>` needs `nonce={Astro.locals.nonce}` (Astro) or `nonceAttr(nonce)` from `src/lib/csp.ts` (shortcode strings, threaded through `processShortcodes(html, nonce)` → `ShortcodeFn(attrs, nonce)`). `<script type="application/json">` and `ld+json` blocks need none. `build.inlineStylesheets: 'never'` keeps Astro's scoped styles external. Never auto-nonce user-authored HTML.
 
-**WoW spec icons are vendored, not hotlinked.** `scripts/fetch-spec-icons.mjs` (`npm run data:spec-icons`) downloads the 40 spec icons into `public/images/wow-spec-icons/` (~77 KB) and records the specId → icon-name map in `src/lib/assisted-combat-spec-icons.json`. Resolution walks `ChrSpecialization` on wago.tools (at the same pinned build as the APL data) → `SpellIconFileID` → the community listfile → icon name. The listfile is ~100 MB so it's streamed and filtered, never stored, which is why the resolved map is committed and reused by default; pass `--resolve` to re-derive it after a patch, `--force` to re-download the images. The sibling HiddenLodgeWebsite project hotlinks `wow.zamimg.com` instead, but its icons are dynamic item/profession lookups — this set is fixed and small enough to pin. **Gotcha:** `<img>` inside `.prose` needs an `#ac-root img.ac-monogram`-style rule to beat `.prose img`, which otherwise adds `1rem` vertical margin, its own border, and a 10px radius to every icon.
+**Gotcha: memoized shortcode HTML can't bake in a nonce.** `assisted-combat-analysis.ts` and `midnight-s2-interrupts.ts` cache HTML with a `NONCE_PLACEHOLDER` and `.replaceAll()` the real nonce (or strip the attribute) per request. Don't embed `nonce` directly in `buildHtml()`.
 
-**Gotcha:** `marked` HTML-escapes quotes in paragraph text before shortcode processing runs, so `{{token attr="value"}}` becomes `{{token attr=&quot;value&quot;}}` in the parsed HTML. The attribute regex in `shortcodes.ts` decodes entities before parsing — don't "simplify" that away.
+**Before enforcing the CSP:** add a report destination or gather browser evidence, move the editor's dynamically created style to a stylesheet, deal with inline `style` attributes (a style nonce doesn't authorize them) and external favicon origins, and test nonce behavior across ClientRouter navigation.
 
-**Gotcha — Astro View Transitions breaks unguarded scripts:** this site has View Transitions enabled sitewide (`ClientRouter` in `BaseLayout.astro`). Astro does not reliably re-run inline `<script>` tags after a client-side (in-site link) navigation — only on a hard load. Any shortcode with interactive JS (click handlers, filters, etc.) **must** follow the pattern already used in `atlas-farming-strategies.ts` and `expedition-rumours.ts`:
+**Inline JSON.** Use `jsonForHtml` (`src/lib/json.ts`) for every inline JSON/JSON-LD body, including `set:html` and shortcode strings; it escapes `<`, `>`, `&` so a `</script>` in a title can't end the block. Run `npm run test:json` when changing it.
 
-```js
-(function(){
-  function init(){
-    var root = document.getElementById('some-root');
-    if (!root || root.dataset.someInit) return;
-    root.dataset.someInit = '1';
-    // ... wire up listeners ...
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-  document.addEventListener('astro:page-load', init);
-})();
-```
+**Author Markdown is sanitized.** `renderMarkdown` (`src/lib/markdown.ts`) filters Marked's output through an `xss` allowlist: unlisted tags and attributes (`style`, `on*`) are dropped, `<script>`/`<style>` lose their bodies, and `href`/`src` keep only http(s), mailto, tel, fragment and relative URLs (`data:` images refused). Shortcodes expand **after** this step, so widget markup and nonces aren't filtered: never run `processShortcodes` first and never feed author HTML into it. To allow a new tag or attribute (About uses a raw `<img class=…>`), extend the whitelist and add a case to `tests/markdown.test.ts`. `src/lib/feed.ts` has its own unsanitized `marked.parse` for feed portability only.
 
-Skipping this means the widget silently does nothing for any visitor who navigated in via the nav bar instead of a fresh page load — easy to miss when testing by typing the URL directly.
+**Login** (`src/pages/api/auth/login.ts`) is email + password only: no app-level captcha, MFA or throttling; verify any Cloudflare edge rules separately. The app needs no runtime secrets. Local ones go in `.dev.vars` (gitignored); production ones via `wrangler secret put`.
 
-**Gotcha — `.prose` element selectors out-specify your shortcode's classes:** shortcode HTML is injected into `<div class="prose">`, and `BaseLayout.astro` styles bare elements there — `.prose img` (adds `margin: 1rem 0`, a border, and a border-radius), `.prose h2` (adds `margin: 2.75rem 0 0.8rem` and heading typography, with plain text color and no bottom border), `.prose ul` (adds a `1.35rem` left indent), plus `.prose p`, `.prose li`, and `.prose a`. Those selectors have specificity (0,1,1), so a bare `.my-image` rule at (0,1,0) **loses** and your reset is silently ignored. Scope anything that styles one of those elements with the widget's root id:
+## Analytics and privacy
 
-```css
-/* loses to .prose img — margin/border still applied */
-.hl-img{margin:0;border:0;}
+`ConsentBanner.astro` is the only loader for gtag.js. It loads the tag only after acceptance (including a saved choice), stores the choice in `orboro-analytics-consent` localStorage, and leaves advertising consent denied. Footer **Cookie preferences** reopens the banner; withdrawing consent disables the tag, clears GA cookies on the host and parent domains, and reloads. A nonce-bearing `is:inline` script installs one guarded controller with document-level listeners that survive ClientRouter swaps. Keep `send_page_view: false`, send manual page views on `astro:page-load` plus one on first acceptance, and don't double count on re-acceptance. Only pages that contain the banner are tracked, so `AdminLayout` stays excluded. The tag reads the **current page's** nonce from `#analytics-controller`, not one captured earlier. Keep the explicit `[hidden]` display resets on the banner and footer button. Run `npm run test:consent` when changing this; it doesn't verify visuals or real Google traffic, so check desktop and phone layouts, refusal across navigation, acceptance after a swap, saved acceptance on reload and withdrawal in a browser.
 
-/* wins */
-#hl-root img.hl-img{margin:0;border:0;border-radius:0;}
-```
-
-The symptom is misleading: unexplained gaps, stray borders, or indentation that looks like a flexbox/layout bug and sends you rewriting the layout instead of the specificity. `bookmarks.ts` (`#bml-root p.bml-credit`, `#bml-root hr.bml-divider`) and `wow-featured.ts` both use this pattern.
-
-**Gotcha — a class-level `display` beats the `hidden` attribute:** the browser's UA stylesheet sets `[hidden]{display:none}` at the same specificity as a class selector like `.sql-live{display:flex}`, and your page's `<style>` block loads after the UA sheet — so on a tie, your class wins and toggling `el.hidden = true` visibly does nothing. `spell-queue-lab.ts`'s `#sql-root .sql-live[hidden]{display:none;}` is the fix: pair every element you show/hide via the `hidden` property with an explicit `<root> .your-class[hidden]{display:none;}` rule if that class also sets its own `display`.
-
-**Google Analytics is opt-in:** `ConsentBanner.astro` is the only loader for gtag.js. It loads the tag only after acceptance (including saved acceptance), stores the choice in `orboro-analytics-consent` localStorage, and leaves advertising consent denied. Footer Cookie preferences reopens the banner; withdrawing consent disables the running tag, clears GA cookies on the host and parent domains, and reloads. Its nonce-bearing `is:inline` script installs one guarded controller with document-level listeners that survive ClientRouter swaps. Keep `send_page_view: false` and manual page views on `astro:page-load`, plus one view when first accepting; reaccepting an already active choice must not double count. Only track pages that contain the banner, so AdminLayout remains excluded. Run `npm run test:consent` when changing this boundary.
-
-Consent choices have no automatic expiry; they remain until changed or browser storage is cleared. When localStorage is unavailable, the controller keeps the choice in memory across ClientRouter navigation but loses it on a full reload. Storage events synchronize changes across tabs and stop a running tag when consent is withdrawn elsewhere. No JavaScript means no Google tag. The dynamically created tag reads the **current page's** nonce from `#analytics-controller`, not a nonce captured on an earlier page. Keep the explicit `[hidden]` display resets on the banner and footer preference button. Browser verification should cover desktop/phone layout, refusal across navigation, acceptance after a swap, saved acceptance on reload, and withdrawal; the controller tests alone do not verify visuals or real Google network traffic.
+`src/pages/privacy-policy.astro` is a code page, not a D1 row. Keep it aligned with what is actually collected and update `PRIVACY_UPDATED_AT` in `src/lib/privacy.ts` when its substance changes (the sitemap shares that date). Don't promise anonymization, no sharing or a retention period without evidence; retention and Google/Cloudflare settings need dashboard verification.
 
 ## Form feedback
 
-`src/components/FormMessage.astro` provides shared form feedback. Successes use
-an atomic polite status. Errors receive focus on arrival and expose links to
-relevant controls; descriptions are associated without declaring all linked fields
-invalid. Keep existing hint IDs when extending `aria-describedby`. Markdown links
-must focus EasyMDE's generated input, which inherits error descriptions from its
-source textarea. The controller guards each summary and initializes on
-`astro:page-load`. Do not move focus for filtering or simulator updates; use concise
-polite statuses and avoid rewriting unchanged text. Content/category validation
-redirects return to their editor but do not retain unsaved form values.
+`src/components/FormMessage.astro` provides shared form feedback: successes are an atomic polite status; errors take focus on arrival and link to the relevant controls, with descriptions associated without marking every linked field invalid. Keep existing hint IDs when extending `aria-describedby`. Markdown-field links must focus EasyMDE's generated input, which inherits the source textarea's error descriptions. The controller guards each summary and initializes on `astro:page-load`. Don't move focus for filtering or simulator updates; use concise polite statuses and avoid rewriting unchanged text. Content/category validation redirects return to the editor without retaining unsaved values.
 
-## Security response headers
+## Content model and D1
 
-Because this is `output: "server"`, every page and API route is rendered by the Worker — **not**
-served from the Worker's static-assets layer. `public/_headers` only affects responses served
-directly from that static layer (images, `robots.txt`, `admin-editor.js`, `_astro/*`); it does
-nothing for SSR'd HTML. Don't try to fix a missing-security-header issue by only editing
-`public/_headers` — you'll get a clean `dist/_headers` and no actual change on `curl -I` for any
-real page.
+- `content` holds pages and posts, split by `page_type` (`"page"` → `/pages/[slug]`, `"post"` → `/blog/[slug]`). Markdown is in `content.markdown`; shortcodes expand at render time, never stored expanded.
+- `nav_items` drives the header nav: `content_id` plus an optional self-referencing `parent_item_id` for arbitrarily deep nesting (rendered as nested `.nav-flyout` submenus). A page needs no `nav_items` row to be reachable. `categories` / `content_categories` are a separate tagging system for `/category/[slug]`: don't conflate them with nav nesting.
+- **Scripted content edits** go in a SQL file run with `wrangler d1 execute DB --local --file=./scratch.sql` (`--remote` for production, deliberately), not an inlined `UPDATE`. Escape single quotes as `''`.
+- **A new shortcode-backed page gets an idempotent seed script in `scripts/content/`** (see `spell-queue-window-simulator.sql`): `INSERT … ON CONFLICT(slug) DO UPDATE` for the page, `INSERT OR IGNORE INTO content_categories`, and for nav an `INSERT … ON CONFLICT(id) DO UPDATE` with a hardcoded `id`. Re-running it ships later prose or label edits. Resolve `author_id` with `(SELECT id FROM users WHERE role = 'admin' ORDER BY created_at ASC LIMIT 1)`, because local and remote `users.id` differ.
+- **Don't wrap these scripts in `BEGIN TRANSACTION`/`COMMIT`.** Remote D1 rejects them, and `wrangler d1 execute` already applies a file atomically.
+- Local D1 (`.wrangler/state/v3/d1`) is separate from production. Apply migrations locally first, then remote. Never copy a locally observed row ID into a remote insert without checking.
 
-The fix is `src/middleware.ts`, which sets `Strict-Transport-Security`,
-`X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`, and a
-`Content-Security-Policy-Report-Only` on every response after `next()` returns, so it covers all
-routes uniformly. `public/_headers` still carries the same non-CSP headers for the static-asset
-paths the Worker never touches.
+## Server-side fetches and the public API
 
-The CSP is Report-Only, with a per-request nonce (generated in `middleware.ts`, exposed as
-`Astro.locals.nonce`) on `script-src`/`style-src` instead of `'unsafe-inline'`. `'unsafe-inline'` is
-dropped entirely, so **every** inline `<script>`/`<style>` — `ConsentBanner.astro`'s controller, `BaseLayout.astro`'s nav/accordion
-scripts, the handful of admin-page inline scripts, and each
-shortcode's own `<style>`/`<script>` — must carry `nonce={Astro.locals.nonce}` (Astro components) or
-`nonceAttr(nonce)` from `src/lib/csp.ts` (shortcode HTML strings, threaded through
-`processShortcodes(html, nonce)` → each `ShortcodeFn(attrs, nonce)`). A `<script type="application/json">`
-or `type="application/ld+json"` data block needs no nonce — CSP's `script-src` only governs elements
-the browser would execute. `build.inlineStylesheets: 'never'` (astro.config.mjs) keeps Astro's own
-component-scoped `<style>` blocks (e.g. `Icon.astro`) always extracted to external CSS, so they never
-need a nonce and never flip between inlined/extracted depending on their compiled size.
-
-**Gotcha — memoized shortcode HTML can't bake in a real nonce.** `assisted-combat-analysis.ts` and
-`midnight-s2-interrupts.ts` cache their built HTML in a module-level `cachedHtml` (see the shortcode
-section above), but the nonce is per-request. Both cache the HTML with a `NONCE_PLACEHOLDER` string in
-place of the real nonce, then `.replaceAll()` it with the actual per-request `nonce` (or strip the
-attribute entirely if no nonce is given) on every call — don't "simplify" that back to embedding
-`nonce` directly in `buildHtml()`, or every request after the first would ship a stale, non-matching
-nonce.
-
-Still open: CSP is Report-Only and has no report destination. Before enforcement,
-collect reports or browser evidence, move the editor's dynamically created style
-to a compatible stylesheet, address inline style attributes and external favicon
-origins, and test nonce behavior across ClientRouter navigation. A style nonce
-does not authorize style attributes. Never auto-nonce user-authored HTML.
-
-**Inline JSON must be safe for HTML parsing.** Use `jsonForHtml` from `src/lib/json.ts`
-for every inline JSON/JSON-LD body, including `set:html` and shortcode strings.
-It escapes `<`, `>` and `&` as JSON Unicode escapes. Bare `JSON.stringify` allows
-`</script>` in a title to end even a non-executable data block. Ordinary API JSON
-and form-input values do not need this HTML-specific serializer. Run `npm run test:json`
-when changing this boundary. Markdown raw HTML is still permitted; this fix does
-not sanitize article content or make untrusted publishing safe.
-
-## Media storage
-
-- `MEDIA` binds the `orboro-net-media` R2 bucket. Production uploads use
-  `https://media.orboro.net/...`; local uploads use `/media/...` and local R2.
-- Uploads accept PNG/JPEG/GIF/WebP/AVIF, up to 10 MiB, with signature checks.
-  The bytes are stored as supplied, without decoding, resizing or metadata stripping.
-- Deleting a media-library record deletes D1 metadata only. It does not remove
-  the object or update content references.
-- `npm run media:migrate -- --local` previews content-image migration; `--apply`
-  copies objects and rewrites D1 URLs. Review the dry-run manifest before deliberate
-  `--remote --apply` use. Code deployment does not migrate content or objects.
-
-## Privacy documentation
-
-`src/pages/privacy-policy.astro` is a code-backed page, not a D1 content row.
-Keep it aligned with actual collection and update `PRIVACY_UPDATED_AT` in
-`src/lib/privacy.ts` when its substance changes; the sitemap uses that same date.
-Google Analytics loads on BaseLayout pages, including login/setup, only after
-analytics acceptance, and not on authenticated AdminLayout pages. Manual page views
-send `location.href`, including query strings. ConsentBanner stores the choice in
-localStorage, gates the tag entirely until acceptance, and keeps advertising consent
-denied. Withdrawing consent clears GA cookies and reloads; this choice does not gate
-external images or necessary administrator session cookies.
-Bookmark data is fetched server-side with a ten-minute cache, while browsers load
-favicon URLs supplied by Tagstash and the Google-hosted credit icon directly.
-Those images use `referrerpolicy="no-referrer"` but still contact their hosts.
-Workers logs/traces are enabled in Wrangler; retention and Google sharing/advertising
-settings require dashboard verification. Do not promise anonymization, no sharing,
-or a retention period without evidence. `TODO.md` is local and gitignored.
-
-## Content model
-
-- `content` table holds both pages and posts, distinguished by `page_type` (`"page"` renders at `/pages/[slug]`, `"post"` at `/blog/[slug]`). Markdown lives in `content.markdown`; shortcodes (see above) get expanded at render time, not stored expanded.
-- `nav_items` drives the header nav. Each row has `content_id` (what it links to) and an optional `parent_item_id` (self-referencing FK) for arbitrarily deep dropdown/flyout nesting — e.g. "Path of Exile II" is the parent of "Atlas Farming Strategies", "Expedition Rumours Cheat Sheet", and "Useful POE2 Links"; "Gaming" is in turn the parent of "Path of Exile II", "Grim Dawn", and "World of Warcraft", each of which parents its own "Useful … Links" page (three levels deep, rendered as nested `.nav-flyout` submenus). A page doesn't need a `nav_items` row to be reachable at its slug; nav is purely presentational.
-- `categories` / `content_categories` are a separate tagging system from nav nesting — used by `/category/[slug]`, not the same thing as the nav dropdown parent/child relationship above. Don't conflate the two when adding a new sub-page.
-
-## Editing D1 content directly
-
-For scripted or agent-driven edits (as opposed to the admin UI at `/admin`), write the SQL to a file and run it — safer than inlining a long `UPDATE ... SET markdown = '...'` on the command line, and avoids shell-quoting problems with the markdown body:
-
-```bash
-wrangler d1 execute DB --local --file=./scratch.sql
-```
-
-SQL-escape single quotes in markdown content as `''` (not `\'`) — it's SQLite. Drop `--local` (and add `--remote`) to target production; do that deliberately, per the local-vs-remote section below.
-
-**A new shortcode-backed page gets a seed script in `scripts/content/`**, not a one-off scratch file — see `spell-queue-window-simulator.sql` or `bis-lists-are-bait.sql` for the shape. It's a sequence of idempotent statements: `INSERT INTO content (...) VALUES (...) ON CONFLICT(slug) DO UPDATE SET ...` for the page itself, `INSERT OR IGNORE INTO content_categories ...` for tagging, and (if it should appear in the header) an `INSERT INTO nav_items (...) ON CONFLICT(id) DO UPDATE SET ...` with a hardcoded `id` so re-running the script never creates a duplicate nav row. Because the script is safe to re-run, it doubles as the way you ship an edit to a page's intro prose or nav label — change the script, then re-run it against whichever environment(s) you're targeting, rather than hand-editing D1 rows directly. Resolve `author_id` with `(SELECT id FROM users WHERE role = 'admin' ORDER BY created_at ASC LIMIT 1)` instead of a literal UUID, since local and remote `users.id` values don't match (see the local-vs-remote section below) — this is what lets the same script run unmodified against both.
-
-**Gotcha — don't wrap these scripts in `BEGIN TRANSACTION` / `COMMIT`:** `wrangler d1 execute --local` tolerates explicit transaction statements, but `--remote` D1 rejects them outright ("please use the state.storage.transaction() ... APIs instead of the SQL BEGIN TRANSACTION or SAVEPOINT statements"), failing the whole file. `wrangler d1 execute` already applies a multi-statement file atomically on its own, so the wrapper was never doing anything remote could use — just write the bare statements, as the current `scripts/content/*.sql` files do.
-
-## Verifying a change without a browser
-
-The repo has no headless browser tooling. When a browser integration is unavailable,
-the practical loop for confirming a page/shortcode emits the expected markup is:
-
-```bash
-npm run build
-npx wrangler dev --ip 127.0.0.1 --port 8787 &
-curl -s http://127.0.0.1:8787/pages/some-slug | grep -o 'expected-class-or-text'
-# ... then kill the wrangler dev process
-```
-
-This confirms the HTML/CSS/JS came out as expected (and that shortcodes didn't leave a literal `{{token}}` in the output because a fetch or shortcode registration failed). It does **not** confirm visual layout, spacing, or hover states — use an available browser integration or a human browser check for those. Say so explicitly rather than claiming a visual change "looks right" from curl output alone.
-
-## D1: local vs. remote
-
-- Local dev D1 lives in `.wrangler/state/v3/d1` and is completely separate from the production database. Content created/edited via `wrangler d1 execute DB --local` (or the admin UI while running locally) does **not** exist in production.
-- To ship content changes, either recreate them through the admin UI against production, or mirror the same `wrangler d1 execute DB --remote --file=...` statement.
-- Migrations: `npm run d1:migrate:local` / `npm run d1:migrate:remote`. Apply local first, verify, then remote.
-- Local and remote row IDs (especially `users.id` / `author_id`) are not guaranteed to match — don't copy a locally-observed ID into a remote insert without checking.
-
-## Local dev
-
-- Prefer `127.0.0.1` over `localhost` — some integrations (OAuth redirect URIs, etc.) require an exact literal match, and `localhost` vs `127.0.0.1` are different origins to a browser even though they resolve to the same place. `dev:astro` runs `astro dev --host 127.0.0.1`, and `.vscode/launch.json` points at `http://127.0.0.1:4321`.
-- `npm run dev:astro` (Astro dev server, fast, hot-reloading) vs `npm run dev` (builds, then `wrangler dev` — full Cloudflare runtime: D1 bindings, secrets, Cache API, but no hot reload, re-run after each change). Use the latter when testing anything that touches D1, `caches.default`, or `cloudflare:workers` env/secrets, since `astro dev` may not mirror that runtime exactly.
-- Secrets for local dev go in `.dev.vars` (gitignored, never commit). Production secrets: `wrangler secret put <NAME>` (or dashboard → Worker → Settings → Variables and Secrets).
-- `/admin` login (`src/pages/api/auth/login.ts`) is email + password only — hCaptcha was removed in v1.34.0. There is no app-level captcha, MFA or login throttling; any Cloudflare edge rules must be verified separately. The app needs no runtime secrets.
-- **Gotcha — `astro dev` hot reload doesn't reliably pick up edits to `BaseLayout.astro`'s `<style is:global>` block.** The dev server keeps serving the old CSS even across hard reloads, so a style fix looks like it "didn't work". Restart the dev server after changing global styles before concluding anything. If port 4321 is already taken (e.g. another session's server), run `npx astro dev --host 127.0.0.1 --port <other>` rather than killing it.
-- No headless browser tooling is set up in this repo (Playwright was deliberately removed — see git history). Use an available browser integration or a human browser check for visual/interaction verification; do not claim it from build/curl output alone or automatically reinstall headless tooling.
-
-## External API calls from shortcodes/pages
-
-When a shortcode or page fetches an external API server-side (see `bookmarks.ts` for tagsta.sh), cache the response with the Cloudflare Workers Cache API:
+Cache external server-side fetches (see `bookmarks.ts`) with the Workers Cache API and fail gracefully with a small `<p><em>…</em></p>` fallback; a broken shortcode must not 500 the page:
 
 ```js
 const cache = (caches as CacheStorage & { readonly default: Cache }).default;
-const cacheKey = new Request(url); // or a synthetic Request for a non-fetchable key
 let res = await cache.match(cacheKey);
 if (!res) {
   res = await fetch(url);
@@ -271,14 +100,13 @@ if (!res) {
 }
 ```
 
-Always fail gracefully (return a small `<p><em>…</em></p>` fallback, not a thrown error) — these run inline in page content, and a broken shortcode shouldn't 500 the whole page.
+- `caches.default` needs the cast above: the generated `worker-configuration.d.ts` (`npm run cf:types`) doesn't type it.
+- The Cache API persists to `.wrangler/state/v3/cache`, so a stale response survives a dev-server restart. Stop the server, delete `.wrangler/state/v3/cache/miniflare-CacheObject`, and restart (or wait out the TTL).
+- `bookmarks.ts` filters tags into UI categories through an explicit `exclude_categories="…"` attribute rather than guessing which tags every item shares.
+- `src/pages/api/posts/by-category/[slug].ts` is a public, edge-cached (10 min) JSON endpoint of published posts per category, consumed by HiddenLodgeWebsite's `/articles` page. It returns plain-text excerpts, not rendered HTML, because shortcodes only resolve inside this repo's render pipeline. A new public endpoint should return absolute URLs (`new URL(path, site.origin)`), edge-cache, and answer an unknown slug with a `404` JSON body.
 
-**Gotcha — `caches.default` needs a cast:** Cloudflare types come from `worker-configuration.d.ts` (generated by `npm run cf:types`, referenced in `src/env.d.ts`), not the old `@cloudflare/workers-types` package. That generated file doesn't type `default` on the global `caches`, so accessing it needs the cast shown above rather than `caches.default` directly.
+## Local dev and verification
 
-**Gotcha — the Cache API cache survives a dev server restart:** Miniflare persists `caches.default` to disk at `.wrangler/state/v3/cache`, not just in memory. Restarting `npm run dev` / `npm run dev:astro` does **not** clear it, so a stale cached response (e.g. from `bookmarks.ts`) can keep serving after the upstream data changed. To force a fresh fetch locally: stop the dev server (it holds the cache's sqlite files open), delete `.wrangler/state/v3/cache/miniflare-CacheObject`, then restart. Waiting out the `Cache-Control: max-age` TTL also works without touching anything.
-
-`bookmarks.ts` also demonstrates a reusable pattern for turning a flat tag list into filterable UI categories: exclude tags via an explicit shortcode attribute (e.g. `exclude_categories="arpg,gaming"`) rather than trying to auto-detect which tags are "shared by everything" — that heuristic breaks the moment one item is missing a tag the rest share.
-
-## Public content API (cross-site consumers)
-
-`src/pages/api/posts/by-category/[slug].ts` is a public, edge-cached (`Cache-Control`, 10 min) JSON endpoint returning published posts for a category — `title`, `slug`, absolute `url`/`featuredImageUrl`, and a plain-text `excerpt` via `excerptFromMarkdown` in `content.ts`. It's the same request/cache shape as the external calls described above, just serving data out instead of fetching it in. First (and currently only) consumer is HiddenLodgeWebsite's `/articles` page (`world-of-warcraft` category), a sibling repo. **Gotcha:** the endpoint returns plain excerpt text, not rendered HTML — shortcode tokens (`{{token}}`) only resolve inside this repo's own Astro render pipeline, so a cross-site consumer can't render a full post body from this API; they link back to `/blog/[slug]` here instead. Keep that in mind before adding fields that assume rendered content. If you add another public content endpoint, follow the same pattern: absolute URLs (not relative paths — a relative `featured_image_url` needs `new URL(path, site.origin)`), edge cache, and a `404` JSON body for an unknown slug rather than an empty array.
+- Use `127.0.0.1`, not `localhost`: some integrations need an exact origin match. `npm run dev:astro` is fast with hot reload; `npm run dev` builds and runs `wrangler dev` with real D1/Cache/secret bindings but no hot reload. Use the latter for anything touching D1, `caches.default` or `cloudflare:workers`.
+- **`astro dev` doesn't reliably pick up edits to `BaseLayout.astro`'s `<style is:global>`**, even across hard reloads. Restart it before concluding a style fix failed. If 4321 is taken, use `npx astro dev --host 127.0.0.1 --port <other>` rather than killing it.
+- No headless-browser tooling is installed (Playwright was removed on purpose; don't reinstall it). Without a browser integration, confirm markup with `npm run build`, `npx wrangler dev --ip 127.0.0.1 --port 8787`, then `curl -s http://127.0.0.1:8787/pages/<slug> | grep …`. That proves HTML, scripts and shortcode expansion, **not** layout, spacing or hover states: say so rather than claiming a visual change "looks right".

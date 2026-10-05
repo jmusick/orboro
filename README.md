@@ -1,42 +1,32 @@
 # Orboro.net
 
-Orboro.net is JD's personal site and Markdown CMS, built with Astro 7 and deployed
-as the Cloudflare Worker `orboro-net`. Content and account records live in D1;
-uploaded images live in R2. See `package.json` for the current version.
+Orboro.net is JD's personal site and Markdown CMS, built with Astro 7 and deployed as the Cloudflare Worker `orboro-net`. Content and account records live in D1; uploaded images live in R2. See `package.json` for the current version.
 
-JD is the only user, with an admin account. The schema and route guards also
-support `editor` and `author`, but there is no public registration or user-management
-UI. Author ownership restrictions are not implemented; review those permissions
-before adding non-admin users.
+JD is the only user, with an admin account. The schema and route guards also support `editor` and `author`, but there is no public registration or user-management UI, and author ownership restrictions are not implemented: review those permissions before adding non-admin users.
+
+Conventions, architecture notes and known gotchas for working on the code are in [AGENTS.md](AGENTS.md).
 
 ## Requirements
 
-- Node.js `>=22.12.0`
-- npm
-- Cloudflare account + Wrangler CLI access for D1 operations
+- Node.js `>=22.12.0` and npm
+- A Cloudflare account and Wrangler access for D1 and R2 operations
 
 ## Features
 
-- Astro SSR configured for Cloudflare (`@astrojs/cloudflare`)
-- D1 schema + migrations for users, sessions, content, media, categories, and nav items
-- Initial admin setup flow (`/admin/setup`)
-- Custom email/password auth with PBKDF2 password hashes and D1-backed sessions; no JWT or third-party auth service
-- CMS content editor for markdown posts/pages with live preview; EasyMDE and its toolbar fonts are pinned npm dependencies bundled locally
-- Shortcode system for rich, self-contained widgets embedded in markdown (e.g. an external bookmarks list, featured-links cards) — see `src/lib/shortcodes.ts` and [AGENTS.md](AGENTS.md)
-- Blog routes (`/blog`, `/blog/[slug]`, `/blog/category/[slug]`), plus a homepage feed of recent posts — both the homepage feed and `/blog` cards show each post's featured image (`content.featured_image_url`) as a thumbnail, and posts are attributed to JD in the visible byline and JSON-LD author field
-- Generic page route (`/pages/[slug]`), plus a static `/privacy-policy` page
-- Category management with content tagging (`/category/[slug]`)
-- Dynamic navigation builder with unlimited nesting
-- Basic media library records (URL + alt + caption)
-- `sitemap.xml` (generated from published D1 content) and SEO meta tags; `robots.txt` is a static file in `public/`
-- RSS at `/rss.xml`, with WebSub update notifications, and IndexNow notifications for published content
-- Public read-only JSON at `/api/posts/by-category/[slug]`, with published post summaries and a ten-minute cache
-- Safe inline JSON/JSON-LD serialization through `src/lib/json.ts`
-- Accessible filter selection and polite result/verdict feedback; shared form errors focus a summary with links to relevant fields, including EasyMDE. Invalid content/category submissions return to the editor but do not retain unsaved values.
-- Opt-in Google Analytics (gtag.js) through `ConsentBanner.astro`, with Accept/Decline, footer Cookie preferences, and manual page views across Astro View Transitions (see [AGENTS.md](AGENTS.md))
-- Security response headers (HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`, and a report-only CSP) set in `src/middleware.ts` for all SSR'd routes, plus `public/_headers` for static assets — see [AGENTS.md](AGENTS.md)
+- Astro SSR on Cloudflare (`@astrojs/cloudflare`), with D1 migrations for users, sessions, content, media, categories and nav items
+- Custom email/password auth (PBKDF2 hashes, D1-backed sessions; no JWT or third-party service)
+- CMS editor for Markdown posts and pages with live preview (EasyMDE and its fonts are bundled npm dependencies)
+- Shortcodes for rich, self-contained widgets embedded in Markdown, such as the bookmarks list and featured-link cards (`src/lib/shortcodes.ts`)
+- Blog (`/blog`, `/blog/[slug]`, `/blog/category/[slug]`) with a homepage feed; cards show each post's featured image, and posts are attributed to JD in the byline and JSON-LD
+- Generic pages (`/pages/[slug]`), a code-backed `/privacy-policy`, category tagging (`/category/[slug]`) and a nested navigation builder
+- Media library with direct image uploads to R2
+- `sitemap.xml` from published content, SEO meta tags, a static `robots.txt`, RSS at `/rss.xml` with WebSub, and IndexNow notifications
+- A public, cached JSON endpoint of post summaries at `/api/posts/by-category/[slug]`
+- Server-side code highlighting, Markdown sanitizing and HTML-safe inline JSON
+- Accessible filters and form feedback: errors focus a summary that links to the relevant fields, including EasyMDE
+- Opt-in Google Analytics through a consent banner, and security response headers set in `src/middleware.ts`
 
-## Quick Start
+## Quick start
 
 1. Install dependencies:
 
@@ -44,130 +34,106 @@ before adding non-admin users.
 npm ci
 ```
 
-2. Create D1 DB (one-time):
+2. Create the D1 database (one time):
 
 ```bash
 npx wrangler d1 create orboro-db
 ```
 
-3. Update `database_id` in `wrangler.toml`. For a separate deployment, also
-   provision an R2 bucket for `MEDIA` and configure its public custom domain;
-   local development simulates the binding. Production image URLs currently
-   use `https://media.orboro.net` in `src/lib/media-upload.ts`.
+3. Update `database_id` in `wrangler.toml`. For a separate deployment, also provision an R2 bucket for `MEDIA` and configure its public custom domain; local development simulates the binding. Production image URLs use `https://media.orboro.net` in `src/lib/media-upload.ts`.
 
-4. Apply migrations:
+4. Apply migrations locally:
 
 ```bash
 npm run d1:migrate:local
 ```
 
-5. Start local dev with the full Cloudflare runtime:
+5. Create the first admin in local D1. There is no setup page; the script inserts a user only while the users table is empty:
+
+```bash
+ADMIN_EMAIL=you@example.com ADMIN_PASSWORD='at least 10 characters' npm run admin:create -- --local
+```
+
+6. Start local dev with the full Cloudflare runtime, then open `http://127.0.0.1:8787/admin`:
 
 ```bash
 npm run dev
 ```
 
-Open `http://127.0.0.1:8787`. This builds first and does not hot-reload;
-restart it after changes. For faster work that does not depend on Cloudflare
-runtime behavior, Astro's dev server runs at `http://127.0.0.1:4321`:
+`npm run dev` builds first and does not hot-reload. For faster work that doesn't depend on Cloudflare runtime behavior, Astro's dev server runs at `http://127.0.0.1:4321`:
 
 ```bash
 npm run dev:astro
 ```
 
-6. Open `/admin`, then run initial setup at `/admin/setup` if prompted. This
-   creates an admin in local D1 only. A fresh instance's setup route is public
-   until the first user exists; initialize it before exposing that instance.
-
 ## Scripts
 
-- `npm run dev` - Build, then serve via `wrangler dev` (full Cloudflare runtime: D1 bindings, Cache API, secrets)
-- `npm run dev:astro` - Run Astro dev server directly (fast, hot-reloading, but doesn't fully mirror the Cloudflare runtime)
-- `npm run check` - Type-check `.astro` and TypeScript files
-- `npm run test:markdown` - Verify code highlighting and plain-text escaping
-- `npm run test:dates` - Verify page update dates and rejection of implausible timestamps
-- `npm run test:feed` - Verify feed URLs, widget excerpts, CDATA, sitemap dates, and single-segment slugs
-- `npm run test:json` - Verify inline JSON cannot inject HTML and preserves original values
-- `npm run test:consent` - Verify analytics gating, saved choices, navigation/page views, current-page nonces, withdrawal, and storage restrictions
-- `npm run build` - Production build
-- `npm run preview` - Preview build
-- `npm run deploy` - Build and `wrangler deploy` (manual deploy; normally a push to `master` does it)
-- `npm run astro` - Astro CLI passthrough
-- `npm run cf:types` - Regenerate Cloudflare worker types
-- `npm run data:assisted-combat` - Rebuild assisted-combat data from external research inputs; requires `ASSISTED_COMBAT_RESEARCH_ROOT` and `ASSISTED_COMBAT_VAULT_ROOT`
-- `npm run data:midnight-s2-interrupts` - Rebuild the interrupt reference data from its public Google Sheets source
-- `npm run data:spec-icons` - Download vendored WoW spec icons; `-- --resolve` refreshes the ID map and `-- --force` refreshes images
-- `npm run media:migrate` - Preview content-image migration to R2; see the local/remote and `--apply` notes below
-- `npm run d1:migrate:local` - Apply local migrations
-- `npm run d1:migrate:remote` - Apply remote migrations
+- `npm run dev` builds, then serves through `wrangler dev` (D1, Cache API and secret bindings)
+- `npm run dev:astro` runs Astro's hot-reloading dev server (doesn't fully mirror the Cloudflare runtime)
+- `npm run check` type-checks `.astro` and TypeScript files
+- `npm run test:markdown`, `test:dates`, `test:feed`, `test:json`, `test:consent` run the unit tests: Markdown highlighting/escaping/sanitizing, page update dates, feed and sitemap output, inline-JSON safety, and analytics consent behavior
+- `npm run build` is the production build; `npm run preview` previews it
+- `npm run deploy` builds and runs `wrangler deploy` (manual; normally a push to `master` deploys)
+- `npm run admin:create -- --local|--remote` creates the first admin (see Quick start and Disaster recovery below)
+- `npm run d1:migrate:local` / `d1:migrate:remote` apply migrations
+- `npm run cf:types` regenerates the Cloudflare worker types
+- `npm run media:migrate` previews moving content images to R2 (see Media)
+- `npm run data:assisted-combat` rebuilds the assisted-combat data from research inputs outside the repo; set `ASSISTED_COMBAT_RESEARCH_ROOT` and `ASSISTED_COMBAT_NOTES_ROOT`
+- `npm run data:midnight-s2-interrupts` rebuilds the interrupt reference data from its public Google Sheets source
+- `npm run data:spec-icons` downloads vendored WoW spec icons; `-- --resolve` refreshes the ID map and `-- --force` refreshes images
+- `npm run astro` is the Astro CLI passthrough
 
-Deploy note:
+## Deployment
 
-- Hosted as the Cloudflare Worker `orboro-net` (Workers Builds, git-integrated with GitHub `jmusick/orboro`): pushing to `master` runs `npm run build` then `npx wrangler deploy`. `astro build` writes the real deploy config to `dist/server/wrangler.json`, which `wrangler deploy`/`wrangler dev` pick up.
-- Repository bindings are `DB` (D1), `MEDIA` (R2), and `ASSETS` (static assets). Custom domains are configured outside the repo. Wrangler enables Workers logs and sampled traces; provider retention and dashboard security rules must be checked in the Cloudflare account.
-- Apply any new schema migrations locally, verify them, then apply them remotely before deploying code that requires them. SQL content seeds are a separate step: pushing code does not copy local content into production.
+- The Worker `orboro-net` builds through Workers Builds, git-integrated with GitHub `jmusick/orboro`: a push to `master` runs `npm run build`, then `npx wrangler deploy`. `astro build` writes the real deploy config to `dist/server/wrangler.json`, which `wrangler deploy` and `wrangler dev` pick up.
+- Repository bindings are `DB` (D1), `MEDIA` (R2) and `ASSETS` (static assets). Custom domains, production secrets and edge security rules are configured in Cloudflare, outside the repo. Wrangler enables Workers logs and sampled traces; check retention and dashboard rules in the Cloudflare account.
+- Apply new schema migrations locally, verify them, then apply them remotely **before** deploying code that needs them. SQL content seeds are a separate step: pushing code does not copy local content into production.
+- The app needs no runtime secrets. If one is added, put it in `.dev.vars` for local dev (gitignored) and set it in production with `wrangler secret put <NAME>`.
 
-## Database Schema
+## Database
 
-Migration files:
+Numbered migrations in `migrations/` apply in order. Tables: `users`, `sessions`, `content`, `media`, `categories`, `content_categories`, `nav_items`.
 
-- `migrations/0001_initial.sql`
-- `migrations/0002_content_templates.sql`
-- `migrations/0003_drop_excerpt_template_data.sql`
-- `migrations/0004_drop_template_key.sql`
-- `migrations/0005_categories_nav.sql`
-- `migrations/0006_nav_categories.sql`
-- `migrations/0007_content_parent.sql`
-- `migrations/0008_nav_parent_item.sql`
-- `migrations/0009_drop_content_parent_id.sql`
-- `migrations/0010_drop_nav_category_columns.sql`
-- `migrations/0011_content_featured_image.sql`
+Page and post Markdown is stored in `content.markdown`. Re-runnable seed scripts for individual pages and posts (content row, categories, nav) live in `scripts/content/*.sql`; [AGENTS.md](AGENTS.md) describes the pattern. Local D1 (`.wrangler/state/v3/d1`) is separate from production: content edited locally, through the admin UI or `wrangler d1 execute DB --local`, does not appear on the live site until reproduced against remote D1.
 
-Tables:
+### Disaster recovery
 
-- `users`
-- `sessions`
-- `content`
-- `media`
-- `categories`
-- `content_categories`
-- `nav_items`
+If D1 is ever emptied or restored without a user, no one can sign in. Create a new admin with `npm run admin:create -- --remote` using the same `ADMIN_EMAIL` and `ADMIN_PASSWORD` variables. It is a no-op while any user exists. Note that `/admin/setup` no longer exists.
 
-## Secrets
+## Content rendering
 
-None — the app currently needs no runtime secrets. If you add one, put it in `.dev.vars` for local dev (gitignored) and set it in production with `wrangler secret put <NAME>`.
+- Pages and posts render fenced code through `src/lib/markdown.ts` with server-side Highlight.js and a bundled GitHub Dark theme. Add a language after the opening fence (`js`, `ts`, `bash`, `json`, `html`, `css`, `sql`, `python`, `lua`, `yaml` or `markdown`). Unlabeled and unsupported languages stay escaped plain text; inline code is unchanged.
+- The rendered HTML is sanitized against an allowlist before shortcodes expand: scripts, event handlers, `style` attributes and unsafe URL schemes are removed.
+- RSS keeps plain Markdown rendering, converts relative links and images to absolute URLs, and omits scripts and styles. Posts that contain shortcodes use an excerpt and link to the full article instead of expanding widgets into the feed.
+- Sitemap modification dates come from published content changes, and the privacy page and sitemap share one policy date. Article sidebars and adjacent-post links query lightweight summaries instead of full Markdown bodies.
+- Accordions use native `details`/`summary` so open content can reflow. Layouts respect reduced motion, and shortcode filters have explicit keyboard focus outlines.
+- To support more content types, add values to `content.page_type` and matching routes.
 
-## Notes
+## Media
 
-- Content markdown is stored in D1 (`content.markdown`). Reusable, re-runnable seed scripts for individual pages/posts (content row + categories + nav) live in `scripts/content/*.sql` — see [AGENTS.md](AGENTS.md) for the pattern.
-- Pages and posts render fenced code through `src/lib/markdown.ts` using server-side Highlight.js and a bundled GitHub Dark theme. Add a language after the opening fence (e.g. `js`, `ts`, `bash`, `json`, `html`, `css`, `sql`, `python`, `lua`, `yaml`, or `markdown`). Unlabeled and unsupported languages stay escaped plain text; inline code is unchanged. RSS keeps plain Markdown rendering, converts relative links/images to absolute URLs, and omits scripts/styles. Posts containing shortcodes use an excerpt and link to the full article instead of expanding widgets into the feed.
-- Sitemap modification dates come from published content changes; the privacy page and sitemap share a single policy date. Article sidebars and adjacent-post links query lightweight summaries instead of full Markdown bodies.
-- Accordions use native `details`/`summary` behavior so open content can reflow without a fixed height. Public/admin layouts respect reduced motion; shortcode filters have explicit keyboard focus outlines.
-- The media library accepts direct image uploads (PNG, JPEG, GIF, WebP, or AVIF, up to 10 MB) into the `orboro-net-media` R2 bucket through the `MEDIA` binding. New uploads are saved in D1 with `https://media.orboro.net/...` URLs. That custom domain is connected to the bucket; the `r2.dev` development URL remains disabled.
-- `wrangler dev` uses a separate local R2 store. Local uploads get `/media/...` URLs and are read back through the app's `/media/[...key]` route; they do not write to the production bucket. Use `npm run dev` for Cloudflare bindings.
-- `npm run media:migrate -- --local` previews migrating new content-referenced files from `public/images` into local R2. Add `--apply` to copy the files and rewrite local D1 URLs. Use `--remote` to target production only after reviewing its dry-run manifest; `--remote --apply` copies objects and updates production D1. Previously migrated images now live in R2 and are no longer bundled in `public/images`; the script skips their URLs on repeat runs.
-- Existing image URLs can still be added to the media library. Deleting a media record removes its D1 metadata only; it does not delete the R2 object or update pages that reference the URL.
-- To support additional content types later, add new values in `content.page_type` and build matching routes.
-- `/privacy-policy` (`src/pages/privacy-policy.astro`) describes what tracking is active. Update it whenever you add, remove, or change a tracking/analytics script.
+- The media library accepts direct uploads (PNG, JPEG, GIF, WebP or AVIF, up to 10 MiB, checked by file signature) into the `orboro-net-media` R2 bucket through the `MEDIA` binding. Bytes are stored as supplied, without decoding, resizing or metadata stripping. New uploads are recorded in D1 with `https://media.orboro.net/...` URLs; that custom domain is connected to the bucket and the `r2.dev` development URL stays disabled.
+- `wrangler dev` uses a separate local R2 store. Local uploads get `/media/...` URLs and are read back through `/media/[...key]`; they never write to production. Use `npm run dev` for real bindings.
+- Existing image URLs can be added to the media library. Deleting a media record removes its D1 metadata only: it doesn't delete the R2 object or update pages that reference the URL.
+- `npm run media:migrate -- --local` previews migrating content-referenced files from `public/images` into local R2; `--apply` copies the files and rewrites local D1 URLs. Use `--remote` only after reviewing its dry-run manifest, and `--remote --apply` to copy objects and update production D1. Migrated images live in R2 and are no longer bundled in `public/images`; repeat runs skip their URLs. Code deployment does not migrate content or objects.
 
-## Current security and privacy boundaries
+## Public API
 
-- Admin login is password-only. Sessions last 14 days and logout revokes the current session. The app has no MFA, password recovery, or built-in login throttling; any edge protection is configured separately.
-- CSP is Report-Only and has no reporting endpoint. Inline JSON is safely encoded, but authored Markdown still permits raw HTML. Publishing is currently a trusted-admin capability; these controls do not establish safe untrusted publishing.
-- `ConsentBanner.astro` loads Google Analytics only after acceptance, including a saved choice. It appears on `BaseLayout` pages, including unauthenticated login/setup; the authenticated admin layout does not load analytics. Without acceptance or JavaScript, the Google tag is not fetched. Accepted page views send the full URL, including query strings.
-- The analytics choice is stored in this browser's localStorage under `orboro-analytics-consent` until changed or cleared. Footer **Cookie preferences** reopens the banner. Declining after acceptance disables analytics, clears GA cookies on the current host and parent domains, and reloads the page. Changes propagate to other open tabs through storage events; if localStorage is unavailable, the choice lasts only until a full reload.
-- The tag's consent configuration grants analytics storage only after acceptance and keeps advertising storage, advertising user data, and advertising personalization denied. This preference does not gate necessary admin session cookies, Cloudflare hosting requests, or external images/favicons.
-- Analytics retention, Google advertising/data-sharing settings, Cloudflare log retention, and live edge rules cannot be established from this repo. Check those dashboards before making claims about their settings in the privacy policy.
-- `TODO.md` is a local, gitignored review backlog, not a shipped project file.
+`GET /api/posts/by-category/[slug]` returns published post summaries for a category (title, slug, absolute URL and featured image URL, plain-text excerpt) with a ten-minute edge cache. An unknown slug returns a `404` JSON body. It serves plain excerpts rather than rendered bodies because shortcodes only resolve inside this site's render pipeline.
+
+## Security and privacy
+
+- Admin login is password-only. Sessions last 14 days and logout revokes the current session. There is no MFA, password recovery or built-in login throttling; any edge protection is configured separately.
+- Author Markdown is sanitized and inline JSON is encoded for HTML, but the CSP is still Report-Only with no report endpoint. Publishing is a trusted-admin capability, and these controls don't establish safe untrusted publishing.
+- Google Analytics loads only after acceptance in `ConsentBanner.astro`, on `BaseLayout` pages (including the login page) but never in the authenticated admin layout. Without acceptance or JavaScript the Google tag is never fetched. Accepted page views send the full URL, including query strings.
+- The choice is stored in the browser's localStorage as `orboro-analytics-consent` until changed or cleared. Footer **Cookie preferences** reopens the banner. Withdrawing consent disables analytics, clears GA cookies on the current host and parent domains, and reloads; other open tabs follow through storage events. If localStorage is unavailable the choice lasts only until a full reload.
+- Consent grants analytics storage only and keeps advertising storage, advertising user data and ad personalization denied. It doesn't gate necessary admin session cookies, Cloudflare hosting requests, or external images and favicons.
+- Bookmark data is fetched server-side with a ten-minute cache, but browsers load favicon URLs supplied by Tagstash and a Google-hosted credit icon directly. Those images use `referrerpolicy="no-referrer"` and still contact their hosts.
+- Analytics retention, Google data-sharing settings, Cloudflare log retention and live edge rules can't be established from this repo; check those dashboards before making claims in the privacy policy.
+- `/privacy-policy` (`src/pages/privacy-policy.astro`) describes what tracking is active. Update it, and `PRIVACY_UPDATED_AT` in `src/lib/privacy.ts`, whenever you add, remove or change a tracking script.
 
 ## Troubleshooting
 
-- If content/admin changes are not showing up in local dev, make sure your local D1 DB has migrations applied: `npm run d1:migrate:local`.
-- `npm run dev` uses your configured Cloudflare bindings and local D1 simulation, while `npm run dev:astro` runs Astro directly and may not mirror Cloudflare runtime behavior exactly (e.g. `caches.default`, secrets from `.dev.vars`).
-- Apply production/staging schema updates with `npm run d1:migrate:remote` before testing against remote data.
-- Content edited locally (via the admin UI or `wrangler d1 execute DB --local`) only exists in local D1 — it does not appear on the live site until reproduced against remote D1.
-- To verify the consent banner, use footer **Cookie preferences** to change a saved choice. In browser developer tools, confirm no `gtag.js` request before acceptance or after declining, then check acceptance, reloads, in-site navigation, and withdrawal. Check the banner at desktop and phone widths; `npm run test:consent` verifies controller behavior but does not establish visual layout.
-
-## More
-
-For architecture notes, coding conventions, and known gotchas (the shortcode system, Astro View Transitions, D1 local-vs-remote pitfalls, etc.), see [AGENTS.md](AGENTS.md).
+- If content or admin changes don't show up in local dev, apply local migrations: `npm run d1:migrate:local`.
+- `npm run dev` uses configured Cloudflare bindings and local D1; `npm run dev:astro` runs Astro directly and may differ (for example `caches.default` and `.dev.vars` secrets).
+- Apply schema updates with `npm run d1:migrate:remote` before testing against remote data.
+- To verify the consent banner, change a saved choice through footer **Cookie preferences**. In developer tools, confirm no `gtag.js` request before acceptance or after declining, then check acceptance, reloads, in-site navigation and withdrawal at desktop and phone widths. `npm run test:consent` verifies controller behavior, not visual layout.
