@@ -137,6 +137,24 @@ const navActive = currentPath.startsWith('/admin/nav');
       h1, h2, h3 { color: #f4f8ff; margin: 0 0 1rem; }
       p { line-height: 1.6; margin: 0 0 1rem; }
       a { color: var(--accent); }
+      .skip-link {
+        position: fixed;
+        z-index: 1000;
+        top: 0.75rem;
+        left: 0.75rem;
+        transform: translateY(-180%);
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--line-strong);
+        border-radius: var(--r-sm, 6px);
+        background: var(--surface-2);
+        color: var(--text);
+        font-weight: 700;
+      }
+      .skip-link:focus-visible {
+        transform: translateY(0);
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
+      }
       .mono { font-family: "JetBrains Mono", Consolas, monospace; }
       .admin-layout {
         display: grid;
@@ -250,6 +268,7 @@ const navActive = currentPath.startsWith('/admin/nav');
     </style>
   </head>
   <body>
+    <a href="#admin-main" class="skip-link">Skip to main content</a>
     <div class="admin-layout">
       <aside class="admin-sidebar">
         <div class="sidebar-header">
@@ -294,10 +313,10 @@ const navActive = currentPath.startsWith('/admin/nav');
           </form>
         </div>
       </aside>
-      <div class="admin-main">
+      <main id="admin-main" class="admin-main" tabindex="-1">
         <div class="main-header"><h1>{title}</h1></div>
         <slot />
-      </div>
+      </main>
     </div>
   </body>
 </html>
