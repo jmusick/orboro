@@ -74,6 +74,11 @@ const absoluteImageUrl = page.featuredImageUrl ? new URL(page.featuredImageUrl, 
 </BaseLayout>
 
 <style>
+  /* A leading Markdown header image fills the panel rather than the text measure. */
+  .page-content :global(.prose > p:first-child:has(> img:only-child:not(.float-left):not(.float-right))) {
+    max-width: none;
+  }
+
   /* Same columns as a blog post, so text pages and posts line up. */
   .page-layout--sidebar {
     display: grid;

@@ -13,9 +13,8 @@ const version = packageJson.version;
       <a href="/rss.xml"><Icon name="rss" size={13} />RSS</a>
       <a href="/admin"><Icon name="settings" size={13} />Admin</a>
       <a href="https://github.com/jmusick/orboro" target="_blank" rel="noopener"><Icon name="github" size={13} filled />Source</a>
-      <a href="https://www.patreon.com/cw/Orboro" target="_blank" rel="noopener"><Icon name="patreon" size={13} filled />Support Me</a>
       <a href="/privacy-policy"><Icon name="shield" size={13} />Privacy Policy</a>
-      <button type="button" data-analytics-preferences hidden>Cookie preferences</button>
+      <button type="button" data-analytics-preferences hidden><Icon name="cookie" size={13} />Cookie preferences</button>
     </nav>
   </div>
 </footer>
@@ -30,7 +29,7 @@ const version = packageJson.version;
 
   .footer-inner {
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
     gap: 1rem;
   }
@@ -42,6 +41,7 @@ const version = packageJson.version;
   .footer-nav {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     justify-content: flex-end;
     gap: 1.25rem;
     justify-self: end;
@@ -77,6 +77,7 @@ const version = packageJson.version;
     justify-self: center;
     opacity: 0.5;
     font-size: 0.8rem;
+    white-space: nowrap;
   }
 
   @media (max-width: 600px) {
