@@ -14,6 +14,10 @@ export interface ContentRecord {
   createdAt: number;
   updatedAt: number;
   featuredImageUrl: string | null;
+  homepageFeatured: boolean;
+  homepageGroup: string;
+  homepageOrder: number;
+  homepageDescription: string;
 }
 
 export interface MediaRecord {
@@ -38,6 +42,10 @@ function mapContentRow(row: any): ContentRecord {
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     featuredImageUrl: row.featured_image_url,
+    homepageFeatured: row.homepage_featured === 1,
+    homepageGroup: row.homepage_group ?? "other",
+    homepageOrder: row.homepage_order ?? 0,
+    homepageDescription: row.homepage_description ?? "",
   };
 }
 
@@ -74,6 +82,17 @@ export function excerptFromMarkdown(markdown: string, maxLen = 155): string {
     .replace(/\s+/g, " ")
     .trim();
   return plain.length > maxLen ? plain.slice(0, maxLen).trimEnd() + "…" : plain;
+}
+
+export async function listHomepageFeatures(locals: App.Locals): Promise<ContentRecord[]> {
+  const db = getDB(locals);
+  if (!db) return [];
+  const result = await db.prepare(
+    `SELECT * FROM content
+     WHERE page_type = 'page' AND status = 'published' AND homepage_featured = 1
+     ORDER BY homepage_order ASC, title COLLATE NOCASE ASC, id ASC`,
+  ).all();
+  return (result.results ?? []).map(mapContentRow);
 }
 
 export type PostSummary = Pick<ContentRecord, 'slug' | 'title' | 'publishedAt' | 'createdAt'>;
@@ -131,11 +150,16 @@ export async function saveContent(
     status: ContentStatus;
     authorId: string;
     featuredImageUrl?: string | null;
+    homepageFeatured?: boolean;
+    homepageGroup?: string;
+    homepageOrder?: number;
+    homepageDescription?: string;
   }
 ): Promise<string> {
   const db = ensureDB(locals);
   const now = Date.now();
   const featuredImageUrl = input.featuredImageUrl || null;
+  const homepageValues = [input.homepageFeatured ? 1 : 0, input.homepageGroup ?? "other", input.homepageOrder ?? 0, input.homepageDescription ?? ""];
 
   if (input.id) {
     await db
@@ -143,10 +167,11 @@ export async function saveContent(
         `UPDATE content
          SET slug = ?, title = ?, markdown = ?, page_type = ?, status = ?,
              published_at = CASE WHEN status = 'draft' AND ? = 'published' THEN ? ELSE published_at END,
-             updated_at = ?, featured_image_url = ?
+             updated_at = ?, featured_image_url = ?,
+             homepage_featured = ?, homepage_group = ?, homepage_order = ?, homepage_description = ?
          WHERE id = ?`
       )
-      .bind(input.slug, input.title, input.markdown, input.pageType, input.status, input.status, now, now, featuredImageUrl, input.id)
+      .bind(input.slug, input.title, input.markdown, input.pageType, input.status, input.status, now, now, featuredImageUrl, ...homepageValues, input.id)
       .run();
     return input.id;
   }
@@ -156,10 +181,11 @@ export async function saveContent(
   await db
     .prepare(
       `INSERT INTO content
-      (id, slug, title, markdown, page_type, status, author_id, published_at, created_at, updated_at, featured_image_url)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      (id, slug, title, markdown, page_type, status, author_id, published_at, created_at, updated_at, featured_image_url,
+       homepage_featured, homepage_group, homepage_order, homepage_description)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
-    .bind(id, input.slug, input.title, input.markdown, input.pageType, input.status, input.authorId, publishedAt, now, now, featuredImageUrl)
+    .bind(id, input.slug, input.title, input.markdown, input.pageType, input.status, input.authorId, publishedAt, now, now, featuredImageUrl, ...homepageValues)
     .run();
 
   return id;

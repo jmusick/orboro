@@ -1,0 +1,47 @@
+---
+interface Props {
+  featured?: boolean;
+  group?: string;
+  order?: number;
+  description?: string;
+}
+const { featured = false, group = "other", order = 0, description = "" } = Astro.props;
+---
+<fieldset class="ui-panel homepage-fields">
+  <legend>Homepage feature</legend>
+  <label class="feature-toggle" for="homepageFeatured">
+    <input id="homepageFeatured" name="homepageFeatured" type="checkbox" value="1" checked={featured} aria-describedby="homepage-feature-hint" />
+    <span>Feature on homepage</span>
+  </label>
+  <p id="homepage-feature-hint">Only published pages appear in Featured tools. Posts appear in the article feed.</p>
+  <div class="feature-row">
+    <div class="form-group">
+      <label for="homepageGroup">Group</label>
+      <select id="homepageGroup" name="homepageGroup">
+        <option value="wow" selected={group === "wow"}>World of Warcraft</option>
+        <option value="poe2" selected={group === "poe2"}>Path of Exile 2</option>
+        <option value="other" selected={group === "other"}>More tools &amp; resources</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="homepageOrder">Display order</label>
+      <input id="homepageOrder" name="homepageOrder" type="number" min="0" max="9999" step="1" value={order} required aria-describedby="homepage-order-hint" />
+      <small id="homepage-order-hint">Lower numbers appear first within the group.</small>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="homepageDescription">Card description</label>
+    <input id="homepageDescription" name="homepageDescription" type="text" maxlength="240" value={description} aria-describedby="homepage-description-hint" />
+    <small id="homepage-description-hint">Explain what the page helps visitors do. Leave blank to use its introductory text.</small>
+  </div>
+</fieldset>
+<style>
+  .homepage-fields { display: grid; gap: 1rem; padding: 1.25rem; min-width: 0; }
+  legend { padding: 0 0.5rem; font-weight: 700; }
+  .feature-toggle { display: flex; align-items: center; gap: 0.65rem; }
+  input[type="checkbox"] { accent-color: var(--accent); }
+  p { margin: 0; color: var(--muted); font-size: 0.9rem; }
+  small { color: var(--muted); }
+  .feature-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  @media (max-width: 600px) { .feature-row { grid-template-columns: 1fr; } }
+</style>

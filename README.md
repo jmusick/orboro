@@ -71,7 +71,7 @@ npm run dev:astro
 - `npm run dev` builds, then serves through `wrangler dev` (D1, Cache API and secret bindings)
 - `npm run dev:astro` runs Astro's hot-reloading dev server (doesn't fully mirror the Cloudflare runtime)
 - `npm run check` type-checks `.astro` and TypeScript files
-- `npm run test:markdown`, `test:dates`, `test:feed`, `test:json`, `test:consent` run the unit tests: Markdown highlighting/escaping/sanitizing, page update dates, feed and sitemap output, inline-JSON safety, and analytics consent behavior
+- `npm run test:markdown`, `test:dates`, `test:feed`, `test:json`, `test:consent`, `test:csp` run the unit tests: Markdown highlighting/escaping/sanitizing, page update dates, feed and sitemap output, inline-JSON safety, analytics consent behavior, and CSP nonce preservation across navigation
 - `npm run build` is the production build; `npm run preview` previews it
 - `npm run deploy` builds and runs `wrangler deploy` (manual; normally a push to `master` deploys)
 - `npm run admin:create -- --local|--remote` creates the first admin (see Quick start and Disaster recovery below)
@@ -93,6 +93,8 @@ npm run dev:astro
 ## Database
 
 Numbered migrations in `migrations/` apply in order. Tables: `users`, `sessions`, `content`, `media`, `categories`, `content_categories`, `nav_items`.
+
+The homepage combines a compact latest-article hero, featured tool pages grouped by game, and four recent articles. In the content editor, use **Feature on homepage**, choose a group, and set the display order (lower first within each group). Only published pages are eligible; draft pages and posts are excluded. Card descriptions can be supplied explicitly or fall back to introductory Markdown. Migration `0012_homepage_features.sql` adds these settings. After applying it, `npx wrangler d1 execute DB --local --file=./scripts/content/homepage-featured-tools.sql` selects the initial four existing tools (two per game). Run the same seed with `--remote` for production before deploying; re-running it restores the initial selection and descriptions for those tools.
 
 Page and post Markdown is stored in `content.markdown`. Re-runnable seed scripts for individual pages and posts (content row, categories, nav) live in `scripts/content/*.sql`; [AGENTS.md](AGENTS.md) describes the pattern. Local D1 (`.wrangler/state/v3/d1`) is separate from production: content edited locally, through the admin UI or `wrangler d1 execute DB --local`, does not appear on the live site until reproduced against remote D1.
 
@@ -124,7 +126,7 @@ If D1 is ever emptied or restored without a user, no one can sign in. Create a n
 ## Security and privacy
 
 - Admin login is password-only. Sessions last 14 days and logout revokes the current session. There is no MFA, password recovery or built-in login throttling; any edge protection is configured separately.
-- Author Markdown is sanitized and inline JSON is encoded for HTML, but the CSP is still Report-Only with no report endpoint. Publishing is a trusted-admin capability, and these controls don't establish safe untrusted publishing.
+- Author Markdown is sanitized and inline JSON is encoded for HTML, and the nonce-based CSP is enforced (without a report endpoint). Inline style attributes are blocked; widgets use classes or direct style-property updates. HTTPS images are permitted for article artwork and bookmark favicons. Publishing is a trusted-admin capability, and these controls don't establish safe untrusted publishing.
 - Google Analytics loads only after acceptance in `ConsentBanner.astro`, on `BaseLayout` pages (including the login page) but never in the authenticated admin layout. Without acceptance or JavaScript the Google tag is never fetched. Accepted page views send the full URL, including query strings.
 - The choice is stored in the browser's localStorage as `orboro-analytics-consent` until changed or cleared. Footer **Cookie preferences** reopens the banner. Withdrawing consent disables analytics, clears GA cookies on the current host and parent domains, and reloads; other open tabs follow through storage events. If localStorage is unavailable the choice lasts only until a full reload.
 - Consent grants analytics storage only and keeps advertising storage, advertising user data and ad personalization denied. It doesn't gate necessary admin session cookies, Cloudflare hosting requests, or external images and favicons.
@@ -136,6 +138,7 @@ If D1 is ever emptied or restored without a user, no one can sign in. Create a n
 
 - If content or admin changes don't show up in local dev, apply local migrations: `npm run d1:migrate:local`.
 - `npm run dev` uses configured Cloudflare bindings and local D1; `npm run dev:astro` runs Astro directly and may differ (for example `caches.default` and `.dev.vars` secrets).
+- Dependency security: the lockfile updates Astro, its Cloudflare adapter, Wrangler, cache semantics and source-map-js; a `sharp` override pins the patched 0.35.5 release while Miniflare still declares 0.35.4. Remove that override once upstream uses a patched release, after checking `npm audit` and rebuilding.
 - Apply schema updates with `npm run d1:migrate:remote` before testing against remote data.
 - To verify the consent banner, change a saved choice through footer **Cookie preferences**. In developer tools, confirm no `gtag.js` request before acceptance or after declining, then check acceptance, reloads, in-site navigation and withdrawal at desktop and phone widths. `npm run test:consent` verifies controller behavior, not visual layout.
 

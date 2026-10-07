@@ -4,12 +4,15 @@ import { getSessionAndUserByToken } from "./lib/auth";
 
 const SESSION_COOKIE = "orboro_session";
 
-function buildCspReportOnly(nonce: string): string {
+function buildCsp(nonce: string): string {
   return [
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' https://www.googletagmanager.com`,
     `style-src 'self' 'nonce-${nonce}'`,
-    "img-src 'self' data: https://media.orboro.net https://www.google.com https://www.google-analytics.com",
+    "style-src-attr 'none'",
+    // Published Markdown, Atlas artwork and bookmark favicons may use HTTPS
+    // image hosts. Images cannot authorize executable script or stylesheet loads.
+    "img-src 'self' data: https:",
     "font-src 'self'",
     "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com",
     "object-src 'none'",
@@ -53,8 +56,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
     "camera=(), microphone=(), geolocation=(), interest-cohort=()",
   );
   response.headers.set(
-    "Content-Security-Policy-Report-Only",
-    buildCspReportOnly(context.locals.nonce),
+    "Content-Security-Policy",
+    buildCsp(context.locals.nonce),
   );
 
   return response;

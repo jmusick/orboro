@@ -68,6 +68,7 @@ function infoIconMarkup(text: string): string {
 }
 
 const css = `
+${Object.entries(render.CLASS_COLORS).map(([name, color]) => `#ac-root [data-game-class="${name}"]{--class-color:${color};}`).join("\n")}
 #ac-root{font-family:inherit;margin:0;color:var(--text,#e9eef9);}
 #ac-root *{box-sizing:border-box;}
 #ac-root .ac-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;clip:rect(0 0 0 0);clip-path:inset(50%);overflow:hidden;white-space:nowrap;}
@@ -392,7 +393,7 @@ const wiring = `
     function paintDetail(refocus){
       var spec=findSpec(payload,state.selected);
       if(!spec)return;
-      detail.style.setProperty('--class-color',classColor(spec.gameClass));
+      detail.setAttribute('data-game-class',spec.gameClass);
       detail.innerHTML=renderDetail(spec,payload,state);
       if(status)status.textContent=statusMessage(spec,state,shown,payload.specs.length);
       var cards=results.querySelectorAll('.ac-spec-card');
@@ -499,7 +500,7 @@ function buildHtml(): string {
   const actionLinesInfo = `Executable action lines in the primary SimulationCraft profile for each of the ${summary.comparableSpecs} comparable specs, compared with ${summary.comparableBlizzardSteps} Blizzard priority steps for the same specs.`;
 
   const initialDetail = initialSpec
-    ? `<div class="ac-detail" id="ac-detail" style="--class-color:${render.classColor(initialSpec.gameClass)}">${render.renderDetail(initialSpec, data, initialState)}</div>`
+    ? `<div class="ac-detail" id="ac-detail" data-game-class="${esc(initialSpec.gameClass)}">${render.renderDetail(initialSpec, data, initialState)}</div>`
     : `<div class="ac-detail" id="ac-detail"><div class="ac-empty">No research data available.</div></div>`;
 
   return (

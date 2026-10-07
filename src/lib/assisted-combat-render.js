@@ -228,8 +228,8 @@ export function renderCards(specs, state) {
         escapeHtml(specKey(spec)) +
         '" aria-pressed="' +
         (selected ? "true" : "false") +
-        '" style="--class-color:' +
-        classColor(spec.gameClass) +
+        '" data-game-class="' +
+        escapeHtml(spec.gameClass) +
         '">' +
         specIconMarkup(spec) +
         '<span><span class="ac-spec-name">' +

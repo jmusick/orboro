@@ -4,9 +4,14 @@ import PostListItem from "../components/PostListItem.astro";
 import Button from "../components/Button.astro";
 import SidebarLayout from "../components/SidebarLayout.astro";
 import Sidebar from "../components/Sidebar.astro";
-import { getPublishedContentByType, excerptFromMarkdown, listCategoriesWithPostCounts } from "../lib/content";
+import FeaturedTools from "../components/FeaturedTools.astro";
+import { getPublishedContentByType, excerptFromMarkdown, listCategoriesWithPostCounts, listHomepageFeatures } from "../lib/content";
 
-const rawPosts = await getPublishedContentByType(Astro.locals, "post", 8);
+const [rawPosts, featuredPages, categories] = await Promise.all([
+  getPublishedContentByType(Astro.locals, "post", 5),
+  listHomepageFeatures(Astro.locals),
+  listCategoriesWithPostCounts(Astro.locals),
+]);
 const posts = rawPosts.map((post) => {
 	const date = post.publishedAt ?? post.createdAt;
 	return {
@@ -21,7 +26,6 @@ const lead = posts[0];
 const leadExcerpt = lead ? excerptFromMarkdown(lead.markdown, 200) : "";
 const feedPosts = posts.slice(1);
 
-const categories = await listCategoriesWithPostCounts(Astro.locals);
 const recentPosts = posts.slice(0, 5);
 ---
 
@@ -48,35 +52,36 @@ const recentPosts = posts.slice(0, 5);
 		</article>
 	)}
 	<SidebarLayout>
-		<section class="feed-section" aria-labelledby="feed-title">
-			<div class="feed-header">
-				<h2 id="feed-title">More posts</h2>
-				<Button href="/blog" variant="tertiary" size="sm">All posts</Button>
-			</div>
-			{posts.length === 0 ? (
-				<p class="empty-note">No posts published yet.</p>
-			) : feedPosts.length === 0 ? (
-				<p class="empty-note">More posts coming soon.</p>
-			) : (
-				<div class="feed-list" id="home-feed">
-					{feedPosts.map((post) => (
-<PostListItem post={post} />
-					))}
+		<div class="home-content">
+			<FeaturedTools pages={featuredPages} />
+			<section class="feed-section" aria-labelledby="feed-title">
+				<div class="feed-header">
+					<h2 id="feed-title">Recent articles</h2>
+					<Button href="/blog" variant="tertiary" size="sm">All posts</Button>
 				</div>
-			)}
-		</section>
+				{posts.length === 0 ? (
+					<p class="empty-note">No posts published yet.</p>
+				) : feedPosts.length === 0 ? (
+					<p class="empty-note">More posts coming soon.</p>
+				) : (
+					<div class="feed-list" id="home-feed">
+						{feedPosts.map((post) => (
+							<PostListItem post={post} />
+						))}
+					</div>
+				)}
+			</section>
+		</div>
 
 		<Sidebar slot="sidebar" categories={categories} recentPosts={recentPosts} />
 	</SidebarLayout>
 </BaseLayout>
 
 <style>
-	/* ── Lead post ─────────────────────────────
-	   The one loud element on the page: the newest post's headline, set
-	   large below its full-width header art. Everything below stays quiet. */
+	/* A compact lead leaves room for tools and the article feed. */
 	.lead {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr);
+		grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
 		margin-bottom: 1.2rem;
 		background: var(--surface);
 		border: 1px solid var(--line);
@@ -89,11 +94,11 @@ const recentPosts = posts.slice(0, 5);
 		flex-direction: column;
 		justify-content: center;
 		align-items: flex-start;
-		padding: clamp(1.75rem, 3.5vw, 3.25rem);
+		padding: clamp(1.25rem, 2vw, 1.75rem);
 	}
 
 	.lead__date {
-		margin: 0 0 1rem;
+		margin: 0 0 0.65rem;
 		color: var(--muted);
 		font-size: 0.95rem;
 		font-weight: 500;
@@ -101,9 +106,9 @@ const recentPosts = posts.slice(0, 5);
 
 	.lead__title {
 		margin: 0;
-		font-size: clamp(1.85rem, 1.1rem + 2.4vw, 3.3rem);
+		font-size: clamp(1.45rem, 1.1rem + 1.2vw, 2.1rem);
 		font-weight: 850;
-		line-height: 1.04;
+		line-height: 1.15;
 		letter-spacing: -0.03em;
 	}
 
@@ -119,25 +124,35 @@ const recentPosts = posts.slice(0, 5);
 
 	.lead__excerpt {
 		max-width: 34rem;
-		margin: 1.25rem 0 0;
+		margin: 0.75rem 0 0;
 		color: var(--muted);
 		font-family: var(--font-read);
-		font-size: 1.125rem;
+		font-size: 1rem;
 		line-height: 1.6;
 	}
 
-	.lead__body :global(.lead__cta) { margin-top: 1.75rem; }
+	.lead__body :global(.lead__cta) { margin-top: 1rem; }
+	.lead:not(:has(.lead__art)) { grid-template-columns: 1fr; }
 
 	.lead__art {
 		display: block;
-		order: -1;
-		border-bottom: 1px solid var(--line);
+		position: relative;
+		min-height: 12rem;
+		border-left: 1px solid var(--line);
 	}
 
 	.lead__art img {
 		display: block;
+		position: absolute;
+		inset: 0;
 		width: 100%;
-		height: auto;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	@media (max-width: 600px) {
+		.lead { grid-template-columns: 1fr; }
+		.lead__art { order: -1; height: 8rem; min-height: 0; border-left: 0; border-bottom: 1px solid var(--line); }
 	}
 
 	/* ── Feed + sidebar ─────────────────────── */

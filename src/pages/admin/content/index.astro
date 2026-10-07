@@ -129,7 +129,7 @@ const getStatusIcon = (status: string) => {
             })}
           </tbody>
         </table>
-        <p id="no-results" class="no-results" style="display:none">No content matches your filters.</p>
+        <p id="no-results" class="no-results" hidden>No content matches your filters.</p>
       </div>
     </section>
   )}
@@ -186,7 +186,7 @@ const getStatusIcon = (status: string) => {
             : visible.length + ' of ' + allRows.length + ' items';
           if (countEl.textContent !== message) countEl.textContent = message;
         }
-        if (noResults) noResults.style.display = visible.length === 0 ? '' : 'none';
+        if (noResults) noResults.hidden = visible.length !== 0;
       }
 
       function updateSortIcons() {

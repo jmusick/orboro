@@ -1,0 +1,49 @@
+---
+import type { ContentRecord } from "../lib/content";
+import { excerptFromMarkdown } from "../lib/content";
+interface Props { pages: ContentRecord[]; }
+const { pages } = Astro.props;
+const groups = [
+  { key: "wow", title: "World of Warcraft" },
+  { key: "poe2", title: "Path of Exile 2" },
+  { key: "other", title: "More tools & resources" },
+].map(group => ({ ...group, pages: pages.filter(page => page.homepageGroup === group.key).map(page => ({
+  ...page,
+  description: page.homepageDescription || excerptFromMarkdown(page.markdown.replace(/\{\{[\s\S]*?\}\}/g, "").replace(/<[^>]*>/g, ""), 180),
+})) })).filter(group => group.pages.length);
+---
+{groups.length > 0 && (
+  <section class="featured-tools" aria-labelledby="tools-title">
+    <h2 id="tools-title">Featured tools</h2>
+    <p class="tools-intro">Simulators, analysis, and quick references for your next session.</p>
+    {groups.map(group => (
+      <section class="tool-group" aria-labelledby={`tools-${group.key}`}>
+        <h3 id={`tools-${group.key}`}>{group.title}</h3>
+        <div class="tool-grid">
+          {group.pages.map(page => (
+              <a class="ui-panel tool-card" href={`/pages/${page.slug}`}>
+                <h4>{page.title}</h4>
+                {page.description && <p>{page.description}</p>}
+                <span class="tool-action">Explore tool</span>
+              </a>
+          ))}
+        </div>
+      </section>
+    ))}
+  </section>
+)}
+<style>
+  .featured-tools { margin-bottom: 2.5rem; }
+  h2 { margin: 0; font-size: 1.25rem; }
+  .tools-intro { margin: 0.5rem 0 1.5rem; color: var(--muted); }
+  .tool-group + .tool-group { margin-top: 1.5rem; }
+  h3 { margin: 0 0 0.75rem; font-size: 1rem; }
+  .tool-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  .tool-card { display: flex; flex-direction: column; gap: 0.65rem; padding: 1.25rem; text-decoration: none; transition: border-color var(--transition-fast); }
+  .tool-card:hover { border-color: var(--accent); }
+  .tool-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  h4 { margin: 0; font-size: 1.05rem; line-height: 1.35; }
+  .tool-card p { margin: 0; color: var(--muted); font-size: 0.9rem; line-height: 1.55; }
+  .tool-action { margin-top: auto; padding-top: 0.35rem; color: var(--accent); font-size: 0.875rem; font-weight: 600; }
+  @media (max-width: 600px) { .tool-grid { grid-template-columns: 1fr; } }
+</style>

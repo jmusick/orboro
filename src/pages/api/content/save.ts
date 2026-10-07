@@ -17,6 +17,14 @@ export const POST: APIRoute = async (context) => {
   const statusRaw = String(form.get("status") ?? "draft").trim().toLowerCase();
   const status: ContentStatus = statusRaw === "published" ? "published" : "draft";
   const featuredImageUrl = String(form.get("featuredImageUrl") ?? "").trim() || null;
+  const homepageFeatured = form.get("homepageFeatured") === "1";
+  const homepageGroup = String(form.get("homepageGroup") ?? "other");
+  const homepageOrder = Number(form.get("homepageOrder") ?? 0);
+  const homepageDescription = String(form.get("homepageDescription") ?? "").trim();
+
+  if (!["wow", "poe2", "other"].includes(homepageGroup) || !Number.isInteger(homepageOrder) || homepageOrder < 0 || homepageOrder > 9999 || homepageDescription.length > 240) {
+    return context.redirect(`/admin/content/${id ? encodeURIComponent(id) : "new"}?error=homepage`);
+  }
 
   if (!title || !slug || !markdown) {
     return context.redirect(`/admin/content/${id ? encodeURIComponent(id) : "new"}?error=invalid`);
@@ -31,6 +39,10 @@ export const POST: APIRoute = async (context) => {
     status,
     authorId: user.id,
     featuredImageUrl,
+    homepageFeatured,
+    homepageGroup,
+    homepageOrder,
+    homepageDescription,
   });
 
   const categoryIds = form.getAll("categoryId").map((v) => String(v)).filter(Boolean);

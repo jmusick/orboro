@@ -670,13 +670,12 @@ function renderStrategyBody(s: Strategy): string {
 }
 
 function renderAccordionItem(s: Strategy): string {
-  const meta = TIER_META[s.tier];
   const hasContent = !!(s.notes || s.waystone || s.tablets || s.steps || s.recommendationNote || s.rarityNote);
   const bodyId = `afs-body-${s.id}`;
   return (
     `<div class="afs-item" id="afs-item-${s.id}" data-tier="${s.tier}">` +
     `<button type="button" class="afs-item__summary" aria-expanded="false" aria-controls="${bodyId}">` +
-    `<span class="afs-item__tier" style="--tier-bg:${meta.bg};--tier-border:${meta.border};--tier-color:${meta.text}">${s.tier}</span>` +
+    `<span class="afs-item__tier" data-tier="${s.tier}">${s.tier}</span>` +
     `<span class="afs-item__titles"><span class="afs-item__name">${esc(s.name)}</span>` +
     (s.subtitle ? `<span class="afs-item__subtitle">${esc(s.subtitle)}</span>` : "") +
     `</span>` +
@@ -701,12 +700,12 @@ function renderTierRow(tier: Tier): string {
   const chips = items
     .map(
       (s) =>
-        `<button type="button" class="afs-chip" data-target="afs-item-${s.id}" style="--tier-bg:${meta.bg};--tier-border:${meta.border};--tier-color:${meta.text}">${esc(s.name)}</button>`
+        `<button type="button" class="afs-chip" data-target="afs-item-${s.id}" data-tier="${s.tier}">${esc(s.name)}</button>`
     )
     .join("");
   return (
     `<div class="afs-tierrow">` +
-    `<div class="afs-tierrow__label" style="background:${meta.border}">${meta.label}</div>` +
+    `<div class="afs-tierrow__label" data-tier="${tier}">${meta.label}</div>` +
     `<div class="afs-tierrow__chips">${chips}</div>` +
     `</div>`
   );
@@ -717,12 +716,13 @@ export function generateAtlasFarmingStrategies(_attrs: Record<string, string>, n
   const accordionItems = STRATEGIES.map(renderAccordionItem).join("");
 
   const css = `
+${TIER_ORDER.map(tier => { const meta = TIER_META[tier]; return `#afs-root [data-tier="${tier}"]{--tier-bg:${meta.bg};--tier-border:${meta.border};--tier-color:${meta.text};}`; }).join("\n")}
 #afs-root{font-family:inherit;margin:0;}
 #afs-root *{box-sizing:border-box;}
 
 #afs-root .afs-tierlist{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.5rem;}
 #afs-root .afs-tierrow{display:flex;align-items:stretch;gap:.6rem;border:1px solid var(--line,#222c4a);border-radius:var(--r-md,10px);overflow:hidden;background:var(--surface,#0e1428);}
-#afs-root .afs-tierrow__label{flex:0 0 4.5rem;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#fff;text-align:center;padding:.5rem .25rem;}
+#afs-root .afs-tierrow__label{background:var(--tier-border);flex:0 0 4.5rem;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#fff;text-align:center;padding:.5rem .25rem;}
 #afs-root .afs-tierrow__chips{flex:1;display:flex;flex-wrap:wrap;gap:.4rem;padding:.6rem;align-content:center;}
 
 #afs-root .afs-chip{background:var(--tier-bg);border:1px solid var(--tier-border);color:var(--tier-color);border-radius:var(--r-sm,6px);padding:.4rem .7rem;font:inherit;font-size:.82rem;font-weight:600;cursor:pointer;transition:border-color var(--transition-fast);line-height:1.2;}

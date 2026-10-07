@@ -28,6 +28,7 @@ const ogImage = ogImageProp || `${(Astro.site ?? new URL('https://orboro.net')).
 const navItems = await listNavItems(Astro.locals);
 const pathname = new URL(Astro.request.url).pathname;
 const nonce = Astro.locals.nonce;
+const hasHeaderFeature = Astro.slots.has("headerFeature");
 
 // Build nav tree (unlimited depth)
 type NavNode = (typeof navItems)[0] & { children: NavNode[] };
@@ -100,6 +101,40 @@ function nodeIcon(node: NavNode): string {
       <script type="application/ld+json" set:html={jsonForHtml(structuredData)} />
     )}
     <ClientRouter />
+    <script id="csp-navigation" is:inline nonce={nonce}>
+      (function () {
+        if (window.orboroCspNavigation) return;
+        window.orboroCspNavigation = true;
+        // The original document's response policy remains active after a swap.
+        // Only reconcile tags already nonced by our server; never authorize
+        // unnonced author HTML or inline style attributes.
+        var activeNonce = document.currentScript.nonce;
+        document.addEventListener('astro:before-swap', function (event) {
+          if (!('newDocument' in event) || !(event.newDocument instanceof Document)) return;
+          event.newDocument.querySelectorAll('script[nonce], style[nonce]').forEach(function (element) {
+            if (element.nonce || element.getAttribute('nonce')) element.setAttribute('nonce', activeNonce);
+          });
+        });
+        document.addEventListener('astro:after-swap', function () {
+          // Astro copies script attributes when executing swapped scripts.
+          // Browsers hide connected nonce attribute values, so preserve the
+          // nonce property ourselves for server-authorized inline scripts.
+          document.querySelectorAll('script[nonce]:not([data-astro-exec])').forEach(function (script) {
+            var type = script.getAttribute('type');
+            if (script.src || (type && type !== 'text/javascript')) return;
+            if (script.nonce !== activeNonce) return;
+            var replacement = document.createElement('script');
+            Array.from(script.attributes).forEach(function (attr) {
+              if (attr.name !== 'nonce') replacement.setAttribute(attr.name, attr.value);
+            });
+            replacement.textContent = script.textContent;
+            replacement.nonce = activeNonce;
+            replacement.dataset.astroExec = '';
+            script.replaceWith(replacement);
+          });
+        });
+      })();
+    </script>
     <style is:global>
       body {
         margin: 0;
@@ -372,6 +407,9 @@ function nodeIcon(node: NavNode): string {
       main:focus {
         outline: none;
       }
+      main.main-with-feature { background: transparent; border: 0; padding: 0; }
+      .main-panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 2rem; }
+      @media (max-width: 768px) { .main-panel { padding: 1.5rem; } }
       section + section {
         margin-top: 2.5rem;
       }
@@ -816,9 +854,9 @@ function nodeIcon(node: NavNode): string {
           <a href="https://www.patreon.com/cw/Orboro" target="_blank" rel="noopener noreferrer"><Icon name="patreon" size={15} filled />Support Me</a>
         </nav>
       </header>
-      <slot name="headerFeature" />
-      <main id="main-content" tabindex="-1">
-        <slot />
+      <main id="main-content" tabindex="-1" class:list={[hasHeaderFeature && "main-with-feature"]}>
+        <slot name="headerFeature" />
+        {hasHeaderFeature ? <div class="main-panel"><slot /></div> : <slot />}
       </main>
       <Footer />
       <ConsentBanner />
