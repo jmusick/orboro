@@ -1,0 +1,29 @@
+/* Opt-in primitives work in Astro components and trusted shortcode HTML.
+   Widgets keep their own layout, density and semantic state rules. */
+.ui-panel, .ui-callout {
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  color: var(--text);
+}
+.ui-callout { padding: var(--space-4); }
+.ui-action, .ui-control {
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  padding: 0.6rem 0.9rem;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
+}
+.ui-action {
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: none;
+}
+.ui-action:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.ui-control:focus { border-color: var(--accent); }
+.ui-control::placeholder { color: var(--muted); }
+.ui-action:disabled, .ui-control:disabled { opacity: 0.5; cursor: default; }
+.ui-action[hidden], .ui-control[hidden], .ui-panel[hidden], .ui-callout[hidden] { display: none; }

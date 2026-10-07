@@ -1,0 +1,87 @@
+---
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import Button from "../../components/Button.astro";
+import Card from "../../components/Card.astro";
+import Pill from "../../components/Pill.astro";
+import FormMessage from "../../components/FormMessage.astro";
+import PostCard from "../../components/PostCard.astro";
+import PostListItem from "../../components/PostListItem.astro";
+import { ensureRole } from "../../lib/http";
+import { getPublishedContentByType, excerptFromMarkdown } from "../../lib/content";
+import { generateExpeditionRumourSheet } from "../../lib/expedition-rumours";
+
+const access = ensureRole(Astro, ["admin"]);
+if (access instanceof Response) return access;
+const [post] = await getPublishedContentByType(Astro.locals, "post", 1);
+const date = post ? new Date(post.publishedAt ?? post.createdAt) : null;
+const dateIso = date?.toISOString() ?? "";
+const dateLabel = date?.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) ?? "";
+const excerpt = post ? excerptFromMarkdown(post.markdown, 140) : "";
+const showError = Astro.url.searchParams.has("error");
+const colors = ["bg", "surface", "surface-2", "text", "muted", "accent", "line", "line-strong"];
+---
+<AdminLayout title="Design system">
+  <section>
+    <h2>Palette and type</h2>
+    <p>Shared tokens keep the public site, admin and widgets aligned. Blue identifies actions; status and data colors communicate meaning.</p>
+    <div class="swatches">
+      {colors.map((color) => <div class={`swatch swatch--${color}`}><span aria-hidden="true"></span><code>--{color}</code></div>)}
+    </div>
+    <h3>Schibsted Grotesk for headings and controls</h3>
+    <p>Article text uses Source Sans 3 on the public site. Small controls use 6px corners, cards and inputs 10px, and shells 16px.</p>
+  </section>
+  <section>
+    <h2>Buttons and status</h2>
+    <div class="examples">
+      <Button>Primary</Button><Button variant="secondary">Secondary</Button>
+      <Button variant="tertiary">Tertiary</Button><Button variant="danger" icon="trash-2">Delete</Button>
+      <Button size="sm">Small</Button><Button size="lg">Large</Button><Button disabled>Disabled</Button>
+      <Button href="/blog" variant="secondary">Link button</Button>
+      <Button href="/blog" variant="secondary" disabled>Disabled link</Button>
+    </div>
+    <div class="examples">
+      <Pill>Default</Pill><Pill variant="success">Success</Pill><Pill variant="warning">Warning</Pill>
+      <Pill variant="danger">Error</Pill><Pill variant="info">Info</Pill><Pill size="sm">Small</Pill>
+    </div>
+    <p>Use Tab to inspect focus outlines. Hover changes color or borders; disabled actions stay inert.</p>
+  </section>
+  <section>
+    <h2>Fields and feedback</h2>
+    {showError ? <FormMessage error fields={[{ id: "example-title", label: "Title" }]}>Enter a title before saving.</FormMessage> : <FormMessage>Changes saved.</FormMessage>}
+    <div class="fields">
+      <div class="form-group"><label for="example-title">Title</label><input id="example-title" placeholder="A descriptive title" aria-describedby="example-hint" /><small id="example-hint">A hint remains associated when an error appears.</small></div>
+      <div class="form-group"><label for="example-category">Category</label><select id="example-category"><option>World of Warcraft</option><option>Path of Exile 2</option></select></div>
+      <div class="form-group"><label for="example-disabled">Disabled field</label><input id="example-disabled" disabled value="Unavailable" /></div>
+      <div class="form-group"><label for="example-notes">Notes</label><textarea id="example-notes" rows="3"></textarea></div>
+    </div>
+    <Button href={showError ? "/admin/design-system" : "/admin/design-system?error=1"} variant="secondary" size="sm">{showError ? "Show success feedback" : "Show error feedback"}</Button>
+  </section>
+  <section>
+    <h2>Cards and posts</h2>
+    <div class="cards">
+      <Card title="Information" icon="file-text"><p>A quiet frame and muted supporting text.</p></Card>
+      <Card title="Browse posts" icon="file-text" href="/blog"><p>Linked cards share the blue hover and focus treatment.</p></Card>
+      {post && <PostCard title={post.title} slug={post.slug} image={post.featuredImageUrl} dateIso={dateIso} dateLabel={dateLabel} excerpt={excerpt} />}
+      {post && <PostCard title={post.title} slug={post.slug} dateIso={dateIso} dateLabel={dateLabel} variant="compact" />}
+    </div>
+    {post && <PostListItem post={{ ...post, dateIso, dateLabel, excerpt }} />}
+  </section>
+  <section>
+    <h2>Widget primitives</h2>
+    <div class="ui-callout">Callouts use the same frame and radius as cards.</div>
+    <div class="examples"><label for="widget-search">Search</label><input class="ui-control" id="widget-search" type="search" placeholder="Filter entries" /><button class="ui-action" type="button">Action</button><button class="ui-action" type="button" disabled>Disabled</button></div>
+    <p>This live widget demonstrates controls, selection and feedback using the shared primitives.</p>
+    <div class="prose" set:html={generateExpeditionRumourSheet({}, Astro.locals.nonce)} />
+  </section>
+</AdminLayout>
+<style>
+  .examples { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); margin: var(--space-4) 0; }
+  .cards, .fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: var(--space-6); margin-bottom: var(--space-6); }
+  .swatches { display: flex; flex-wrap: wrap; gap: var(--space-4); margin-bottom: var(--space-6); }
+  .swatch { display: grid; gap: var(--space-2); }
+  .swatch span { width: 5rem; height: 3rem; background: var(--swatch); border: 1px solid var(--line-strong); border-radius: var(--r-sm); }
+  .swatch--bg { --swatch: var(--bg); }.swatch--surface { --swatch: var(--surface); }.swatch--surface-2 { --swatch: var(--surface-2); }
+  .swatch--text { --swatch: var(--text); }.swatch--muted { --swatch: var(--muted); }.swatch--accent { --swatch: var(--accent); }
+  .swatch--line { --swatch: var(--line); }.swatch--line-strong { --swatch: var(--line-strong); }
+  small { color: var(--muted); }
+</style>

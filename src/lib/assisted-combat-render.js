@@ -278,7 +278,7 @@ export function renderSteps(spec) {
 function renderMissingPanel(spec) {
   if (!spec.simcComparable) {
     return (
-      '<section class="ac-block"><h4 class="ac-block-title">Not directly comparable</h4>' +
+      '<section class="ui-panel ac-block"><h4 class="ac-block-title">Not directly comparable</h4>' +
       bulletList(
         spec.comparisonLimitation,
         "SimulationCraft does not provide an equivalent optimized profile for this role/spec."
@@ -288,17 +288,17 @@ function renderMissingPanel(spec) {
   }
   return (
     '<div class="ac-panel-grid">' +
-    '<section class="ac-block"><h4 class="ac-block-title">In SimC, not in Blizzard\'s list' +
+    '<section class="ui-panel ac-block"><h4 class="ac-block-title">In SimC, not in Blizzard\'s list' +
     infoIcon(MISSING_ACTIONS_INFO) +
     "</h4>" +
     bulletList(spec.missingActions, "No material missing actions identified in the curated comparison.") +
     "</section>" +
-    '<section class="ac-block"><h4 class="ac-block-title">Logic SimC applies that Blizzard doesn\'t' +
+    '<section class="ui-panel ac-block"><h4 class="ac-block-title">Logic SimC applies that Blizzard doesn\'t' +
     infoIcon(MISSING_LOGIC_INFO) +
     "</h4>" +
     bulletList(spec.missingLogic, "No additional missing logic was called out.") +
     "</section>" +
-    '<section class="ac-block ac-block--wide"><h4 class="ac-block-title">Comparison context</h4><div class="ac-metric-row">' +
+    '<section class="ui-panel ac-block ac-block--wide"><h4 class="ac-block-title">Comparison context</h4><div class="ac-metric-row">' +
     '<div class="ac-mini-metric"><span class="ac-mini-value ac-mini-value--match">' +
     spec.overlap +
     "%" +
@@ -351,7 +351,7 @@ function renderAplPanel(spec, payload) {
 
 function renderIcyPanel(spec) {
   return (
-    '<section class="ac-block"><h4 class="ac-block-title">Guide alignment</h4><span class="ac-rating" data-rating="' +
+    '<section class="ui-panel ac-block"><h4 class="ac-block-title">Guide alignment</h4><span class="ac-rating" data-rating="' +
     escapeHtml(spec.icyRating) +
     '">' +
     escapeHtml(spec.icyRating) +

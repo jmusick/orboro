@@ -138,3 +138,13 @@ If D1 is ever emptied or restored without a user, no one can sign in. Create a n
 - `npm run dev` uses configured Cloudflare bindings and local D1; `npm run dev:astro` runs Astro directly and may differ (for example `caches.default` and `.dev.vars` secrets).
 - Apply schema updates with `npm run d1:migrate:remote` before testing against remote data.
 - To verify the consent banner, change a saved choice through footer **Cookie preferences**. In developer tools, confirm no `gtag.js` request before acceptance or after declining, then check acceptance, reloads, in-site navigation and withdrawal at desktop and phone widths. `npm run test:consent` verifies controller behavior, not visual layout.
+
+## Design system
+
+- `src/styles/tokens.css` is the shared palette, typography, spacing, radius and interaction source for both layouts. Use token-relative accent tints (`rgb(from var(--accent) r g b / …)`) instead of fixed RGB values.
+- `src/styles/primitives.css` supplies opt-in `ui-control`, `ui-action`, `ui-panel` and `ui-callout` classes for components and trusted shortcode HTML. Widget-specific CSS owns layout, density and semantic states; include the same classes in server and client render templates. These styles are loaded by both layouts, outside nonce-sensitive cached shortcode output.
+- `src/styles/editor.css` owns the EasyMDE theme, loaded after the vendor CSS. The editor script no longer injects a duplicate theme at runtime.
+- `src/styles/forms.css` owns `.form-group` labels and fields, including focus and disabled states. Keep route-specific CSS for form grids, spacing and actions. Preserve hint IDs and the existing `FormMessage` behavior.
+- `SidebarLayout.astro` owns the shared content/sidebar columns and mobile breakpoint. Set `sidebar={false}` for full-width widgets. `PostCard.astro` supplies detailed and compact cards; `PostListItem.astro` supplies homepage feed rows.
+- Visit `/admin/design-system` while signed in as an admin for component examples, field feedback and a live widget. The page is excluded from analytics and requires the admin role.
+- Run `npm run check:styles` before shipping style changes. It checks fixed accent tints, off-scale radii, hover lift, empty or broad transitions, unimported monospace fonts, and duplicate token definitions. `npm run check` and `npm run build` verify types and compilation; use a browser for layout and interaction checks.

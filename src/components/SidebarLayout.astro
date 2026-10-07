@@ -1,0 +1,27 @@
+---
+interface Props {
+  sidebar?: boolean;
+  class?: string;
+}
+const { sidebar = true, class: className = "" } = Astro.props;
+---
+<div class:list={["sidebar-layout", sidebar && "sidebar-layout--columns", className]}>
+  <slot />
+  {sidebar && <slot name="sidebar" />}
+</div>
+<style>
+  .sidebar-layout { min-width: 0; }
+  .sidebar-layout--columns {
+    --measure: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--sidebar-width);
+    gap: var(--space-10);
+    align-items: start;
+  }
+  .sidebar-layout > :global(*) { min-width: 0; }
+  .sidebar-layout--columns > :global(aside.site-sidebar) { position: sticky; top: var(--space-6); }
+  @media (max-width: 900px) {
+    .sidebar-layout--columns { grid-template-columns: 1fr; }
+    .sidebar-layout--columns > :global(aside.site-sidebar) { position: static; }
+  }
+</style>

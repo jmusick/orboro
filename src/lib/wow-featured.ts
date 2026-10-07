@@ -20,23 +20,23 @@ export function generateWowIntro(_attrs: Record<string, string>, nonce?: string)
 #wi-root{font-family:inherit;margin:0;}
 #wi-root *{box-sizing:border-box;}
 
-.wi-row{display:flex;gap:1.5rem;align-items:center;margin:1rem 0;}
-@media (max-width:700px){.wi-row{flex-direction:column;align-items:stretch;}}
+#wi-root .wi-row{display:flex;gap:1.5rem;align-items:center;margin:1rem 0;}
+@media (max-width:700px){#wi-root .wi-row{flex-direction:column;align-items:stretch;}}
 
-.wi-text{flex:1;margin:0;line-height:1.7;color:var(--text,#e8f3ff);}
+#wi-root .wi-text{flex:1;margin:0;line-height:1.7;color:var(--text,#e9eef9);}
 #wi-root .wi-text p{margin:0 0 1rem;}
 #wi-root .wi-text p:last-child{margin-bottom:0;}
 
-.wi-links{flex:0 0 400px;display:flex;flex-direction:column;gap:.75rem;}
-@media (max-width:700px){.wi-links{flex-basis:auto;}}
+#wi-root .wi-links{flex:0 0 400px;display:flex;flex-direction:column;gap:.75rem;}
+@media (max-width:700px){#wi-root .wi-links{flex-basis:auto;}}
 
-#wi-root a.wi-link{display:flex;align-items:center;gap:.9rem;padding:.9rem 1.1rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-md,10px);background:rgb(255 63 184 / 4%);text-decoration:none;color:var(--text,#e8f3ff);transition:border-color .18s ease,background .18s ease,box-shadow .18s ease;}
-#wi-root a.wi-link:hover{border-color:var(--accent-2,#ff3fb8);background:rgb(255 63 184 / 8%);box-shadow:0 0 .8rem rgb(255 63 184 / 15%);text-decoration:none;}
+#wi-root a.wi-link{display:flex;align-items:center;gap:.9rem;padding:.9rem 1.1rem;text-decoration:none;color:var(--text,#e9eef9);transition:border-color .18s ease,background .18s ease;}
+#wi-root a.wi-link:hover{border-color:var(--accent);background:rgb(from var(--accent) r g b / 8%);text-decoration:none;}
 
-.wi-icon{color:var(--accent-2,#ff3fb8);flex:none;}
+#wi-root .wi-icon{color:var(--accent);flex:none;}
 
-.wi-title{font-weight:600;font-size:.95rem;white-space:nowrap;min-width:0;}
-@media (max-width:700px){.wi-title{white-space:normal;}}
+#wi-root .wi-title{font-weight:600;font-size:.95rem;white-space:nowrap;min-width:0;}
+@media (max-width:700px){#wi-root .wi-title{white-space:normal;}}
 `;
 
   return (
@@ -44,13 +44,13 @@ export function generateWowIntro(_attrs: Record<string, string>, nonce?: string)
     `<div class="wi-row">` +
     `<div class="wi-text">${INTRO_PARAGRAPHS.map((p) => `<p>${esc(p)}</p>`).join("")}</div>` +
     `<div class="wi-links">` +
-    `<a class="wi-link" href="https://worldofwarcraft.com" target="_blank" rel="noopener noreferrer">` +
+    `<a class="ui-panel wi-link" href="https://worldofwarcraft.com" target="_blank" rel="noopener noreferrer">` +
     `<svg class="wi-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">` +
     `<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>` +
     `</svg>` +
     `<span class="wi-title">Visit the Official World of Warcraft Site ↗</span>` +
     `</a>` +
-    `<a class="wi-link" href="https://worldofwarcraft.blizzard.com/en-us/news" target="_blank" rel="noopener noreferrer">` +
+    `<a class="ui-panel wi-link" href="https://worldofwarcraft.blizzard.com/en-us/news" target="_blank" rel="noopener noreferrer">` +
     `<svg class="wi-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">` +
     `<path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/>` +
     `</svg>` +
@@ -95,7 +95,7 @@ const FEATURED_ITEMS: FeaturedItem[] = [
 
 export function generateWowFeatured(_attrs: Record<string, string>, nonce?: string): string {
   const itemsHtml = FEATURED_ITEMS.map((item) => (
-    `<a class="wf-card" href="${esc(item.href)}">` +
+    `<a class="ui-panel wf-card" href="${esc(item.href)}">` +
     `<svg class="wf-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${item.iconSvg}</svg>` +
     `<span class="wf-title">${esc(item.title)}</span>` +
     `<span class="wf-desc">${esc(item.description)}</span>` +
@@ -109,18 +109,18 @@ export function generateWowFeatured(_attrs: Record<string, string>, nonce?: stri
 #wf-root{font-family:inherit;margin:0;}
 #wf-root *{box-sizing:border-box;}
 
-#wf-root p.wf-label{margin:1.5rem 0 .6rem;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#97a8c4);}
+#wf-root p.wf-label{margin:1.5rem 0 .6rem;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#98a3bf);}
 
 #wf-root .wf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin:0;}
 @media (max-width:640px){#wf-root .wf-grid{grid-template-columns:1fr;}}
 
-#wf-root a.wf-card{display:flex;flex-direction:column;gap:.6rem;min-width:0;padding:1.1rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-md,10px);background:linear-gradient(160deg,rgb(12 19 36 / 60%) 0%,rgb(17 26 48 / 60%) 100%);color:var(--text,#e8f3ff);text-decoration:none;transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease;}
-#wf-root a.wf-card:hover{border-color:var(--accent-2,#ff3fb8);box-shadow:0 0 1rem rgb(255 63 184 / 15%);transform:translateY(-2px);text-decoration:none;}
-#wf-root a.wf-card:focus-visible{outline:2px solid var(--accent-2,#ff3fb8);outline-offset:2px;}
+#wf-root a.wf-card{display:flex;flex-direction:column;gap:.6rem;min-width:0;padding:1.1rem;color:var(--text,#e9eef9);text-decoration:none;transition:border-color .2s ease;}
+#wf-root a.wf-card:hover{border-color:var(--accent);text-decoration:none;}
+#wf-root a.wf-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
 
-#wf-root .wf-icon{color:var(--accent-2,#ff3fb8);flex:none;}
+#wf-root .wf-icon{color:var(--accent);flex:none;}
 #wf-root .wf-title{font-weight:600;font-size:1rem;}
-#wf-root .wf-desc{color:var(--muted,#97a8c4);font-size:.85rem;line-height:1.5;}
+#wf-root .wf-desc{color:var(--muted,#98a3bf);font-size:.85rem;line-height:1.5;}
 `;
 
   return `<div id="wf-root"><style${nonceAttr(nonce)}>${css}</style><p class="wf-label">On This Site</p><div class="wf-grid">${itemsHtml}</div></div>`;
@@ -137,30 +137,30 @@ export function generateHiddenLodgeFeature(_attrs: Record<string, string>, nonce
 #hl-root{font-family:inherit;margin:0;}
 #hl-root *{box-sizing:border-box;}
 
-.hl-card{position:relative;border:1px solid var(--line,#1f2b46);border-radius:var(--r-md,10px);overflow:hidden;background:linear-gradient(160deg,rgb(12 19 36 / 60%) 0%,rgb(17 26 48 / 60%) 100%);margin:1.5rem 0;}
+#hl-root .hl-card{position:relative;overflow:hidden;margin:1.5rem 0;}
 
-.hl-media{position:absolute;top:0;right:0;bottom:0;width:42%;overflow:hidden;}
-@media (max-width:700px){.hl-media{position:static;width:100%;aspect-ratio:16/9;}}
+#hl-root .hl-media{position:absolute;top:0;right:0;bottom:0;width:42%;overflow:hidden;}
+@media (max-width:700px){#hl-root .hl-media{position:static;width:100%;aspect-ratio:16/9;}}
 
 /* The .prose img/h2/ul/p rules in BaseLayout out-specify a bare class, so
    these overrides are scoped by #hl-root to win. */
 #hl-root img.hl-img{display:block;width:100%;height:100%;margin:0;border:0;border-radius:0;object-fit:cover;object-position:center 42%;}
 
-.hl-body{padding:1.25rem 1.5rem 1.5rem 1.5rem;margin-right:calc(42% + 1.5rem);}
-@media (max-width:700px){.hl-body{margin-right:0;padding:1.25rem 1.25rem 1.5rem;}}
+#hl-root .hl-body{padding:1.25rem 1.5rem 1.5rem 1.5rem;margin-right:calc(42% + 1.5rem);}
+@media (max-width:700px){#hl-root .hl-body{margin-right:0;padding:1.25rem 1.25rem 1.5rem;}}
 
-#hl-root h2.hl-title{margin:0 0 .3rem;padding:0;border:0;font-size:1.3rem;font-weight:700;color:var(--text,#e8f3ff);}
+#hl-root h2.hl-title{margin:0 0 .3rem;padding:0;border:0;font-size:1.3rem;font-weight:700;color:var(--text,#e9eef9);}
 
 #hl-root p.hl-tagline{margin:0 0 1rem;font-size:.85rem;font-style:italic;color:var(--accent,#70d0ff);}
 
-#hl-root p.hl-desc{margin:0 0 1.1rem;line-height:1.7;color:var(--text,#e8f3ff);}
+#hl-root p.hl-desc{margin:0 0 1.1rem;line-height:1.7;color:var(--text,#e9eef9);}
 
 #hl-root ul.hl-facts{display:flex;flex-wrap:wrap;gap:.6rem;margin:0 0 1.2rem;padding:0;list-style:none;}
-#hl-root li.hl-fact{display:flex;align-items:baseline;gap:.4rem;margin:0;padding:.4rem .8rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-pill,999px);font-size:.8rem;color:var(--muted,#97a8c4);}
-.hl-fact strong{color:var(--text,#e8f3ff);font-weight:600;}
+#hl-root li.hl-fact{display:flex;align-items:baseline;gap:.4rem;margin:0;padding:.4rem .8rem;border:1px solid var(--line,#222c4a);border-radius:var(--r-pill,999px);font-size:.8rem;color:var(--muted,#98a3bf);}
+#hl-root .hl-fact strong{color:var(--text,#e9eef9);font-weight:600;}
 
-#hl-root a.hl-cta{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.2rem;border:1px solid var(--accent,#70d0ff);border-radius:var(--r-md,10px);color:var(--accent,#70d0ff);text-decoration:none;font-weight:600;font-size:.9rem;transition:background .18s ease,box-shadow .18s ease;}
-#hl-root a.hl-cta:hover{background:rgb(112 208 255 / 10%);box-shadow:0 0 .8rem rgb(112 208 255 / 15%);text-decoration:none;}
+#hl-root a.hl-cta{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.2rem;border:1px solid var(--accent,#70d0ff);border-radius:var(--r-md,10px);color:var(--accent,#70d0ff);text-decoration:none;font-weight:600;font-size:.9rem;transition:background .18s ease;}
+#hl-root a.hl-cta:hover{background:rgb(from var(--accent) r g b / 10%);text-decoration:none;}
 `;
 
   const factsHtml = HIDDEN_LODGE_FACTS
@@ -169,7 +169,7 @@ export function generateHiddenLodgeFeature(_attrs: Record<string, string>, nonce
 
   return (
     `<div id="hl-root"><style${nonceAttr(nonce)}>${css}</style>` +
-    `<div class="hl-card">` +
+    `<div class="ui-panel hl-card">` +
     `<div class="hl-media">` +
     `<img class="hl-img" src="/images/hidden-lodge-header.webp" alt="The Hidden Lodge banner: For Azeroth. For The Hidden Lodge." loading="lazy" />` +
     `</div>` +

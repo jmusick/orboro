@@ -78,7 +78,7 @@ const error = url.searchParams.get("error");
     padding: 0.75rem 1rem;
     background: rgb(255 61 77 / 15%);
     border: 1px solid rgb(255 61 77 / 40%);
-    border-radius: 8px;
+    border-radius: var(--r-md);
     color: #ff3d4d;
     font-size: 0.9rem;
   }
@@ -124,7 +124,7 @@ const error = url.searchParams.get("error");
     font-weight: 600;
     color: var(--accent);
     border-bottom: 2px solid var(--line);
-    background: linear-gradient(90deg, rgb(112 208 255 / 5%) 0%, transparent 100%);
+    background:var(--surface-2);
   }
 
   .content-table td {
@@ -134,7 +134,7 @@ const error = url.searchParams.get("error");
   }
 
   .content-table tbody tr:hover {
-    background: linear-gradient(90deg, rgb(112 208 255 / 5%) 0%, transparent 100%);
+    background:var(--surface-2);
   }
 
   .cell-title {

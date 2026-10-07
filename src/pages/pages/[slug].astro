@@ -1,6 +1,7 @@
 ---
 import { renderMarkdown } from "../../lib/markdown";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import SidebarLayout from "../../components/SidebarLayout.astro";
 import Sidebar from "../../components/Sidebar.astro";
 import { getPublishedBySlugAndType, listPostSummaries, listCategoriesWithPostCounts } from "../../lib/content";
 import { processShortcodes } from "../../lib/shortcodes";
@@ -60,7 +61,7 @@ const absoluteImageUrl = page.featuredImageUrl ? new URL(page.featuredImageUrl, 
 ---
 
 <BaseLayout title={`${page.title} | Orboro.net`} description={description} ogType="article" ogImage={absoluteImageUrl}>
-  <div class:list={["page-layout", !hasWidgets && "page-layout--sidebar"]}>
+  <SidebarLayout sidebar={!hasWidgets}>
     <article class="page-content">
       <h1>{page.title}</h1>
       {updated && <p class="meta">Updated {updated}</p>}
@@ -69,8 +70,8 @@ const absoluteImageUrl = page.featuredImageUrl ? new URL(page.featuredImageUrl, 
       )}
       <div class="prose" set:html={html} />
     </article>
-    {!hasWidgets && <Sidebar categories={categories} recentPosts={recentPosts} />}
-  </div>
+    <Sidebar slot="sidebar" categories={categories} recentPosts={recentPosts} />
+  </SidebarLayout>
 </BaseLayout>
 
 <style>
@@ -80,23 +81,6 @@ const absoluteImageUrl = page.featuredImageUrl ? new URL(page.featuredImageUrl, 
   }
 
   /* Same columns as a blog post, so text pages and posts line up. */
-  .page-layout--sidebar {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 280px;
-    gap: 2.5rem;
-    align-items: start;
-  }
-
-  .page-layout--sidebar :global(aside.site-sidebar) {
-    position: sticky;
-    top: 1.5rem;
-  }
-
-  @media (max-width: 900px) {
-    .page-layout--sidebar {
-      grid-template-columns: 1fr;
-    }
-  }
 
   .meta {
     color: var(--muted);

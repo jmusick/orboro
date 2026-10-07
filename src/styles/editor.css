@@ -1,0 +1,68 @@
+/* ── EasyMDE chrome ── */
+.EasyMDEContainer .editor-toolbar {
+  background: var(--surface-2) !important;
+  border: 1px solid var(--line-strong, #667aa3) !important;
+  border-radius: var(--r-md) var(--r-md) 0 0 !important;
+  opacity: 1 !important;
+}
+.EasyMDEContainer .editor-toolbar button {
+  color: var(--text) !important;
+  border: 1px solid transparent !important;
+  border-radius: var(--r-sm) !important;
+}
+.EasyMDEContainer .editor-toolbar button:hover, .EasyMDEContainer .editor-toolbar button.active {
+  background: rgb(from var(--accent) r g b / 10%) !important;
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+.EasyMDEContainer .editor-toolbar i.separator { border-right-color: var(--line) !important; }
+.EasyMDEContainer .editor-preview, .EasyMDEContainer .editor-preview-side {
+  background: var(--surface-2) !important;
+  color: var(--text) !important;
+  border-color: var(--line) !important;
+}
+.EasyMDEContainer .editor-statusbar { color: var(--muted) !important; border-top-color: var(--line) !important; }
+
+/* ── Custom dark CodeMirror theme (cm-s-orboro) + broad fallback ── */
+.cm-s-orboro.CodeMirror,
+.EasyMDEContainer .CodeMirror {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--line-strong, #667aa3) !important;
+  border-top: 0 !important;
+  border-radius: 0 0 var(--r-md) var(--r-md) !important;
+  font-family: var(--font-code);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  height: auto;
+}
+.cm-s-orboro .CodeMirror-scroll,
+.EasyMDEContainer .CodeMirror-scroll { min-height: 380px; background: var(--surface) !important; }
+.cm-s-orboro .CodeMirror-lines,
+.EasyMDEContainer .CodeMirror-lines { background: var(--surface) !important; }
+.cm-s-orboro .CodeMirror-gutters,
+.EasyMDEContainer .CodeMirror-gutters {
+  background: var(--surface) !important;
+  border-right: 1px solid var(--line) !important;
+  color: var(--muted);
+}
+.cm-s-orboro .CodeMirror-cursor,
+.EasyMDEContainer .CodeMirror-cursor { border-left: 2px solid var(--accent) !important; }
+.cm-s-orboro .CodeMirror-selected,
+.EasyMDEContainer .CodeMirror-selected { background: rgb(from var(--accent) r g b / 0.12) !important; }
+.cm-s-orboro .cm-header,
+.EasyMDEContainer .cm-header { color: var(--accent) !important; font-weight: 700; }
+.cm-s-orboro .cm-strong,
+.EasyMDEContainer .cm-strong { color: var(--text) !important; font-weight: 700; }
+.cm-s-orboro .cm-em,
+.EasyMDEContainer .cm-em { color: var(--accent) !important; font-style: italic; }
+.cm-s-orboro .cm-strikethrough,
+.EasyMDEContainer .cm-strikethrough { color: var(--muted) !important; }
+.cm-s-orboro .cm-link,
+.EasyMDEContainer .cm-link { color: var(--accent) !important; }
+.cm-s-orboro .cm-url,
+.EasyMDEContainer .cm-url { color: var(--accent) !important; }
+.cm-s-orboro .cm-quote,
+.EasyMDEContainer .cm-quote { color: var(--muted) !important; font-style: italic; }
+
+.EasyMDEContainer .editor-toolbar button i { color: inherit !important; }

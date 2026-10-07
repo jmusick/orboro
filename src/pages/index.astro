@@ -1,6 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PostListItem from "../components/PostListItem.astro";
 import Button from "../components/Button.astro";
+import SidebarLayout from "../components/SidebarLayout.astro";
 import Sidebar from "../components/Sidebar.astro";
 import { getPublishedContentByType, excerptFromMarkdown, listCategoriesWithPostCounts } from "../lib/content";
 
@@ -23,7 +25,6 @@ const categories = await listCategoriesWithPostCounts(Astro.locals);
 const recentPosts = posts.slice(0, 5);
 ---
 
-
 <BaseLayout title="Orboro.net | Gaming guides, analysis, and developer resources" description="World of Warcraft and Path of Exile guides, game analysis, and developer resources from JD." structuredData={{
 	"@context": "https://schema.org",
 	"@graph": [
@@ -37,7 +38,7 @@ const recentPosts = posts.slice(0, 5);
 				<p class="lead__date"><time datetime={lead.dateIso}>{lead.dateLabel}</time></p>
 				<h1 id="lead-title" class="lead__title"><a href={`/blog/${lead.slug}`}>{lead.title}</a></h1>
 				{leadExcerpt && <p class="lead__excerpt">{leadExcerpt}</p>}
-				<a class="lead__cta" href={`/blog/${lead.slug}`}>Read the post</a>
+				<Button class="lead__cta" href={`/blog/${lead.slug}`}>Read the post</Button>
 			</div>
 			{lead.featuredImageUrl && (
 				<a class="lead__art" href={`/blog/${lead.slug}`} tabindex="-1" aria-hidden="true">
@@ -46,7 +47,7 @@ const recentPosts = posts.slice(0, 5);
 			)}
 		</article>
 	)}
-	<div class="home-layout">
+	<SidebarLayout>
 		<section class="feed-section" aria-labelledby="feed-title">
 			<div class="feed-header">
 				<h2 id="feed-title">More posts</h2>
@@ -59,25 +60,14 @@ const recentPosts = posts.slice(0, 5);
 			) : (
 				<div class="feed-list" id="home-feed">
 					{feedPosts.map((post) => (
-						<article class="feed-item">
-							{post.featuredImageUrl && (
-								<a class="feed-item__thumb" href={`/blog/${post.slug}`} tabindex="-1" aria-hidden="true">
-									<img src={post.featuredImageUrl} alt="" loading="lazy" />
-								</a>
-							)}
-							<div class="feed-item__body">
-								<h3 class="feed-item__title"><a href={`/blog/${post.slug}`}>{post.title}</a></h3>
-								<p class="feed-item__date"><time datetime={post.dateIso}>{post.dateLabel}</time></p>
-								{post.excerpt && <p class="feed-item__excerpt">{post.excerpt}</p>}
-							</div>
-						</article>
+<PostListItem post={post} />
 					))}
 				</div>
 			)}
 		</section>
 
-		<Sidebar categories={categories} recentPosts={recentPosts} />
-	</div>
+		<Sidebar slot="sidebar" categories={categories} recentPosts={recentPosts} />
+	</SidebarLayout>
 </BaseLayout>
 
 <style>
@@ -136,20 +126,7 @@ const recentPosts = posts.slice(0, 5);
 		line-height: 1.6;
 	}
 
-	.lead__cta {
-		margin-top: 1.75rem;
-		padding: 0.65rem 1.2rem;
-		border-radius: var(--r-md,10px);
-		background: var(--accent);
-		color: var(--bg);
-		font-weight: 650;
-		text-decoration: none;
-		transition: background 0.2s ease;
-	}
-
-	.lead__cta:hover {
-		background: #a3e1ff;
-	}
+	.lead__body :global(.lead__cta) { margin-top: 1.75rem; }
 
 	.lead__art {
 		display: block;
@@ -164,12 +141,6 @@ const recentPosts = posts.slice(0, 5);
 	}
 
 	/* ── Feed + sidebar ─────────────────────── */
-	.home-layout {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr) 280px;
-		gap: 2.5rem;
-		align-items: start;
-	}
 
 	.feed-header {
 		display: flex;
@@ -193,102 +164,4 @@ const recentPosts = posts.slice(0, 5);
 		flex-direction: column;
 	}
 
-	.feed-item {
-		display: flex;
-		gap: 1.25rem;
-		padding: 1.4rem 0;
-		border-bottom: 1px solid var(--line);
-	}
-
-	.feed-item:last-child {
-		border-bottom: none;
-		padding-bottom: 0;
-	}
-
-	.feed-item__thumb {
-		flex-shrink: 0;
-		align-self: flex-start;
-		display: block;
-		width: 10rem;
-		aspect-ratio: 16 / 10;
-		border-radius: var(--r-md,10px);
-		overflow: hidden;
-	}
-
-	.feed-item__thumb img {
-		display: block;
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-	}
-
-	.feed-item__body {
-		min-width: 0;
-		flex: 1;
-		max-width: var(--measure);
-	}
-
-	.feed-item__title {
-		margin: 0 0 0.3rem;
-		font-size: 1.25rem;
-		font-weight: 700;
-		line-height: 1.25;
-	}
-
-	.feed-item__title a {
-		color: var(--text);
-		text-decoration: none;
-		transition: color 0.2s ease;
-	}
-
-	.feed-item__title a:hover {
-		color: var(--accent);
-	}
-
-	.feed-item__date {
-		margin: 0 0 0.6rem;
-		font-size: 0.875rem;
-		color: var(--muted);
-	}
-
-	.feed-item__excerpt {
-		display: -webkit-box;
-		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 3;
-		line-clamp: 3;
-		overflow: hidden;
-		margin: 0;
-		color: var(--muted);
-		font-family: var(--font-read);
-		font-size: 1rem;
-		line-height: 1.6;
-	}
-
-	.home-layout :global(aside.site-sidebar) {
-		position: sticky;
-		top: 1.5rem;
-	}
-
-	@media (max-width: 900px) {
-		.home-layout {
-			grid-template-columns: 1fr;
-			gap: 2.5rem;
-		}
-	}
-
-	@media (max-width: 560px) {
-		.feed-item {
-			gap: 1rem;
-		}
-
-		.feed-item__thumb {
-			width: 5.5rem;
-			aspect-ratio: 1;
-		}
-
-		.feed-item__excerpt {
-			-webkit-line-clamp: 2;
-			line-clamp: 2;
-		}
-	}
 </style>

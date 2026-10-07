@@ -3,6 +3,7 @@ import Icon from './Icon.astro';
 
 interface Props {
   href?: string;
+  disabled?: boolean;
   type?: 'button' | 'submit' | 'reset';
   variant?: 'primary' | 'secondary' | 'tertiary' | 'danger';
   size?: 'sm' | 'md' | 'lg';
@@ -12,22 +13,25 @@ interface Props {
   [key: string]: any;
 }
 
-const { 
-  href, 
-  type = 'button', 
-  variant = 'primary', 
-  size = 'md', 
+const {
+  href,
+  disabled = false,
+  type = 'button',
+  variant = 'primary',
+  size = 'md',
   icon,
   iconPosition = 'left',
   class: className = '',
-  ...rest 
+  ...rest
 } = Astro.props;
 
 const Element = href ? 'a' : 'button';
-const elementProps = href ? { href } : { type };
+const elementProps = href
+  ? { href: disabled ? undefined : href, "aria-disabled": disabled || undefined, role: disabled ? "link" as const : undefined }
+  : { type, disabled };
 ---
 
-<Element 
+<Element
   class={`btn btn--${variant} btn--${size} ${className}`}
   {...elementProps}
   {...rest}
@@ -51,18 +55,19 @@ const elementProps = href ? { href } : { type };
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border: none;
+    border: 1px solid transparent;
     border-radius: var(--r-md,10px);
     font-weight: 500;
     cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
     text-decoration: none;
     white-space: nowrap;
-    font-family: inherit;
+    font-family: var(--font-ui);
     font-size: inherit;
   }
 
   .btn--sm {
+    border-radius: var(--r-sm);
     padding: 0.4rem 0.8rem;
     font-size: 0.875rem;
   }
@@ -84,8 +89,8 @@ const elementProps = href ? { href } : { type };
     font-weight: 650;
   }
 
-  .btn--primary:hover {
-    background: #a3e1ff;
+  .btn--primary:hover:not(:disabled):not([aria-disabled="true"]) {
+    background: var(--accent-hover);
   }
 
   /* Secondary Button */
@@ -95,8 +100,8 @@ const elementProps = href ? { href } : { type };
     border: 1px solid var(--accent);
   }
 
-  .btn--secondary:hover {
-    background: rgb(112 208 255 / 10%);
+  .btn--secondary:hover:not(:disabled):not([aria-disabled="true"]) {
+    background: rgb(from var(--accent) r g b / 10%);
   }
 
   /* Tertiary Button */
@@ -106,19 +111,20 @@ const elementProps = href ? { href } : { type };
     border: 1px solid transparent;
   }
 
-  .btn--tertiary:hover {
+  .btn--tertiary:hover:not(:disabled):not([aria-disabled="true"]) {
     border-color: var(--accent);
   }
 
   /* Danger Button */
   .btn--danger {
-    background: linear-gradient(135deg, #ff3d4d 0%, #dd2d3a 100%);
-    color: white;
+    background: var(--surface);
+    border-color: var(--danger);
+    color: var(--danger);
+
   }
 
-  .btn--danger:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0.5rem 1.5rem rgb(255 61 77 / 40%);
+  .btn--danger:hover:not(:disabled):not([aria-disabled="true"]) {
+    background: rgb(from var(--danger) r g b / 12%);
   }
 
   .btn__icon {
@@ -126,6 +132,8 @@ const elementProps = href ? { href } : { type };
     align-items: center;
     justify-content: center;
   }
+
+  .btn:disabled, .btn[aria-disabled="true"] { opacity: 0.5; cursor: default; }
 
   /* Focus state */
   .btn:focus-visible {

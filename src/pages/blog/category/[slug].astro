@@ -1,7 +1,9 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import Card from "../../../components/Card.astro";
-import { getCategoryBySlug, getPublishedContentByCategory } from "../../../lib/content";
+import PostCard from "../../../components/PostCard.astro";
+import Sidebar from "../../../components/Sidebar.astro";
+import SidebarLayout from "../../../components/SidebarLayout.astro";
+import { getCategoryBySlug, getPublishedContentByCategory, excerptFromMarkdown, listCategoriesWithPostCounts, listPostSummaries } from "../../../lib/content";
 
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect("/blog");
@@ -10,9 +12,19 @@ const category = await getCategoryBySlug(Astro.locals, slug);
 if (!category) return Astro.redirect("/blog");
 
 const posts = await getPublishedContentByCategory(Astro.locals, slug, "post");
+const [categories, summaries] = await Promise.all([
+  listCategoriesWithPostCounts(Astro.locals),
+  listPostSummaries(Astro.locals, 5),
+]);
+const recentPosts = summaries.map((post) => ({
+  slug: post.slug,
+  title: post.title,
+  dateLabel: new Date(post.publishedAt ?? post.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
+}));
 ---
 
 <BaseLayout title={`${category.name} | Orboro.net`} description={`Browse posts in the ${category.name} category on Orboro.net.`}>
+  <SidebarLayout>
   <section>
     <h1>{category.name}</h1>
     {posts.length === 0 ? (
@@ -20,11 +32,16 @@ const posts = await getPublishedContentByCategory(Astro.locals, slug, "post");
     ) : (
       <div class="posts-grid">
         {posts.map((post) => (
-          <Card href={`/blog/${post.slug}`} title={post.title} headingLevel="h2" />
+          <PostCard title={post.title} slug={post.slug} image={post.featuredImageUrl}
+            dateIso={new Date(post.publishedAt ?? post.createdAt).toISOString()}
+            dateLabel={new Date(post.publishedAt ?? post.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+            excerpt={excerptFromMarkdown(post.markdown, 140)} />
         ))}
       </div>
     )}
   </section>
+  <Sidebar slot="sidebar" categories={categories} recentPosts={recentPosts} activeCategorySlug={slug} />
+  </SidebarLayout>
 </BaseLayout>
 
 <style>

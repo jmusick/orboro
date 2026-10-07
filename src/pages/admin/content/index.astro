@@ -312,7 +312,7 @@ const getStatusIcon = (status: string) => {
     font-weight: 600;
     color: var(--accent);
     border-bottom: 2px solid var(--line);
-    background: linear-gradient(90deg, rgb(112 208 255 / 5%) 0%, transparent 100%);
+    background:var(--surface-2);
     white-space: nowrap;
   }
 
@@ -352,7 +352,7 @@ const getStatusIcon = (status: string) => {
   }
 
   .content-table tbody tr:hover {
-    background: linear-gradient(90deg, rgb(112 208 255 / 5%) 0%, transparent 100%);
+    background:var(--surface-2);
   }
 
   .cell-title { font-weight: 500; }
@@ -373,7 +373,7 @@ const getStatusIcon = (status: string) => {
     color: var(--muted);
     background: rgb(0 0 0 / 20%);
     padding: 0.25rem 0.5rem;
-    border-radius: 4px;
+    border-radius: var(--r-sm);
   }
 
   .no-results {

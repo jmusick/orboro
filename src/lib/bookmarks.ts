@@ -104,7 +104,7 @@ export async function generateBookmarksList(attrs: Record<string, string>, nonce
     const dataCats = esc(cats.join(" "));
 
     return (
-      `<a class="bml-item" data-categories="${dataCats}" href="${esc(b.url)}" target="_blank" rel="noopener noreferrer">` +
+      `<a class="ui-panel bml-item" data-categories="${dataCats}" href="${esc(b.url)}" target="_blank" rel="noopener noreferrer">` +
       favicon +
       `<span class="bml-body">` +
       `<span class="bml-title">${esc(b.title)}</span>` +
@@ -116,9 +116,9 @@ export async function generateBookmarksList(attrs: Record<string, string>, nonce
 
   const categoryChips = categories.length > 0
     ? `<div class="bml-cats">` +
-      `<button type="button" class="bml-cat bml-cat--active" data-category="" aria-pressed="true">All <span class="bml-cat__count">${sorted.length}</span></button>` +
+      `<button type="button" class="ui-action bml-cat bml-cat--active" data-category="" aria-pressed="true">All <span class="bml-cat__count">${sorted.length}</span></button>` +
       categories
-        .map((c) => `<button type="button" class="bml-cat" data-category="${esc(c)}" aria-pressed="false">${esc(c)} <span class="bml-cat__count">${categoryCounts.get(c)}</span></button>`)
+        .map((c) => `<button type="button" class="ui-action bml-cat" data-category="${esc(c)}" aria-pressed="false">${esc(c)} <span class="bml-cat__count">${categoryCounts.get(c)}</span></button>`)
         .join("") +
       `</div>`
     : "";
@@ -127,39 +127,39 @@ export async function generateBookmarksList(attrs: Record<string, string>, nonce
 #bml-root{font-family:inherit;margin:0;}
 #bml-root *{box-sizing:border-box;}
 
-.bml-list{display:grid;grid-template-columns:repeat(2,1fr);gap:.4rem;}
-@media (max-width:640px){.bml-list{grid-template-columns:1fr;}}
+#bml-root .bml-list{display:grid;grid-template-columns:repeat(2,1fr);gap:.4rem;}
+@media (max-width:640px){#bml-root .bml-list{grid-template-columns:1fr;}}
 
-.bml-item{display:flex;align-items:center;gap:.6rem;padding:.5rem .75rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-sm,6px);background:rgb(112 208 255 / 3%);text-decoration:none;color:var(--text,#e8f3ff);transition:border-color .18s ease,background .18s ease,box-shadow .18s ease;min-width:0;}
-.bml-item:hover{border-color:var(--accent,#70d0ff);background:rgb(112 208 255 / 8%);box-shadow:0 0 .8rem rgb(112 208 255 / 15%);}
+#bml-root .bml-item{display:flex;align-items:center;gap:.6rem;padding:.5rem .75rem;text-decoration:none;color:var(--text,#e9eef9);transition:border-color .18s ease,background .18s ease;min-width:0;}
+#bml-root .bml-item:hover{border-color:var(--accent,#70d0ff);background:rgb(from var(--accent) r g b / 8%);}
 
-.bml-favicon{width:16px;height:16px;flex:none;border-radius:var(--r-sm,6px);}
-.bml-favicon--placeholder{background:var(--surface,#0c1324);border:1px solid var(--line,#1f2b46);}
+#bml-root .bml-favicon{width:16px;height:16px;flex:none;border-radius:var(--r-sm,6px);}
+#bml-root .bml-favicon--placeholder{background:var(--surface,#0e1428);border:1px solid var(--line,#222c4a);}
 
-.bml-body{display:flex;flex-direction:column;gap:.1rem;min-width:0;}
+#bml-root .bml-body{display:flex;flex-direction:column;gap:.1rem;min-width:0;}
 
-.bml-title{font-weight:600;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#bml-root .bml-title{font-weight:600;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
-.bml-desc{color:var(--muted,#97a8c4);font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#bml-root .bml-desc{color:var(--muted,#98a3bf);font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
-.bml-item[hidden]{display:none;}
+#bml-root .bml-item[hidden]{display:none;}
 
-#bml-root p.bml-status{margin:0 0 .7rem;font-size:.85rem;color:var(--muted,#97a8c4);}
-.bml-cats{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.7rem;}
-.bml-cat{display:inline-flex;align-items:center;gap:.35rem;background:transparent;border:1px solid var(--line,#1f2b46);color:var(--muted,#97a8c4);padding:.3rem .65rem;border-radius:var(--r-pill,999px);font:inherit;font-size:.78rem;font-weight:600;cursor:pointer;transition:color .15s ease,border-color .15s ease,background .15s ease;}
-.bml-cat:hover{color:var(--text,#e8f3ff);border-color:var(--muted,#97a8c4);}
-.bml-cat--active{color:#04141a;background:var(--accent,#70d0ff);border-color:var(--accent,#70d0ff);}
-.bml-cat--active:hover{color:#04141a;}
-.bml-cat__count{font-size:.72rem;opacity:.75;}
+#bml-root p.bml-status{margin:0 0 .7rem;font-size:.85rem;color:var(--muted,#98a3bf);}
+#bml-root .bml-cats{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.7rem;}
+#bml-root .bml-cat{display:inline-flex;align-items:center;gap:.35rem;color:var(--muted,#98a3bf);padding:.3rem .65rem;font-size:.78rem;font-weight:600;cursor:pointer;transition:color .15s ease,border-color .15s ease,background .15s ease;}
+#bml-root .bml-cat:hover{color:var(--text,#e9eef9);border-color:var(--muted,#98a3bf);}
+#bml-root .bml-cat--active{color:#04141a;background:var(--accent,#70d0ff);border-color:var(--accent,#70d0ff);}
+#bml-root .bml-cat--active:hover{color:#04141a;}
+#bml-root .bml-cat__count{font-size:.72rem;opacity:.75;}
 
-#bml-root hr.bml-divider{border:none;border-top:1px solid var(--line,#1f2b46);margin:1.25rem 0;}
+#bml-root hr.bml-divider{border:none;border-top:1px solid var(--line,#222c4a);margin:1.25rem 0;}
 
-#bml-root p.bml-credit{display:flex;align-items:center;gap:.7rem;margin:0;padding:.75rem 1rem;border:1px solid rgb(112 208 255 / 25%);border-radius:var(--r-md,10px);background:rgb(112 208 255 / 5%);font-size:.85rem;color:var(--text,#e8f3ff);}
-.bml-credit-icon{flex:none;color:var(--accent,#70d0ff);}
-.bml-credit-text{flex:1 1 auto;min-width:0;}
-.bml-credit a{display:inline-flex;align-items:center;gap:.3rem;color:var(--accent,#70d0ff);text-decoration:none;font-weight:700;}
-.bml-credit a:hover{text-decoration:underline;}
-.bml-credit-favicon{width:16px;height:16px;border-radius:var(--r-sm,6px);}
+#bml-root p.bml-credit{display:flex;align-items:center;gap:.7rem;margin:0;padding:.75rem 1rem;border:1px solid rgb(from var(--accent) r g b / 25%);border-radius:var(--r-md,10px);background:rgb(from var(--accent) r g b / 5%);font-size:.85rem;color:var(--text,#e9eef9);}
+#bml-root .bml-credit-icon{flex:none;color:var(--accent,#70d0ff);}
+#bml-root .bml-credit-text{flex:1 1 auto;min-width:0;}
+#bml-root .bml-credit a{display:inline-flex;align-items:center;gap:.3rem;color:var(--accent,#70d0ff);text-decoration:none;font-weight:700;}
+#bml-root .bml-credit a:hover{text-decoration:underline;}
+#bml-root .bml-credit-favicon{width:16px;height:16px;border-radius:var(--r-sm,6px);}
 `;
 
   const credit =

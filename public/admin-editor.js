@@ -62,31 +62,6 @@ if (markdownEl instanceof HTMLTextAreaElement && typeof EasyMDE !== "undefined")
     markdownLabel.addEventListener("click", () => easyMde.codemirror.focus());
   }
 
-  // Inject dark theme after EasyMDE initializes so it's last in the cascade
-  const s = document.createElement("style");
-  s.textContent = `
-    .editor-toolbar { background: #111a30 !important; border: 1px solid var(--line-strong, #667aa3) !important; border-radius: 8px 8px 0 0 !important; opacity: 1 !important; }
-    .editor-toolbar button, .editor-toolbar button i { color: #c8d8f0 !important; }
-    .editor-toolbar button:hover, .editor-toolbar button.active { background: rgba(0,229,255,0.1) !important; border-color: #00e5ff !important; color: #00e5ff !important; }
-    .editor-toolbar button:hover i, .editor-toolbar button.active i { color: #00e5ff !important; }
-    .editor-toolbar i.separator { color: #1f2b46 !important; }
-    .editor-statusbar { color: #97a8c4 !important; border-top-color: #1f2b46 !important; }
-    .EasyMDEContainer .CodeMirror { background: #0c1324 !important; color: #e8f3ff !important; border: 1px solid var(--line-strong, #667aa3) !important; border-top: 0 !important; }
-    .EasyMDEContainer .CodeMirror-scroll { background: #0c1324 !important; }
-    .EasyMDEContainer .CodeMirror-lines { background: #0c1324 !important; }
-    .EasyMDEContainer .CodeMirror-gutters { background: #0c1324 !important; border-right: 1px solid #1f2b46 !important; color: #4a5e80; }
-    .EasyMDEContainer .CodeMirror-cursor { border-left: 2px solid #00e5ff !important; }
-    .EasyMDEContainer .CodeMirror-selected { background: rgba(0,229,255,0.12) !important; }
-    .EasyMDEContainer .cm-header { color: #00e5ff !important; font-weight: 700; }
-    .EasyMDEContainer .cm-strong { color: #e8f3ff !important; font-weight: 700; }
-    .EasyMDEContainer .cm-em { color: #ff3fb8 !important; font-style: italic; }
-    .EasyMDEContainer .cm-strikethrough { color: #97a8c4 !important; }
-    .EasyMDEContainer .cm-link { color: #00e5ff !important; }
-    .EasyMDEContainer .cm-url { color: #a8ff60 !important; }
-    .EasyMDEContainer .cm-quote { color: #97a8c4 !important; font-style: italic; }
-  `;
-  document.head.appendChild(s);
-
   // Sync editor value back to textarea before form submits
   const contentForm = document.querySelector("#content-form");
   if (contentForm instanceof HTMLFormElement) {

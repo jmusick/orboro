@@ -1,6 +1,7 @@
 ---
 import { renderMarkdown } from "../../lib/markdown";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import SidebarLayout from "../../components/SidebarLayout.astro";
 import Sidebar from "../../components/Sidebar.astro";
 import {
   getPublishedBySlugAndType,
@@ -89,7 +90,7 @@ const structuredData = {
   ogImage={absoluteImageUrl}
   structuredData={structuredData}
 >
-  <div class="post-layout">
+  <SidebarLayout>
     <article>
       <h1>{post.title}</h1>
       <p class="meta">
@@ -127,22 +128,11 @@ const structuredData = {
         </nav>
       )}
     </article>
-    <Sidebar categories={categories} recentPosts={recentPosts} />
-  </div>
+    <Sidebar slot="sidebar" categories={categories} recentPosts={recentPosts} />
+  </SidebarLayout>
 </BaseLayout>
 
 <style>
-  .post-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 280px;
-    gap: 2.5rem;
-    align-items: start;
-  }
-
-  .post-layout :global(aside.site-sidebar) {
-    position: sticky;
-    top: 1.5rem;
-  }
 
   article > h1 {
     max-width: 22ch;
@@ -181,7 +171,7 @@ const structuredData = {
     padding: 0.35rem 0.85rem;
     border: 1px solid var(--line);
     border-radius: var(--r-pill,999px);
-    background: rgb(112 208 255 / 8%);
+    background: rgb(from var(--accent) r g b / 8%);
     color: var(--accent);
     text-decoration: none;
     font-size: 0.82rem;
@@ -191,7 +181,7 @@ const structuredData = {
 
   .tag:hover {
     border-color: var(--accent);
-    background: rgb(112 208 255 / 15%);
+    background: rgb(from var(--accent) r g b / 15%);
   }
 
   .post-nav {
@@ -236,12 +226,6 @@ const structuredData = {
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 100%;
-  }
-
-  @media (max-width: 900px) {
-    .post-layout {
-      grid-template-columns: 1fr;
-    }
   }
 
   @media (max-width: 600px) {

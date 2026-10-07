@@ -87,7 +87,7 @@ function resultCard(result: SimulationResult): string {
     })
     .join("");
   return (
-    `<article class="sql-result-card${selected}">` +
+    `<article class="ui-panel sql-result-card${selected}">` +
     `<h3 class="sql-result-title">${label} <span>${unit}</span></h3>` +
     `<div class="sql-score"><strong>${result.uptime.toFixed(2)}%</strong><span>GCD uptime</span></div>` +
     `<div class="sql-bar"><i style="width:${result.uptime.toFixed(2)}%"></i></div>` +
@@ -106,67 +106,67 @@ function resultCard(result: SimulationResult): string {
 const initialCards = [0, 100, 250, 400].map(simulateWindow).map(resultCard).join("");
 
 const css = `
-#sql-root{font-family:inherit;margin:0;color:var(--text,#e8f3ff);}
+#sql-root{font-family:inherit;margin:0;color:var(--text,#e9eef9);}
 #sql-root *{box-sizing:border-box;}
 #sql-root button,#sql-root input{font:inherit;}
 #sql-root button{color:inherit;}
 #sql-root .sql-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;clip:rect(0 0 0 0);clip-path:inset(50%);overflow:hidden;white-space:nowrap;}
 
-#sql-root .sql-intro{display:flex;align-items:flex-start;justify-content:space-between;gap:1.25rem;margin:1.5rem 0 1rem;padding:1rem 1.1rem;border:1px solid rgb(112 208 255 / 24%);border-radius:var(--r-md,10px);background:rgb(112 208 255 / 5%);}
-#sql-root p.sql-intro-copy{max-width:880px;margin:0;color:var(--muted,#97a8c4);font-size:.9rem;line-height:1.65;}
-#sql-root .sql-intro-copy strong{color:var(--text,#e8f3ff);}
+#sql-root .sql-intro{display:flex;align-items:flex-start;justify-content:space-between;gap:1.25rem;margin:1.5rem 0 1rem;padding:1rem 1.1rem;border:1px solid rgb(from var(--accent) r g b / 24%);border-radius:var(--r-md,10px);background:rgb(from var(--accent) r g b / 5%);}
+#sql-root p.sql-intro-copy{max-width:880px;margin:0;color:var(--muted,#98a3bf);font-size:.9rem;line-height:1.65;}
+#sql-root .sql-intro-copy strong{color:var(--text,#e9eef9);}
 #sql-root .sql-retail{flex:none;padding:.3rem .55rem;border:1px solid rgb(168 255 96 / 28%);border-radius:var(--r-pill,999px);color:var(--accent-3,#a8ff60);font-size:.68rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;}
 
 #sql-root .sql-workspace{display:grid;grid-template-columns:minmax(245px,310px) minmax(0,1fr);gap:1rem;align-items:start;}
-#sql-root .sql-panel{min-width:0;border:1px solid var(--line,#1f2b46);border-radius:var(--r-lg,16px);background:rgb(5 7 15 / 38%);overflow:hidden;}
+#sql-root .sql-panel{min-width:0;overflow:hidden;}
 #sql-root .sql-controls{padding:1.05rem;}
 #sql-root .sql-eyebrow{margin:0 0 .35rem;color:var(--accent,#70d0ff);font-size:.68rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;}
-#sql-root h2.sql-heading{margin:0;padding:0;border:0;color:var(--text,#e8f3ff);font-size:1.3rem;line-height:1.25;}
-#sql-root p.sql-copy{margin:.5rem 0 1rem;color:var(--muted,#97a8c4);font-size:.82rem;line-height:1.55;}
+#sql-root h2.sql-heading{margin:0;padding:0;border:0;color:var(--text,#e9eef9);font-size:1.3rem;line-height:1.25;}
+#sql-root p.sql-copy{margin:.5rem 0 1rem;color:var(--muted,#98a3bf);font-size:.82rem;line-height:1.55;}
 
-#sql-root .sql-control{margin-top:.85rem;padding-top:.85rem;border-top:1px solid var(--line,#1f2b46);}
+#sql-root .sql-control{margin-top:.85rem;padding-top:.85rem;border-top:1px solid var(--line,#222c4a);}
 #sql-root .sql-control-head{display:flex;align-items:baseline;justify-content:space-between;gap:.75rem;margin-bottom:.45rem;}
-#sql-root .sql-control-head label{color:var(--text,#e8f3ff);font-size:.78rem;font-weight:700;}
-#sql-root .sql-value{color:var(--accent,#70d0ff);font-family:"JetBrains Mono",Consolas,monospace;font-size:.72rem;font-variant-numeric:tabular-nums;}
+#sql-root .sql-control-head label{color:var(--text,#e9eef9);font-size:.78rem;font-weight:700;}
+#sql-root .sql-value{color:var(--accent,#70d0ff);font-family:var(--font-code);font-size:.72rem;font-variant-numeric:tabular-nums;}
 #sql-root input[type="range"]{display:block;width:100%;margin:0;accent-color:var(--accent,#70d0ff);cursor:pointer;}
 #sql-root .sql-range-notes{display:flex;justify-content:space-between;margin-top:.2rem;color:rgb(151 168 196 / 68%);font-size:.62rem;}
 #sql-root .sql-quick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.35rem;margin-top:.5rem;}
-#sql-root .sql-timer-track{height:.5rem;margin-top:.5rem;border-radius:var(--r-pill,999px);overflow:hidden;background:var(--bg,#05070f);}
-#sql-root .sql-timer-track i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--accent,#70d0ff),var(--accent-3,#a8ff60));transition:width .2s linear;}
+#sql-root .sql-timer-track{height:.5rem;margin-top:.5rem;border-radius:var(--r-pill,999px);overflow:hidden;background:var(--bg,#080b18);}
+#sql-root .sql-timer-track i{display:block;height:100%;border-radius:inherit;background:var(--accent);transition:width .2s linear;}
 #sql-root dl.sql-rhythm-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.4rem;margin:.65rem 0 0;}
-#sql-root .sql-rhythm-stats div{padding:.5rem .6rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-sm,6px);background:var(--surface,#0c1324);}
-#sql-root .sql-rhythm-stats dt{margin:0 0 .2rem;color:var(--muted,#97a8c4);font-size:.68rem;}
+#sql-root .sql-rhythm-stats div{padding:.5rem .6rem;border:1px solid var(--line,#222c4a);border-radius:var(--r-sm,6px);background:var(--surface,#0e1428);}
+#sql-root .sql-rhythm-stats dt{margin:0 0 .2rem;color:var(--muted,#98a3bf);font-size:.68rem;}
 #sql-root .sql-rhythm-stats dd{margin:0;color:var(--accent,#70d0ff);font-size:.95rem;font-weight:700;font-variant-numeric:tabular-nums;}
-#sql-root button.sql-chip{min-width:0;padding:.38rem .15rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-sm,6px);background:var(--surface,#0c1324);color:var(--muted,#97a8c4);font-size:.68rem;cursor:pointer;transition:color .15s ease,border-color .15s ease,background .15s ease;}
-#sql-root button.sql-chip:hover,#sql-root button.sql-chip.active{border-color:rgb(112 208 255 / 55%);background:rgb(112 208 255 / 8%);color:var(--accent,#70d0ff);}
-#sql-root button.sql-primary,#sql-root button.sql-secondary{display:block;width:100%;border-radius:var(--r-md,10px);font-weight:800;cursor:pointer;transition:background .15s ease,border-color .15s ease,box-shadow .15s ease,transform .15s ease;}
-#sql-root button.sql-primary{margin-top:1rem;padding:.72rem .8rem;border:1px solid var(--accent,#70d0ff);background:var(--accent,#70d0ff);color:var(--bg,#05070f);box-shadow:0 0 .9rem rgb(112 208 255 / 14%);}
-#sql-root button.sql-primary:hover{background:#52edff;box-shadow:0 0 1.1rem rgb(112 208 255 / 22%);transform:translateY(-1px);}
-#sql-root button.sql-secondary{margin-top:.45rem;padding:.62rem .8rem;border:1px solid rgb(112 208 255 / 30%);background:rgb(112 208 255 / 5%);color:var(--accent,#70d0ff);}
-#sql-root button.sql-secondary:hover{border-color:rgb(112 208 255 / 55%);background:rgb(112 208 255 / 9%);}
+#sql-root button.sql-chip{min-width:0;padding:.38rem .15rem;color:var(--muted,#98a3bf);font-size:.68rem;cursor:pointer;transition:color .15s ease,border-color .15s ease,background .15s ease;}
+#sql-root button.sql-chip:hover,#sql-root button.sql-chip.active{border-color:rgb(from var(--accent) r g b / 55%);background:rgb(from var(--accent) r g b / 8%);color:var(--accent,#70d0ff);}
+#sql-root button.sql-primary,#sql-root button.sql-secondary{display:block;width:100%;border-radius:var(--r-md,10px);font-weight:800;cursor:pointer;transition:background .15s ease,border-color .15s ease;}
+#sql-root button.sql-primary{margin-top:1rem;padding:.72rem .8rem;border:1px solid var(--accent,#70d0ff);background:var(--accent,#70d0ff);color:var(--bg,#080b18);}
+#sql-root button.sql-primary:hover{background:var(--accent-hover);}
+#sql-root button.sql-secondary{margin-top:.45rem;padding:.62rem .8rem;border:1px solid rgb(from var(--accent) r g b / 30%);background:rgb(from var(--accent) r g b / 5%);color:var(--accent,#70d0ff);}
+#sql-root button.sql-secondary:hover{border-color:rgb(from var(--accent) r g b / 55%);background:rgb(from var(--accent) r g b / 9%);}
 #sql-root button.sql-primary:focus-visible{outline:2px solid var(--accent,#70d0ff);outline-offset:3px;}
 #sql-root p.sql-shortcut{margin:.5rem 0 0;text-align:center;color:rgb(151 168 196 / 72%);font-size:.66rem;}
-#sql-root kbd{padding:.08rem .3rem;border:1px solid var(--line,#1f2b46);border-bottom-width:2px;border-radius:var(--r-sm,6px);background:var(--surface,#0c1324);color:var(--text,#e8f3ff);font-family:inherit;}
+#sql-root kbd{padding:.08rem .3rem;border:1px solid var(--line,#222c4a);border-bottom-width:2px;border-radius:var(--r-sm,6px);background:var(--surface,#0e1428);color:var(--text,#e9eef9);font-family:inherit;}
 
 #sql-root .sql-stage{padding:1.05rem;}
 #sql-root .sql-stage-head{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;margin-bottom:.85rem;}
-#sql-root p.sql-stage-copy{margin:.25rem 0 0;color:var(--muted,#97a8c4);font-size:.78rem;}
-#sql-root .sql-live{display:flex;align-items:center;gap:.4rem;color:var(--muted,#97a8c4);font-size:.66rem;white-space:nowrap;}
+#sql-root p.sql-stage-copy{margin:.25rem 0 0;color:var(--muted,#98a3bf);font-size:.78rem;}
+#sql-root .sql-live{display:flex;align-items:center;gap:.4rem;color:var(--muted,#98a3bf);font-size:.66rem;white-space:nowrap;}
 #sql-root .sql-live[hidden]{display:none;}
-#sql-root .sql-live::before{content:"";width:.38rem;height:.38rem;border-radius:50%;background:var(--accent-3,#a8ff60);box-shadow:0 0 .55rem rgb(168 255 96 / 65%);}
-#sql-root .sql-live.stopped::before{background:var(--muted,#97a8c4);box-shadow:none;}
-#sql-root .sql-timeline-wrap{padding:.85rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-md,10px);background:rgb(5 7 15 / 46%);overflow:hidden;}
+#sql-root .sql-live::before{content:"";width:.38rem;height:.38rem;border-radius:50%;background:var(--accent-3,#a8ff60);}
+#sql-root .sql-live.stopped::before{background:var(--muted,#98a3bf);box-shadow:none;}
+#sql-root .sql-timeline-wrap{padding:.85rem;border:1px solid var(--line,#222c4a);border-radius:var(--r-md,10px);background:rgb(from var(--bg) r g b / 46%);overflow:hidden;}
 #sql-root .sql-scale{display:grid;grid-template-columns:repeat(5,1fr);margin:0 .15rem .35rem;color:rgb(151 168 196 / 60%);font-size:.6rem;}
 #sql-root .sql-scale span:not(:first-child){text-align:right;}
-#sql-root .sql-track{position:relative;height:88px;border:1px solid rgb(112 208 255 / 20%);border-radius:var(--r-md,10px);overflow:hidden;background:linear-gradient(90deg,rgb(112 208 255 / 11%),rgb(112 208 255 / 2%));}
+#sql-root .sql-track{position:relative;height:88px;border:1px solid rgb(from var(--accent) r g b / 20%);border-radius:var(--r-md,10px);overflow:hidden;background:linear-gradient(90deg,rgb(from var(--accent) r g b / 11%),rgb(from var(--accent) r g b / 2%));}
 #sql-root .sql-track::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 calc(10% - 1px),rgb(255 255 255 / 4%) calc(10% - 1px) 10%);pointer-events:none;}
 #sql-root .sql-queue-band{position:absolute;z-index:1;inset:0 0 0 auto;width:25%;border-left:1px dashed rgb(255 63 184 / 90%);background:linear-gradient(90deg,rgb(255 63 184 / 3%),rgb(255 63 184 / 19%));transition:width .18s ease;}
 #sql-root .sql-queue-band span{position:absolute;top:.45rem;left:.55rem;color:var(--accent-2,#ff3fb8);font-size:.6rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;}
-#sql-root .sql-cursor{position:absolute;z-index:4;top:0;bottom:0;left:0;width:2px;background:var(--text,#e8f3ff);box-shadow:0 0 .7rem rgb(232 243 255 / 85%);transform:translateX(-1px);}
+#sql-root .sql-cursor{position:absolute;z-index:4;top:0;bottom:0;left:0;width:2px;background:var(--text,#e9eef9);transform:translateX(-1px);}
 #sql-root .sql-pulse{position:absolute;z-index:5;bottom:.7rem;width:.55rem;height:.55rem;border-radius:50%;transform:translateX(-50%);animation:sql-pop .45s ease-out forwards;}
-#sql-root .sql-pulse.early{background:var(--muted,#97a8c4);}
-#sql-root .sql-pulse.queued{background:var(--accent-2,#ff3fb8);box-shadow:0 0 .65rem rgb(255 63 184 / 70%);}
-#sql-root .sql-pulse.cast{background:var(--accent,#70d0ff);box-shadow:0 0 .65rem rgb(112 208 255 / 75%);}
+#sql-root .sql-pulse.early{background:var(--muted,#98a3bf);}
+#sql-root .sql-pulse.queued{background:var(--accent-2,#ff3fb8);}
+#sql-root .sql-pulse.cast{background:var(--accent,#70d0ff);}
 @keyframes sql-pop{0%{scale:.4;opacity:.15}45%{scale:1.25;opacity:1}100%{scale:1;opacity:.88}}
 #sql-root .sql-track-labels{display:flex;justify-content:space-between;gap:.5rem;margin-top:.4rem;color:rgb(151 168 196 / 75%);font-size:.62rem;}
 #sql-root .sql-legend{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:.6rem;color:rgb(151 168 196 / 78%);font-size:.62rem;}
@@ -174,70 +174,70 @@ const css = `
 #sql-root .sql-dot{width:.38rem;height:.38rem;border-radius:50%;}
 
 #sql-root .sql-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.5rem;margin-top:.65rem;}
-#sql-root .sql-metric{min-width:0;padding:.7rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-md,10px);background:rgb(12 19 36 / 55%);}
-#sql-root .sql-metric span{display:block;margin-bottom:.25rem;color:var(--muted,#97a8c4);font-size:.62rem;line-height:1.25;}
-#sql-root .sql-metric strong{color:var(--text,#e8f3ff);font-size:1rem;font-variant-numeric:tabular-nums;}
-#sql-root .sql-metric small{margin-left:.18rem;color:var(--muted,#97a8c4);font-size:.58rem;}
-#sql-root .sql-event{display:flex;align-items:center;gap:.45rem;min-height:2.55rem;margin-top:.65rem;padding:.62rem .72rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-md,10px);color:var(--muted,#97a8c4);font-size:.72rem;line-height:1.4;}
-#sql-root .sql-event::before{content:"";flex:0 0 auto;width:.42rem;height:.42rem;border-radius:50%;background:var(--muted,#97a8c4);}
-#sql-root .sql-event.queued::before{background:var(--accent-2,#ff3fb8);box-shadow:0 0 .55rem rgb(255 63 184 / 60%);}
-#sql-root .sql-event.cast::before{background:var(--accent,#70d0ff);box-shadow:0 0 .55rem rgb(112 208 255 / 60%);}
-#sql-root .sql-callout{margin-top:.65rem;padding:.72rem;border:1px solid rgb(255 63 184 / 24%);border-radius:var(--r-md,10px);background:rgb(255 63 184 / 4%);color:var(--muted,#97a8c4);font-size:.7rem;line-height:1.5;}
-#sql-root .sql-callout strong{color:var(--text,#e8f3ff);}
+#sql-root .sql-metric{min-width:0;padding:.7rem;border:1px solid var(--line,#222c4a);border-radius:var(--r-md,10px);background:rgb(from var(--surface) r g b / 55%);}
+#sql-root .sql-metric span{display:block;margin-bottom:.25rem;color:var(--muted,#98a3bf);font-size:.62rem;line-height:1.25;}
+#sql-root .sql-metric strong{color:var(--text,#e9eef9);font-size:1rem;font-variant-numeric:tabular-nums;}
+#sql-root .sql-metric small{margin-left:.18rem;color:var(--muted,#98a3bf);font-size:.58rem;}
+#sql-root .sql-event{display:flex;align-items:center;gap:.45rem;min-height:2.55rem;margin-top:.65rem;padding:.62rem .72rem;border:1px solid var(--line,#222c4a);border-radius:var(--r-md,10px);color:var(--muted,#98a3bf);font-size:.72rem;line-height:1.4;}
+#sql-root .sql-event::before{content:"";flex:0 0 auto;width:.42rem;height:.42rem;border-radius:50%;background:var(--muted,#98a3bf);}
+#sql-root .sql-event.queued::before{background:var(--accent-2,#ff3fb8);}
+#sql-root .sql-event.cast::before{background:var(--accent,#70d0ff);}
+#sql-root .sql-callout{margin-top:.65rem;padding:.72rem;border:1px solid rgb(255 63 184 / 24%);border-radius:var(--r-md,10px);background:rgb(255 63 184 / 4%);color:var(--muted,#98a3bf);font-size:.7rem;line-height:1.5;}
+#sql-root .sql-callout strong{color:var(--text,#e9eef9);}
 
 #sql-root .sql-bench{margin-top:1rem;padding:1.05rem;}
 #sql-root .sql-bench-head{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;margin-bottom:.85rem;}
-#sql-root p.sql-bench-copy{max-width:760px;margin:.25rem 0 0;color:var(--muted,#97a8c4);font-size:.78rem;line-height:1.5;}
-#sql-root .sql-run-summary{padding:.38rem .58rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-pill,999px);background:var(--surface,#0c1324);color:var(--muted,#97a8c4);font-size:.64rem;white-space:nowrap;}
+#sql-root p.sql-bench-copy{max-width:760px;margin:.25rem 0 0;color:var(--muted,#98a3bf);font-size:.78rem;line-height:1.5;}
+#sql-root .sql-run-summary{padding:.38rem .58rem;border:1px solid var(--line,#222c4a);border-radius:var(--r-pill,999px);background:var(--surface,#0e1428);color:var(--muted,#98a3bf);font-size:.64rem;white-space:nowrap;}
 #sql-root .sql-compare-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.55rem;}
-#sql-root .sql-result-card{position:relative;min-width:0;padding:.8rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-md,10px);background:rgb(12 19 36 / 58%);}
-#sql-root .sql-result-card.selected{border-color:rgb(112 208 255 / 46%);}
+#sql-root .sql-result-card{position:relative;min-width:0;padding:.8rem;}
+#sql-root .sql-result-card.selected{border-color:rgb(from var(--accent) r g b / 46%);}
 #sql-root .sql-result-card.selected::before{content:"Selected";position:absolute;top:.58rem;right:.58rem;color:var(--accent,#70d0ff);font-size:.52rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;}
-#sql-root h3.sql-result-title{margin:0 0 .7rem;color:var(--text,#e8f3ff);font-size:.85rem;}
-#sql-root .sql-result-title span{margin-left:.1rem;color:var(--muted,#97a8c4);font-size:.62rem;font-weight:500;}
+#sql-root h3.sql-result-title{margin:0 0 .7rem;color:var(--text,#e9eef9);font-size:.85rem;}
+#sql-root .sql-result-title span{margin-left:.1rem;color:var(--muted,#98a3bf);font-size:.62rem;font-weight:500;}
 #sql-root .sql-score{display:flex;align-items:baseline;gap:.3rem;margin-bottom:.4rem;}
 #sql-root .sql-score strong{font-size:1.25rem;font-variant-numeric:tabular-nums;}
-#sql-root .sql-score span{color:var(--muted,#97a8c4);font-size:.58rem;}
-#sql-root .sql-bar{height:.34rem;margin-bottom:.6rem;border-radius:var(--r-pill,999px);overflow:hidden;background:var(--bg,#05070f);}
-#sql-root .sql-bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--accent,#70d0ff),var(--accent-3,#a8ff60));transition:width .35s ease;}
+#sql-root .sql-score span{color:var(--muted,#98a3bf);font-size:.58rem;}
+#sql-root .sql-bar{height:.34rem;margin-bottom:.6rem;border-radius:var(--r-pill,999px);overflow:hidden;background:var(--bg,#080b18);}
+#sql-root .sql-bar i{display:block;height:100%;border-radius:inherit;background:var(--accent);transition:width .35s ease;}
 #sql-root .sql-result-card dl{display:grid;gap:.32rem;margin:0;}
 #sql-root .sql-result-card dl div{display:flex;justify-content:space-between;gap:.5rem;font-size:.61rem;line-height:1.3;}
-#sql-root .sql-result-card dt{color:var(--muted,#97a8c4);}
-#sql-root .sql-result-card dd{margin:0;color:var(--text,#e8f3ff);font-variant-numeric:tabular-nums;text-align:right;}
-#sql-root p.sql-lost-label{margin:.75rem 0 .4rem;padding-top:.65rem;border-top:1px solid var(--line,#1f2b46);color:var(--muted,#97a8c4);font-size:.68rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+#sql-root .sql-result-card dt{color:var(--muted,#98a3bf);}
+#sql-root .sql-result-card dd{margin:0;color:var(--text,#e9eef9);font-variant-numeric:tabular-nums;text-align:right;}
+#sql-root p.sql-lost-label{margin:.75rem 0 .4rem;padding-top:.65rem;border-top:1px solid var(--line,#222c4a);color:var(--muted,#98a3bf);font-size:.68rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
 #sql-root .sql-lost-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.3rem;}
-#sql-root .sql-lost-grid div{padding:.4rem .3rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-sm,6px);background:rgb(5 7 15 / 40%);text-align:center;}
+#sql-root .sql-lost-grid div{padding:.4rem .3rem;border:1px solid var(--line,#222c4a);border-radius:var(--r-sm,6px);background:rgb(from var(--bg) r g b / 40%);text-align:center;}
 #sql-root .sql-lost-grid strong{display:block;color:var(--accent-2,#ff3fb8);font-size:.92rem;font-variant-numeric:tabular-nums;}
-#sql-root .sql-lost-grid small{display:block;margin-top:.15rem;color:var(--muted,#97a8c4);font-size:.62rem;}
+#sql-root .sql-lost-grid small{display:block;margin-top:.15rem;color:var(--muted,#98a3bf);font-size:.62rem;}
 #sql-root .sql-notes{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(260px,.75fr);gap:.55rem;margin-top:.55rem;}
-#sql-root .sql-note{padding:.72rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-md,10px);background:rgb(5 7 15 / 30%);color:var(--muted,#97a8c4);font-size:.69rem;line-height:1.55;}
-#sql-root .sql-note strong{color:var(--text,#e8f3ff);}
-#sql-root .sql-note code{padding:.08rem .28rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-sm,6px);background:var(--bg,#05070f);color:var(--accent,#70d0ff);font-size:.66rem;overflow-wrap:anywhere;}
+#sql-root .sql-note{padding:.72rem;color:var(--muted,#98a3bf);font-size:.69rem;line-height:1.55;}
+#sql-root .sql-note strong{color:var(--text,#e9eef9);}
+#sql-root .sql-note code{padding:.08rem .28rem;border:1px solid var(--line,#222c4a);border-radius:var(--r-sm,6px);background:var(--bg,#080b18);color:var(--accent,#70d0ff);font-size:.66rem;overflow-wrap:anywhere;}
 #sql-root .sql-note a{color:var(--accent,#70d0ff);}
 
 #sql-root .sql-guide{margin-top:1rem;}
-#sql-root .sql-guide-head{padding:1.15rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-lg,16px);background:rgb(5 7 15 / 38%);}
-#sql-root h2.sql-guide-title{max-width:780px;margin:0;padding:0;border:0;color:var(--text,#e8f3ff);font-size:clamp(1.45rem,3vw,2rem);line-height:1.18;}
-#sql-root p.sql-guide-lead{max-width:850px;margin:.7rem 0 0;color:var(--muted,#97a8c4);font-size:1rem;line-height:1.7;}
+#sql-root .sql-guide-head{padding:1.15rem;border:1px solid var(--line,#222c4a);border-radius:var(--r-lg,16px);background:rgb(from var(--bg) r g b / 38%);}
+#sql-root h2.sql-guide-title{max-width:780px;margin:0;padding:0;border:0;color:var(--text,#e9eef9);font-size:clamp(1.45rem,3vw,2rem);line-height:1.18;}
+#sql-root p.sql-guide-lead{max-width:850px;margin:.7rem 0 0;color:var(--muted,#98a3bf);font-size:1rem;line-height:1.7;}
 #sql-root .sql-guide-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.38fr);gap:1rem;margin-top:1rem;align-items:start;}
-#sql-root .sql-article{min-width:0;padding:1.15rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-lg,16px);background:rgb(5 7 15 / 30%);}
-#sql-root .sql-article-section+ .sql-article-section{margin-top:1.8rem;padding-top:1.8rem;border-top:1px solid var(--line,#1f2b46);}
-#sql-root h3.sql-article-title{margin:0 0 .55rem;color:var(--text,#e8f3ff);font-size:1.22rem;line-height:1.3;}
-#sql-root .sql-article p{margin:.65rem 0;color:var(--muted,#97a8c4);font-size:.96rem;line-height:1.72;}
-#sql-root .sql-article strong{color:var(--text,#e8f3ff);}
-#sql-root .sql-article ul,#sql-root .sql-article ol{margin:.7rem 0;padding-left:1.25rem;color:var(--muted,#97a8c4);font-size:.94rem;line-height:1.65;}
+#sql-root .sql-article{min-width:0;padding:1.15rem;border:1px solid var(--line,#222c4a);border-radius:var(--r-lg,16px);background:rgb(from var(--bg) r g b / 30%);}
+#sql-root .sql-article-section+ .sql-article-section{margin-top:1.8rem;padding-top:1.8rem;border-top:1px solid var(--line,#222c4a);}
+#sql-root h3.sql-article-title{margin:0 0 .55rem;color:var(--text,#e9eef9);font-size:1.22rem;line-height:1.3;}
+#sql-root .sql-article p{margin:.65rem 0;color:var(--muted,#98a3bf);font-size:.96rem;line-height:1.72;}
+#sql-root .sql-article strong{color:var(--text,#e9eef9);}
+#sql-root .sql-article ul,#sql-root .sql-article ol{margin:.7rem 0;padding-left:1.25rem;color:var(--muted,#98a3bf);font-size:.94rem;line-height:1.65;}
 #sql-root .sql-article li+li{margin-top:.4rem;}
 #sql-root .sql-diagrams{display:grid;gap:.65rem;margin-top:1rem;}
-#sql-root figure.sql-diagram{margin:0;padding:.8rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-md,10px);background:rgb(12 19 36 / 48%);}
-#sql-root .sql-diagram figcaption{display:flex;align-items:baseline;justify-content:space-between;gap:.75rem;margin-bottom:.58rem;color:var(--text,#e8f3ff);font-size:.85rem;font-weight:800;}
-#sql-root .sql-diagram figcaption span{color:var(--muted,#97a8c4);font-size:.82rem;font-weight:500;text-align:right;}
-#sql-root .sql-example-track{position:relative;height:54px;border:1px solid rgb(112 208 255 / 18%);border-radius:var(--r-sm,6px);overflow:hidden;background:rgb(5 7 15 / 62%);}
-#sql-root .sql-example-gcd{position:absolute;inset:0 10% 0 0;background:rgb(112 208 255 / 9%);}
+#sql-root figure.sql-diagram{margin:0;padding:.8rem;border:1px solid var(--line,#222c4a);border-radius:var(--r-md,10px);background:rgb(from var(--surface) r g b / 48%);}
+#sql-root .sql-diagram figcaption{display:flex;align-items:baseline;justify-content:space-between;gap:.75rem;margin-bottom:.58rem;color:var(--text,#e9eef9);font-size:.85rem;font-weight:800;}
+#sql-root .sql-diagram figcaption span{color:var(--muted,#98a3bf);font-size:.82rem;font-weight:500;text-align:right;}
+#sql-root .sql-example-track{position:relative;height:54px;border:1px solid rgb(from var(--accent) r g b / 18%);border-radius:var(--r-sm,6px);overflow:hidden;background:rgb(from var(--bg) r g b / 62%);}
+#sql-root .sql-example-gcd{position:absolute;inset:0 10% 0 0;background:rgb(from var(--accent) r g b / 9%);}
 #sql-root .sql-example-window{position:absolute;inset:0 10% 0 auto;width:36%;border-left:1px dashed rgb(255 63 184 / 85%);background:rgb(255 63 184 / 14%);}
 #sql-root .sql-example-ready{position:absolute;z-index:2;top:0;bottom:0;right:10%;width:1px;background:var(--accent-3,#a8ff60);}
 #sql-root .sql-example-ready::after{content:"GCD ends";position:absolute;right:.3rem;top:.25rem;color:var(--accent-3,#a8ff60);font-size:.76rem;white-space:nowrap;}
-#sql-root .sql-example-press{position:absolute;z-index:3;bottom:.55rem;left:var(--press);width:.55rem;height:.55rem;border:2px solid var(--bg,#05070f);border-radius:50%;background:var(--marker,var(--muted,#97a8c4));box-shadow:0 0 .55rem color-mix(in srgb,var(--marker,var(--muted,#97a8c4)) 55%,transparent);transform:translateX(-50%);}
-#sql-root .sql-example-press::before{content:attr(data-label);position:absolute;left:50%;bottom:.75rem;color:var(--text,#e8f3ff);font-size:.76rem;font-weight:700;white-space:nowrap;transform:translateX(-50%);}
+#sql-root .sql-example-press{position:absolute;z-index:3;bottom:.55rem;left:var(--press);width:.55rem;height:.55rem;border:2px solid var(--bg,#080b18);border-radius:50%;background:var(--marker,var(--muted,#98a3bf));transform:translateX(-50%);}
+#sql-root .sql-example-press::before{content:attr(data-label);position:absolute;left:50%;bottom:.75rem;color:var(--text,#e9eef9);font-size:.76rem;font-weight:700;white-space:nowrap;transform:translateX(-50%);}
 #sql-root .sql-example-gap{position:absolute;inset:0 0 0 90%;background:repeating-linear-gradient(135deg,rgb(255 189 74 / 18%) 0 5px,rgb(255 189 74 / 6%) 5px 10px);}
 #sql-root .sql-example-axis{position:relative;height:1.1em;margin-top:.3rem;color:rgb(151 168 196 / 68%);font-size:.8rem;}
 #sql-root .sql-example-axis span{position:absolute;top:0;white-space:nowrap;}
@@ -245,16 +245,16 @@ const css = `
 #sql-root .sql-example-axis span:nth-child(2){left:54%;transform:translateX(-50%);}
 #sql-root .sql-example-axis span:last-child{right:0;text-align:right;}
 #sql-root .sql-equation{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem;margin-top:1rem;}
-#sql-root .sql-equation div{padding:.7rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-md,10px);background:rgb(12 19 36 / 48%);text-align:center;}
+#sql-root .sql-equation div{padding:.7rem;border:1px solid var(--line,#222c4a);border-radius:var(--r-md,10px);background:rgb(from var(--surface) r g b / 48%);text-align:center;}
 #sql-root .sql-equation strong{display:block;color:var(--accent,#70d0ff);font-size:1.05rem;}
-#sql-root .sql-equation span{display:block;margin-top:.2rem;color:var(--muted,#97a8c4);font-size:.74rem;line-height:1.35;}
+#sql-root .sql-equation span{display:block;margin-top:.2rem;color:var(--muted,#98a3bf);font-size:.74rem;line-height:1.35;}
 #sql-root .sql-side{display:grid;gap:.65rem;position:sticky;top:1rem;}
-#sql-root .sql-side-card{padding:.85rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-md,10px);background:rgb(12 19 36 / 52%);}
-#sql-root h3.sql-side-title{margin:0 0 .45rem;color:var(--text,#e8f3ff);font-size:.98rem;}
-#sql-root .sql-side-card p,#sql-root .sql-side-card li{color:var(--muted,#97a8c4);font-size:.84rem;line-height:1.55;}
+#sql-root .sql-side-card{padding:.85rem;}
+#sql-root h3.sql-side-title{margin:0 0 .45rem;color:var(--text,#e9eef9);font-size:.98rem;}
+#sql-root .sql-side-card p,#sql-root .sql-side-card li{color:var(--muted,#98a3bf);font-size:.84rem;line-height:1.55;}
 #sql-root .sql-side-card p{margin:.4rem 0;}
 #sql-root .sql-side-card ol{margin:.5rem 0 0;padding-left:1.1rem;}
-#sql-root .sql-command{display:block;margin:.45rem 0 0;padding:.55rem .6rem;border:1px solid rgb(112 208 255 / 22%);border-radius:var(--r-sm,6px);background:var(--bg,#05070f);color:var(--accent,#70d0ff);font-family:"JetBrains Mono",Consolas,monospace;font-size:.76rem;overflow-wrap:anywhere;user-select:all;}
+#sql-root .sql-command{display:block;margin:.45rem 0 0;padding:.55rem .6rem;border:1px solid rgb(from var(--accent) r g b / 22%);border-radius:var(--r-sm,6px);background:var(--bg,#080b18);color:var(--accent,#70d0ff);font-family:var(--font-code);font-size:.76rem;overflow-wrap:anywhere;user-select:all;}
 #sql-root .sql-source-links{display:grid;gap:.35rem;margin-top:.5rem;}
 #sql-root .sql-source-links a{color:var(--accent,#70d0ff);font-size:.82rem;line-height:1.4;}
 
@@ -440,9 +440,9 @@ export function generateSpellQueueLab(_attrs: Record<string, string>, nonce?: st
     `<section class="sql-article-section"><h3 class="sql-article-title">A practical way to choose a setting</h3><ol><li>Start at the 400 ms default and play content where your rotation is familiar.</li><li>Use the simulator below with your normal GCD, world latency, and an honest estimate of how quickly you repeat a key.</li><li>Lower the window in modest steps, such as 50 ms, and test for several minutes rather than a few casts.</li><li>If casts begin to leave small empty spaces, move back to the last stable value.</li><li>Repeat the test during high-haste effects. A shorter GCD gives you less total time to place the next input.</li></ol><p>Do not treat a popular formula such as “ping plus a fixed amount” as a universal rule. Latency is only one part of the timing chain, and the game&apos;s displayed round-trip latency is not a perfect measurement of when every input reaches processing.</p></section>` +
     `<section class="sql-article-section"><h3 class="sql-article-title">What this simulator leaves out</h3><p>The model deliberately reduces the system to GCD length, a queue deadline, estimated one-way travel, and repeated keypresses. The live game also has frame timing, variable network conditions, server processing, ability-specific rules, off-GCD actions, channels, cast times, macros, and cases where an action is not eligible when pressed.</p><p>Use the numbers to understand the relationship and compare settings. Validate the final choice by feel and combat logs in the content you actually play.</p></section>` +
     `</article><aside class="sql-side" aria-label="Spell Queue Window reference">` +
-    `<section class="sql-side-card"><h3 class="sql-side-title">In-game commands</h3><p>Check the current account-level CVar:</p><code class="sql-command">/dump GetCVar("SpellQueueWindow")</code><p>Set it to the documented default:</p><code class="sql-command">/console SpellQueueWindow 400</code></section>` +
-    `<section class="sql-side-card"><h3 class="sql-side-title">Quick interpretation</h3><ol><li>More total gap means the window is too hard for the modeled rhythm to hit.</li><li>More ignored presses means inputs often arrive before the queue opens.</li><li>Near-100% uptime means the current pattern usually reaches the queue in time.</li></ol></section>` +
-    `<section class="sql-side-card"><h3 class="sql-side-title">Further reading</h3><p>This guide is an original explanation inspired by the topic covered by Maxroll, with independent diagrams and examples.</p><div class="sql-source-links"><a href="https://maxroll.gg/wow/resources/spell-queue-window" target="_blank" rel="noopener noreferrer">Maxroll: Spell Queue Window</a><a href="https://warcraft.wiki.gg/wiki/CVar" target="_blank" rel="noopener noreferrer">Warcraft Wiki: console variables</a></div></section>` +
+    `<section class="ui-panel sql-side-card"><h3 class="sql-side-title">In-game commands</h3><p>Check the current account-level CVar:</p><code class="sql-command">/dump GetCVar("SpellQueueWindow")</code><p>Set it to the documented default:</p><code class="sql-command">/console SpellQueueWindow 400</code></section>` +
+    `<section class="ui-panel sql-side-card"><h3 class="sql-side-title">Quick interpretation</h3><ol><li>More total gap means the window is too hard for the modeled rhythm to hit.</li><li>More ignored presses means inputs often arrive before the queue opens.</li><li>Near-100% uptime means the current pattern usually reaches the queue in time.</li></ol></section>` +
+    `<section class="ui-panel sql-side-card"><h3 class="sql-side-title">Further reading</h3><p>This guide is an original explanation inspired by the topic covered by Maxroll, with independent diagrams and examples.</p><div class="sql-source-links"><a href="https://maxroll.gg/wow/resources/spell-queue-window" target="_blank" rel="noopener noreferrer">Maxroll: Spell Queue Window</a><a href="https://warcraft.wiki.gg/wiki/CVar" target="_blank" rel="noopener noreferrer">Warcraft Wiki: console variables</a></div></section>` +
     `</aside></div></section>`
   );
 
@@ -452,21 +452,21 @@ export function generateSpellQueueLab(_attrs: Record<string, string>, nonce?: st
     guideSection +
     `<div class="sql-intro"><p class="sql-intro-copy"><strong>Now try it yourself.</strong> Press during the highlighted end of the global cooldown below and WoW can hold the action until the GCD finishes. Press too early and the input is ignored. Press after the GCD and the delay becomes a rotational gap.</p><span class="sql-retail">Retail model</span></div>` +
     `<div class="sql-workspace">` +
-    `<aside class="sql-panel sql-controls" aria-label="Simulation controls">` +
+    `<aside class="ui-panel sql-panel sql-controls" aria-label="Simulation controls">` +
     `<p class="sql-eyebrow">Live timing test</p><h2 class="sql-heading">Find the window your rhythm can hit.</h2><p class="sql-copy">Click the spell or focus Cast Arcane Pulse and press 1 repeatedly. Your first press starts a 30-second timer — cast at your normal rhythm and we will measure your real press interval and variation from it.</p>` +
-    `<div class="sql-control"><div class="sql-control-head"><label for="sql-sqw">Spell Queue Window</label><output class="sql-value" id="sql-sqw-value">250 ms</output></div><input id="sql-sqw" type="range" min="0" max="400" step="10" value="250"><div class="sql-range-notes"><span>0 ms</span><span>400 ms</span></div><div class="sql-quick" aria-label="Queue window presets"><button type="button" class="sql-chip" data-sqw="0">Off</button><button type="button" class="sql-chip" data-sqw="100">100</button><button type="button" class="sql-chip active" data-sqw="250">250</button><button type="button" class="sql-chip" data-sqw="400">400</button></div></div>` +
+    `<div class="sql-control"><div class="sql-control-head"><label for="sql-sqw">Spell Queue Window</label><output class="sql-value" id="sql-sqw-value">250 ms</output></div><input id="sql-sqw" type="range" min="0" max="400" step="10" value="250"><div class="sql-range-notes"><span>0 ms</span><span>400 ms</span></div><div class="sql-quick" aria-label="Queue window presets"><button type="button" class="ui-action sql-chip" data-sqw="0">Off</button><button type="button" class="ui-action sql-chip" data-sqw="100">100</button><button type="button" class="ui-action sql-chip active" data-sqw="250">250</button><button type="button" class="ui-action sql-chip" data-sqw="400">400</button></div></div>` +
     `<div class="sql-control"><div class="sql-control-head"><label for="sql-gcd">Global cooldown</label><output class="sql-value" id="sql-gcd-value">1.00 s</output></div><input id="sql-gcd" type="range" min="750" max="1500" step="50" value="1000"><div class="sql-range-notes"><span>0.75 s</span><span>1.50 s</span></div></div>` +
     `<div class="sql-control"><div class="sql-control-head"><label for="sql-latency">World latency</label><output class="sql-value" id="sql-latency-value">40 ms</output></div><input id="sql-latency" type="range" min="0" max="200" step="5" value="40"><div class="sql-range-notes"><span>0 ms</span><span>200 ms RTT</span></div></div>` +
     `<div class="sql-control"><div class="sql-control-head"><label>Test your rhythm</label><output class="sql-value" id="sql-timer-value">30s</output></div><div class="sql-timer-track"><i id="sql-timer-fill" style="width:100%"></i></div><p class="sql-copy" style="margin:.5rem 0 0;">Cast for 30 seconds at the pace you actually play. We measure your average interval and its variation from those real presses instead of a guess.</p><dl class="sql-rhythm-stats" id="sql-rhythm-stats" hidden><div><dt>Average interval</dt><dd id="sql-rhythm-cadence-value">— ms</dd></div><div><dt>Variation</dt><dd id="sql-rhythm-jitter-value">± — ms</dd></div></dl></div>` +
-    `<button type="button" class="sql-primary" id="sql-spell-button" aria-describedby="sql-shortcut">Cast Arcane Pulse</button><button type="button" class="sql-secondary" id="sql-reset-button">Reset test</button><p class="sql-shortcut" id="sql-shortcut">Click to cast, or press <kbd>1</kbd> repeatedly while Cast Arcane Pulse is focused.</p>` +
+    `<button type="button" class="ui-action sql-primary" id="sql-spell-button" aria-describedby="sql-shortcut">Cast Arcane Pulse</button><button type="button" class="ui-action sql-secondary" id="sql-reset-button">Reset test</button><p class="sql-shortcut" id="sql-shortcut">Click to cast, or press <kbd>1</kbd> repeatedly while Cast Arcane Pulse is focused.</p>` +
     `</aside>` +
-    `<section class="sql-panel sql-stage" aria-labelledby="sql-live-title"><div class="sql-stage-head"><div><p class="sql-eyebrow">Current GCD</p><h2 class="sql-heading" id="sql-live-title">Input timeline</h2><p class="sql-stage-copy">One cycle repeats continuously so you can test your own cadence.</p></div><span class="sql-live" id="sql-live-status" hidden>Simulator running</span></div>` +
+    `<section class="ui-panel sql-panel sql-stage" aria-labelledby="sql-live-title"><div class="sql-stage-head"><div><p class="sql-eyebrow">Current GCD</p><h2 class="sql-heading" id="sql-live-title">Input timeline</h2><p class="sql-stage-copy">One cycle repeats continuously so you can test your own cadence.</p></div><span class="sql-live" id="sql-live-status" hidden>Simulator running</span></div>` +
     `<div class="sql-timeline-wrap"><div class="sql-scale"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>Ready</span></div><div class="sql-track" id="sql-track" aria-label="Current global cooldown progress"><div class="sql-queue-band" id="sql-queue-band"><span>Queue open</span></div><div class="sql-cursor" id="sql-cursor"></div></div><div class="sql-track-labels"><span>GCD starts</span><span id="sql-open-label">Queue opens at 750 ms</span><span>Next cast</span></div><div class="sql-legend"><span><i class="sql-dot" style="background:var(--muted)"></i> Too early</span><span><i class="sql-dot" style="background:var(--accent-2)"></i> Queued</span><span><i class="sql-dot" style="background:var(--accent)"></i> Cast after ready</span></div></div>` +
     `<div class="sql-metrics" aria-live="polite"><div class="sql-metric"><span>Casts completed</span><strong id="sql-casts">0</strong></div><div class="sql-metric"><span>Queued cleanly</span><strong id="sql-clean">0</strong><small>%</small></div><div class="sql-metric"><span>Total gap, live</span><strong id="sql-gap">0</strong><small>ms</small></div><div class="sql-metric"><span>Your press interval</span><strong id="sql-interval">—</strong><small>ms</small></div></div>` +
     `<div class="sql-event" id="sql-event" aria-live="polite">Press the spell to begin measuring your rhythm.</div><div class="sql-callout"><strong>The useful test:</strong> can your next press consistently land after the highlighted window opens? A queue shorter than the space between key presses can miss every opening and add a repeatable gap.</div></section>` +
     `</div>` +
-    `<section class="sql-panel sql-bench" aria-labelledby="sql-bench-title"><div class="sql-bench-head"><div><p class="sql-eyebrow">Same player, four settings</p><h2 class="sql-heading" id="sql-bench-title">Queue window comparison</h2><p class="sql-bench-copy">Each card runs the same 30-cast input pattern. GCD uptime falls whenever no press reaches the open queue before the cooldown ends.</p></div><span class="sql-run-summary" id="sql-run-summary">1.00s GCD · 250ms rhythm · ±30ms</span></div><div class="sql-compare-grid" id="sql-compare-grid">${initialCards}</div>` +
-    `<div class="sql-notes"><div class="sql-note"><strong>How the model works.</strong> A press before the queue opens is ignored. A press inside the window is held and fires when the GCD ends. A press arriving afterward fires immediately, but its delay becomes a gap. Latency delays arrival by half of the displayed round-trip time. This is a teaching model, not a frame-perfect recreation of Blizzard's server.</div><div class="sql-note"><strong>In game:</strong> check with <code>/dump GetCVar("SpellQueueWindow")</code> and set with <code>/console SpellQueueWindow 400</code>, the documented default.</div></div></section>` +
+    `<section class="ui-panel sql-panel sql-bench" aria-labelledby="sql-bench-title"><div class="sql-bench-head"><div><p class="sql-eyebrow">Same player, four settings</p><h2 class="sql-heading" id="sql-bench-title">Queue window comparison</h2><p class="sql-bench-copy">Each card runs the same 30-cast input pattern. GCD uptime falls whenever no press reaches the open queue before the cooldown ends.</p></div><span class="sql-run-summary" id="sql-run-summary">1.00s GCD · 250ms rhythm · ±30ms</span></div><div class="sql-compare-grid" id="sql-compare-grid">${initialCards}</div>` +
+    `<div class="sql-notes"><div class="ui-callout sql-note"><strong>How the model works.</strong> A press before the queue opens is ignored. A press inside the window is held and fires when the GCD ends. A press arriving afterward fires immediately, but its delay becomes a gap. Latency delays arrival by half of the displayed round-trip time. This is a teaching model, not a frame-perfect recreation of Blizzard's server.</div><div class="ui-callout sql-note"><strong>In game:</strong> check with <code>/dump GetCVar("SpellQueueWindow")</code> and set with <code>/console SpellQueueWindow 400</code>, the documented default.</div></div></section>` +
     `<script${nonceAttr(nonce)}>${js}<\/script>` +
     `</div>`
   );

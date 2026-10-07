@@ -38,7 +38,7 @@ function esc(s: string): string {
 
 export function generatePoe2Featured(_attrs: Record<string, string>, nonce?: string): string {
   const itemsHtml = ITEMS.map((item) => (
-    `<a class="pf-card" href="${esc(item.href)}">` +
+    `<a class="ui-panel pf-card" href="${esc(item.href)}">` +
     `<svg class="pf-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${item.iconSvg}</svg>` +
     `<span class="pf-title">${esc(item.title)}</span>` +
     `<span class="pf-desc">${esc(item.description)}</span>` +
@@ -49,20 +49,20 @@ export function generatePoe2Featured(_attrs: Record<string, string>, nonce?: str
 #pf-root{font-family:inherit;margin:0;}
 #pf-root *{box-sizing:border-box;}
 
-.pf-label{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#97a8c4);margin:1.25rem 0 .6rem;}
+#pf-root .pf-label{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#98a3bf);margin:1.25rem 0 .6rem;}
 
-.pf-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:0;}
-@media (max-width:768px){.pf-grid{grid-template-columns:1fr 1fr;}}
-@media (max-width:520px){.pf-grid{grid-template-columns:1fr;}}
+#pf-root .pf-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:0;}
+@media (max-width:768px){#pf-root .pf-grid{grid-template-columns:1fr 1fr;}}
+@media (max-width:520px){#pf-root .pf-grid{grid-template-columns:1fr;}}
 
-.pf-card{display:flex;flex-direction:column;gap:.6rem;padding:1.1rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-md,10px);background:linear-gradient(160deg,rgb(12 19 36 / 60%) 0%,rgb(17 26 48 / 60%) 100%);text-decoration:none;color:var(--text,#e8f3ff);transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease;}
-.pf-card:hover{border-color:var(--accent,#70d0ff);box-shadow:0 0 1rem rgb(112 208 255 / 15%);transform:translateY(-2px);}
+#pf-root .pf-card{display:flex;flex-direction:column;gap:.6rem;padding:1.1rem;text-decoration:none;color:var(--text,#e9eef9);transition:border-color .2s ease;}
+#pf-root .pf-card:hover{border-color:var(--accent,#70d0ff);}
 
-.pf-icon{color:var(--accent,#70d0ff);flex:none;}
+#pf-root .pf-icon{color:var(--accent,#70d0ff);flex:none;}
 
-.pf-title{font-weight:600;font-size:1rem;}
+#pf-root .pf-title{font-weight:600;font-size:1rem;}
 
-.pf-desc{color:var(--muted,#97a8c4);font-size:.85rem;line-height:1.5;}
+#pf-root .pf-desc{color:var(--muted,#98a3bf);font-size:.85rem;line-height:1.5;}
 `;
 
   return `<div id="pf-root"><style${nonceAttr(nonce)}>${css}</style><p class="pf-label">On This Site</p><div class="pf-grid">${itemsHtml}</div></div>`;
@@ -82,23 +82,23 @@ export function generatePoe2Intro(_attrs: Record<string, string>, nonce?: string
 #pi-root{font-family:inherit;margin:0;}
 #pi-root *{box-sizing:border-box;}
 
-.pi-row{display:flex;gap:1.5rem;align-items:center;margin:1rem 0;}
-@media (max-width:700px){.pi-row{flex-direction:column;align-items:stretch;}}
+#pi-root .pi-row{display:flex;gap:1.5rem;align-items:center;margin:1rem 0;}
+@media (max-width:700px){#pi-root .pi-row{flex-direction:column;align-items:stretch;}}
 
-.pi-text{flex:1;margin:0;line-height:1.7;color:var(--text,#e8f3ff);}
-.pi-text p{margin:0 0 1rem;}
-.pi-text p:last-child{margin-bottom:0;}
+#pi-root .pi-text{flex:1;margin:0;line-height:1.7;color:var(--text,#e9eef9);}
+#pi-root .pi-text p{margin:0 0 1rem;}
+#pi-root .pi-text p:last-child{margin-bottom:0;}
 
-.pi-links{flex:0 0 400px;display:flex;flex-direction:column;gap:.75rem;}
-@media (max-width:700px){.pi-links{flex-basis:auto;}}
+#pi-root .pi-links{flex:0 0 400px;display:flex;flex-direction:column;gap:.75rem;}
+@media (max-width:700px){#pi-root .pi-links{flex-basis:auto;}}
 
-.pi-link{display:flex;align-items:center;gap:.9rem;padding:.9rem 1.1rem;border:1px solid var(--line,#1f2b46);border-radius:var(--r-md,10px);background:rgb(255 63 184 / 4%);text-decoration:none;color:var(--text,#e8f3ff);transition:border-color .18s ease,background .18s ease,box-shadow .18s ease;}
-.pi-link:hover{border-color:var(--accent-2,#ff3fb8);background:rgb(255 63 184 / 8%);box-shadow:0 0 .8rem rgb(255 63 184 / 15%);}
+#pi-root .pi-link{display:flex;align-items:center;gap:.9rem;padding:.9rem 1.1rem;text-decoration:none;color:var(--text,#e9eef9);transition:border-color .18s ease,background .18s ease;}
+#pi-root .pi-link:hover{border-color:var(--accent);background:rgb(from var(--accent) r g b / 8%);}
 
-.pi-icon{color:var(--accent-2,#ff3fb8);flex:none;}
+#pi-root .pi-icon{color:var(--accent);flex:none;}
 
-.pi-title{font-weight:600;font-size:.95rem;white-space:nowrap;min-width:0;}
-@media (max-width:700px){.pi-title{white-space:normal;}}
+#pi-root .pi-title{font-weight:600;font-size:.95rem;white-space:nowrap;min-width:0;}
+@media (max-width:700px){#pi-root .pi-title{white-space:normal;}}
 `;
 
   return (
@@ -106,13 +106,13 @@ export function generatePoe2Intro(_attrs: Record<string, string>, nonce?: string
     `<div class="pi-row">` +
     `<div class="pi-text">${INTRO_PARAGRAPHS.map((p) => `<p>${esc(p)}</p>`).join("")}</div>` +
     `<div class="pi-links">` +
-    `<a class="pi-link" href="https://pathofexile2.com" target="_blank" rel="noopener noreferrer">` +
+    `<a class="ui-panel pi-link" href="https://pathofexile2.com" target="_blank" rel="noopener noreferrer">` +
     `<svg class="pi-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">` +
     `<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>` +
     `</svg>` +
     `<span class="pi-title">Visit the Official Path of Exile 2 Site ↗</span>` +
     `</a>` +
-    `<a class="pi-link" href="https://poe.ninja/poe2/profile/XingYuen-3765" target="_blank" rel="noopener noreferrer">` +
+    `<a class="ui-panel pi-link" href="https://poe.ninja/poe2/profile/XingYuen-3765" target="_blank" rel="noopener noreferrer">` +
     `<svg class="pi-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">` +
     `<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>` +
     `</svg>` +
