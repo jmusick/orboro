@@ -4,9 +4,15 @@ node_modules/
 # Build and generated output
 dist/
 outputs/
+output/
 .astro/
 coverage/
 *.tsbuildinfo
+
+# Local scratch files and personal tool preferences
+.tmp/
+.baoyu-skills/
+/TODO.md
 
 # Cloudflare / Wrangler local state
 .wrangler/
