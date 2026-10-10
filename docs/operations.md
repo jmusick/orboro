@@ -1,0 +1,33 @@
+# Operations and decision history
+
+Use [README.md](../README.md) for setup and deployment, [AGENTS.md](../AGENTS.md) for code conventions, and git commits and tags for the detailed change record.
+
+## Deployment configuration check — October 10, 2026
+
+Checked GitHub with its API and Cloudflare through the authenticated Worker dashboard. These are dated observations, not a claim that account settings cannot change.
+
+- GitHub repository: [jmusick/orboro-net](https://github.com/jmusick/orboro-net), repository ID `1231197478`, public, default branch `master`, homepage `https://orboro.net`.
+- Local `origin`: `https://github.com/jmusick/orboro-net.git`. `git ls-remote` resolves `master` to `13beff8d2b70940841d5644132dd5ef057089b46`, matching the checkout and the latest deployed build.
+- Cloudflare Worker: `orboro-net`. Its production Builds settings link to `jmusick/orboro-net`, use branch `master` and root `/`, and have builds enabled. Build command: `npm run build`; deploy command: `npx wrangler deploy`; include watch path: `*`.
+- The build token is selected as `orboro-net build token`. No build variables or secrets are configured. An older external note claimed `NODE_VERSION=22`; the dashboard did not support that claim. The repository's Node requirement remains in `package.json`.
+- GitHub's `Workers Builds: orboro-net` check succeeded for the current commit. Cloudflare shows production version `d822d5e2` ready and serving 100% of traffic. No post-rename push or new deployment was performed during this check.
+- Production bindings match `wrangler.toml`: D1 `DB` → `orboro-db` (`7fe68e1c-ce42-40a6-ae78-3bb674d6ad0f`), R2 `MEDIA` → `orboro-net-media`, and static `ASSETS`. Compatibility date: `2026-04-05`; flag: `nodejs_compat`. No runtime variables or secrets are configured.
+- Worker custom domain: `orboro.net`; workers.dev hostname: `orboro-net.jd-fda.workers.dev`. The R2 custom domain and its development URL were not rechecked in this review.
+- Older deployment records retain `jmusick/orboro` links. The active repository connection uses the renamed repository; historical labels alone do not indicate a broken connection.
+
+Cloudflare account settings remain outside the repository. Analytics retention, Google data sharing, live edge rules and log retention were not checked. Consult the account dashboards before making claims about them.
+
+Reference: [Cloudflare GitHub integration](https://developers.cloudflare.com/workers/ci-cd/builds/git-integration/github-integration/) and [GitHub repository renames](https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository).
+
+## Decision history
+
+These rationales were consolidated from earlier project notes; they are historical, not new deployment changes.
+
+- **v1.33.0:** moved from Cloudflare Pages to the `orboro-net` Worker.
+- **v1.34.0:** removed hCaptcha and its runtime secret from admin login; login became email and password only.
+- **v1.37.0:** took the palette from the logo and header art instead of the previous neon colors. Fonts became self-hosted because the prior stylesheet named an unloaded face and visitors saw Segoe UI. The homepage began leading with the newest post, and text-only pages gained the blog sidebar.
+- **October 4, 2026:** removed `/admin/setup`, which was unnecessary for a one-user site and had a race on empty databases. `admin:create` handles fresh and restored databases.
+
+## Research data
+
+The assisted-combat generator reads external inputs through `ASSISTED_COMBAT_RESEARCH_ROOT` and `ASSISTED_COMBAT_NOTES_ROOT`. The input filenames and error handling are documented in [the generator](../scripts/generate-assisted-combat-data.mjs). Set the variables when using another workspace; do not copy personal research locations into runtime code.

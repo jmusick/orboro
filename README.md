@@ -6,6 +6,14 @@ JD is the only user, with an admin account. The schema and route guards also sup
 
 Conventions, architecture notes and known gotchas for working on the code are in [AGENTS.md](AGENTS.md).
 
+## Workspace boundaries
+
+The local checkout is `C:\Users\JD\source\orboro-net`; the project library is `C:\Users\JD\Projects\orboro-net`. Use kebab-case for project-library folders and authored asset names; retain framework conventions, generated filenames and original archive contents.
+
+This repository owns website code, deployed assets, content seeds, migrations, data generators, tests, development configuration and technical documentation. The project library owns research inputs and workbook utilities, editable artwork, creative prompts, article drafts, and historical review or build snapshots. Its `README.md` indexes those materials. Keep current build output, dependencies and Cloudflare local state in the checkout; keep historical copies in the project library. Historical SQL and review utilities are records, not setup steps.
+
+[Operations and decision history](docs/operations.md) records implementation rationale and dated deployment configuration checks.
+
 ## Requirements
 
 - Node.js `>=22.12.0` and npm
@@ -85,7 +93,7 @@ npm run dev:astro
 
 ## Deployment
 
-- The Worker `orboro-net` builds through Workers Builds, git-integrated with GitHub `jmusick/orboro`: a push to `master` runs `npm run build`, then `npx wrangler deploy`. `astro build` writes the real deploy config to `dist/server/wrangler.json`, which `wrangler deploy` and `wrangler dev` pick up.
+- The Worker `orboro-net` builds through Workers Builds, git-integrated with GitHub [jmusick/orboro-net](https://github.com/jmusick/orboro-net): a push to `master` runs `npm run build`, then `npx wrangler deploy`. `astro build` writes the real deploy config to `dist/server/wrangler.json`, which `wrangler deploy` and `wrangler dev` pick up.
 - Repository bindings are `DB` (D1), `MEDIA` (R2) and `ASSETS` (static assets). Custom domains, production secrets and edge security rules are configured in Cloudflare, outside the repo. Wrangler enables Workers logs and sampled traces; check retention and dashboard rules in the Cloudflare account.
 - Apply new schema migrations locally, verify them, then apply them remotely **before** deploying code that needs them. SQL content seeds are a separate step: pushing code does not copy local content into production.
 - The app needs no runtime secrets. If one is added, put it in `.dev.vars` for local dev (gitignored) and set it in production with `wrangler secret put <NAME>`.

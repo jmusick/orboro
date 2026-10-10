@@ -4,7 +4,7 @@ Conventions and gotchas for anyone (human or agent) working on this codebase. `R
 
 ## Architecture
 
-- Astro v7, `output: "server"`, deployed as the Cloudflare **Worker** `orboro-net` via `@astrojs/cloudflare` (Workers Builds, git-integrated with GitHub `jmusick/orboro`: a push to `master` runs `npm run build` + `npx wrangler deploy`).
+- Astro v7, `output: "server"`, deployed as the Cloudflare **Worker** `orboro-net` via `@astrojs/cloudflare` (Workers Builds, git-integrated with GitHub `jmusick/orboro-net`: a push to `master` runs `npm run build` + `npx wrangler deploy`).
 - `wrangler.toml` is the source of truth for bindings and runtime config (D1 `DB`, R2 `MEDIA`, static `ASSETS`, compatibility flags, logs/traces). `astro build` writes the real deploy config to `dist/server/wrangler.json`. Custom domains, production secrets and edge rules live outside the repo; do not infer their live settings from source.
 - All content (pages, posts, categories, nav) lives in D1, not markdown files. `src/lib/content.ts` is the data-access layer.
 - Auth is custom (PBKDF2 hashing, D1-backed opaque session tokens, 14-day lifetime): `src/lib/auth.ts`, `src/middleware.ts`. There is no setup or registration UI; a fresh or restored D1 gets its first admin from `npm run admin:create`.
@@ -108,6 +108,8 @@ if (!res) {
 - `src/pages/api/posts/by-category/[slug].ts` is a public, edge-cached (10 min) JSON endpoint of published posts per category, consumed by HiddenLodgeWebsite's `/articles` page. It returns plain-text excerpts, not rendered HTML, because shortcodes only resolve inside this repo's render pipeline. A new public endpoint should return absolute URLs (`new URL(path, site.origin)`), edge-cache, and answer an unknown slug with a `404` JSON body.
 
 ## Local dev and verification
+
+- Keep the checkout focused on building, maintaining and deploying the site. External research, workbook utilities, artwork originals/prompts, drafts and historical reviews belong in the project library described in README.md. Use kebab-case for authored project-library paths; preserve tool conventions and filenames inside historical snapshots. Keep technical instructions and decision history in this repository; reference them from external notes instead of duplicating them.
 
 - Use `127.0.0.1`, not `localhost`: some integrations need an exact origin match. `npm run dev:astro` is fast with hot reload; `npm run dev` builds and runs `wrangler dev` with real D1/Cache/secret bindings but no hot reload. Use the latter for anything touching D1, `caches.default` or `cloudflare:workers`.
 - **`astro dev` doesn't reliably pick up edits to `BaseLayout.astro`'s `<style is:global>`**, even across hard reloads. Restart it before concluding a style fix failed. If 4321 is taken, use `npx astro dev --host 127.0.0.1 --port <other>` rather than killing it.

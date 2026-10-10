@@ -28,7 +28,7 @@ const VERIFIED_AT = "2026-08-24";
 const repoRoot = path.resolve(import.meta.dirname, "..");
 const researchRoot =
   process.env.ASSISTED_COMBAT_RESEARCH_ROOT
-  ?? "C:/Users/JD/Projects/orboro/games/world-of-warcraft/assisted-combat/source-snapshot/2026-08-06";
+  ?? "C:/Users/JD/Projects/orboro-net/games/world-of-warcraft/assisted-combat/source-snapshot/2026-08-06";
 const notesRoot = process.env.ASSISTED_COMBAT_NOTES_ROOT;
 const outputPath = path.join(repoRoot, "src", "lib", "assisted-combat-data.json");
 
