@@ -179,11 +179,11 @@ function buildHtml(): string {
   #m2iu-root .m2iu-toolbar{grid-template-columns:1fr;}
   #m2iu-root .m2iu-tip-grid{grid-template-columns:1fr;}
   #m2iu-root .m2iu-table-wrap{overflow:visible;}
-  #m2iu-root table,#m2iu-root tbody{display:block;}
+  #m2iu-root table,#m2iu-root tbody{display:block;width:100%;min-width:0;table-layout:auto;}
   #m2iu-root thead{position:absolute;width:1px;height:1px;margin:-1px;clip:rect(0 0 0 0);overflow:hidden;}
-  #m2iu-root tr{display:block;padding:.75rem;border-bottom:1px solid var(--line,#222c4a);}
+  #m2iu-root tr{display:block;min-width:0;padding:.75rem;border-bottom:1px solid var(--line,#222c4a);}
   #m2iu-root tbody tr:last-child{border-bottom:0;}
-  #m2iu-root td{display:grid;grid-template-columns:7.2rem minmax(0,1fr);gap:.65rem;padding:.28rem 0;border:0;}
+  #m2iu-root td{display:grid;grid-template-columns:7.2rem minmax(0,1fr);gap:.65rem;padding:.28rem 0;border:0;overflow-wrap:anywhere;}
   #m2iu-root td::before{content:attr(data-label);color:var(--muted,#98a3bf);font-size:.63rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;}
   #m2iu-root .m2iu-action{min-width:0;}
 }
