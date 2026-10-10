@@ -21,6 +21,10 @@ function buildCsp(nonce: string): string {
   ].join("; ");
 }
 
+function isPrivatePath(pathname: string): boolean {
+  return pathname === "/admin" || pathname.startsWith("/admin/");
+}
+
 function generateNonce(): string {
   const bytes = crypto.getRandomValues(new Uint8Array(16));
   return btoa(String.fromCharCode(...bytes));
@@ -59,6 +63,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
     "Content-Security-Policy",
     buildCsp(context.locals.nonce),
   );
+
+  // Index hygiene only; the auth guards are what protect these routes. The
+  // exact /admin login stays crawlable in robots.txt so crawlers can see this.
+  if (isPrivatePath(new URL(context.request.url).pathname)) {
+    response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  }
 
   return response;
 });
