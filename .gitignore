@@ -12,7 +12,6 @@ coverage/
 # Local scratch files and personal tool preferences
 .tmp/
 .baoyu-skills/
-/TODO.md
 
 # Cloudflare / Wrangler local state
 .wrangler/

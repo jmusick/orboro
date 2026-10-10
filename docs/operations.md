@@ -19,6 +19,12 @@ Cloudflare account settings remain outside the repository. Analytics retention, 
 
 Reference: [Cloudflare GitHub integration](https://developers.cloudflare.com/workers/ci-cd/builds/git-integration/github-integration/) and [GitHub repository renames](https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository).
 
+## Security configuration observation — October 10, 2026
+
+The authenticated zone dashboard showed an active per-IP rule for exactly `/api/auth/login`: more than two requests in ten seconds is blocked for ten seconds. The `workers.dev` login is also reachable; account limits and alternate-host coverage remain in [issue #4](https://github.com/jmusick/orboro-net/issues/4). Minimum TLS was shown as TLS 1.0 default, with TLS 1.3 enabled; review effective hostname settings and raise the floor under [issue #15](https://github.com/jmusick/orboro-net/issues/15). No settings were changed during this inspection.
+
+GitHub secret scanning and push protection are enabled. The API showed no Actions workflows, master branch protection or rulesets, and Dependabot security updates disabled. Reproducible release checks are tracked in [issue #14](https://github.com/jmusick/orboro-net/issues/14). The [dated audit issues](https://github.com/jmusick/orboro-net/issues?q=is%3Aissue%20label%3Aaudit%3A2026-10-10) are the current backlog.
+
 ## Decision history
 
 These rationales were consolidated from earlier project notes; they are historical, not new deployment changes.

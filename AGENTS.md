@@ -4,6 +4,8 @@ Conventions and gotchas for anyone (human or agent) working on this codebase. `R
 
 ## Architecture
 
+- Track active work in [GitHub Issues](https://github.com/jmusick/orboro-net/issues), with category and priority labels. Recheck historical findings against current code before opening an issue; include reproducible evidence and completion criteria. Keep review snapshots in the external project library.
+
 - Astro v7, `output: "server"`, deployed as the Cloudflare **Worker** `orboro-net` via `@astrojs/cloudflare` (Workers Builds, git-integrated with GitHub `jmusick/orboro-net`: a push to `master` runs `npm run build` + `npx wrangler deploy`).
 - `wrangler.toml` is the source of truth for bindings and runtime config (D1 `DB`, R2 `MEDIA`, static `ASSETS`, compatibility flags, logs/traces). `astro build` writes the real deploy config to `dist/server/wrangler.json`. Custom domains, production secrets and edge rules live outside the repo; do not infer their live settings from source.
 - All content (pages, posts, categories, nav) lives in D1, not markdown files. `src/lib/content.ts` is the data-access layer.

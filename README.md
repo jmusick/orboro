@@ -6,6 +6,8 @@ JD is the only user, with an admin account. The schema and route guards also sup
 
 Conventions, architecture notes and known gotchas for working on the code are in [AGENTS.md](AGENTS.md).
 
+Track outstanding work in [GitHub Issues](https://github.com/jmusick/orboro-net/issues). Each issue has a `category:security`, `category:accessibility` or `category:seo` label when applicable, and a priority: `priority:p1` means address next, `priority:p2` means normal planned work, and `priority:p3` means an optional improvement or future prerequisite. The [October 10 audit issues](https://github.com/jmusick/orboro-net/issues?q=is%3Aissue%20label%3Aaudit%3A2026-10-10) reconcile the earlier reviews against v1.45.1; historical checklists are evidence, not the current backlog.
+
 ## Workspace boundaries
 
 The local checkout is `C:\Users\JD\source\orboro-net`; the project library is `C:\Users\JD\Projects\orboro-net`. Use kebab-case for project-library folders and authored asset names; retain framework conventions, generated filenames and original archive contents.
